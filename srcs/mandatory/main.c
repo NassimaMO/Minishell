@@ -18,7 +18,7 @@ int	main(int argc, char *argv[], char *envp[])
 	(void)argv;
 	while (1)
 	{
-		print_shell();
+		print_shell(envp);
 		control_c();
 		handle_cmd(get_input(), envp);
 	}
