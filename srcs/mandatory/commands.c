@@ -15,7 +15,7 @@
 void	print_echo_input(char *input, int *i, int len)
 {
 	static int	nl;
-	
+
 	(void)len;
 	if (!ft_strncmp(input, "-n", 2) && *i == 1)
 		nl++;
@@ -30,11 +30,11 @@ void	print_echo_input(char *input, int *i, int len)
 
 void	print_variable(char *envp[], char *input, int *i)
 {
-	int	x;
+	int		x;
 	char	*variable;
 
 	x = 0;
- 	while (input[x] != ' ')
+	while (input[x] != ' ')
 		x++;
 	variable = malloc(sizeof(char) * x + 1);
 	x = 0;
@@ -47,7 +47,8 @@ void	print_variable(char *envp[], char *input, int *i)
 	while (envp[x])
 	{
 		if (ft_strnstr(envp[x], variable, ft_strlen(envp[x])) == envp[x])
-			return (write(1, envp[x] + ft_strlen(variable), ft_strlen(envp[x] + ft_strlen(variable))), *i += ft_strlen(variable), free(variable));
+			return (write(1, envp[x] + ft_strlen(variable), ft_strlen(envp[x] + \
+			ft_strlen(variable))), *i += ft_strlen(variable), free(variable));
 		x++;
 	}
 	free(variable);
@@ -55,9 +56,9 @@ void	print_variable(char *envp[], char *input, int *i)
 
 void	echo_handle_function(char *envp[], char *input)
 {
-	int		i;
-	int		len;
-	
+	int	i;
+	int	len;
+
 	i = 1;
 	len = ft_strlen(input + i);
 	while (i < len)
@@ -72,9 +73,9 @@ void	echo_handle_function(char *envp[], char *input)
 	}
 }
 
-void    handle_cmd(char *line, char *envp[])
+void	handle_cmd(char *line, char *envp[])
 {
 	if (!ft_strncmp(line, "echo", 4))
-		echo_handle_function(envp, line + 4);	
+		echo_handle_function(envp, line + 4);
 	free(line);
 }

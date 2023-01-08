@@ -31,7 +31,7 @@ char	*get_input(void);
 void	free_split(char **split);
 
 /* commands.c */
-void    handle_cmd(char *line, char *envp[]);
+void	handle_cmd(char *line, char *envp[]);
 
 /* utils.c */
 void	exec_cmd(char *envp[], char *cmd, int fd_in, int fd_out);
