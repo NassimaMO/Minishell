@@ -14,10 +14,9 @@
 
 void	print_shell(char *envp[])
 {
-	char	*user_name;
-	char	*computer_name;
-	char	*path;
-	int		fd[2];
+	char		*computer_name;
+	char		*path;
+	int			fd[2];
 	static char	*cmds[3] = {"echo", "hostname", NULL};
 	static char	**env = NULL;
 
@@ -25,9 +24,6 @@ void	print_shell(char *envp[])
 		env = envp;
 	else if (!env)
 		return ;
-	user_name = getenv("USER");
-	if (!user_name)
-		user_name = "";
 	if (pipe(fd) < 0)
 		return ;
 	ft_pipe(2, cmds, env, fd);
@@ -35,7 +31,7 @@ void	print_shell(char *envp[])
 	if (ft_strchr(computer_name, '.'))
 		*ft_strchr(computer_name, '.') = 0;
 	path = "";
-	ft_printf("%s@%s:%s$ ", user_name, computer_name, path);
+	ft_printf("%s@%s:%s$ ", getenv("USER"), computer_name, path);
 	free(computer_name);
 }
 
