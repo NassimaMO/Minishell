@@ -17,6 +17,9 @@
 # include "libft.h"
 # include "signal.h"
 
+# include <errno.h>
+# include <sys/wait.h>
+
 /* print.c */
 void	print_shell(void);
 
