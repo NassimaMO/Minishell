@@ -1,32 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   memory.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/09 15:22:15 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/09 15:22:16 by nghulam-         ###   ########.fr       */
+/*   Created: 2023/01/09 15:22:27 by nghulam-          #+#    #+#             */
+/*   Updated: 2023/01/09 15:22:29 by nghulam-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_handler(int signum)
+void	free_split(char **split)
 {
-	if (signum == SIGINT)
+	int	i;
+
+	i = 0;
+	while (split[i])
 	{
-		printf("\n");
-		print_shell();
+		free(split[i]);
+		i++;
 	}
-	if (signum == SIGQUIT){}
-}
-
-void	control_c(void)
-{
-	struct sigaction	sa;
-
-	sa.sa_handler = &ft_handler;
-	sigaction(SIGINT, &sa, NULL);
-	sigaction(SIGQUIT, &sa, NULL);
+	free(split);
 }
