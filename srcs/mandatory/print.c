@@ -19,3 +19,22 @@ void	print_shell(void)
 	ft_putchar_fd('$', STDOUT_FILENO);
 	ft_putchar_fd(' ', STDOUT_FILENO);
 }
+
+char	*get_input(void)
+{
+	char	*line;
+
+	line = get_next_line(0);
+	if (line && !ft_strncmp(line, "exit\n", 5))
+	{
+		printf("exit\n");
+		free(line);
+		exit(0);
+	}
+	if (!line)
+	{
+		printf("\nexit\n");
+		exit(0);
+	}
+	return (line);
+}
