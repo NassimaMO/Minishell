@@ -12,24 +12,31 @@
 
 #include "minishell.h"
 
-void	print_shell(void)
+void	print_shell(char *envp[])
 {
 	char	*user_name;
 	char	*computer_name;
 	char	*path;
+	int		fd[2];
+	static char	*cmds[3] = {"echo", "hostname", NULL};
+	static char	**env = NULL;
 
+	if (!env && envp)
+		env = envp;
+	else if (!env)
+		return ;
 	user_name = getenv("USER");
 	if (!user_name)
 		user_name = "";
-	computer_name = "";
+	if (pipe(fd) < 0)
+		return ;
+	ft_pipe(2, cmds, env, fd);
+	computer_name = get_next_line(fd[0]);
+	if (ft_strchr(computer_name, '.'))
+		*ft_strchr(computer_name, '.') = 0;
 	path = "";
-	ft_putstr_fd(user_name, STDOUT_FILENO);
-	ft_putchar_fd('@', STDOUT_FILENO);
-	ft_putstr_fd(computer_name, STDOUT_FILENO);
-	ft_putchar_fd(':', STDOUT_FILENO);
-	ft_putstr_fd(path, STDOUT_FILENO);
-	ft_putchar_fd('$', STDOUT_FILENO);
-	ft_putchar_fd(' ', STDOUT_FILENO);
+	ft_printf("%s@%s:%s$ ", user_name, computer_name, path);
+	free(computer_name);
 }
 
 char	*get_input(void)

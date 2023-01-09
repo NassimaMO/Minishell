@@ -80,7 +80,6 @@ void	exec_cmd(char *envp[], char *cmd, int fd_in, int fd_out)
 	}
 	else
 		wait(NULL);
-	close(fd_in);
 	close(fd_out);
 	return (no++, free(pathname), free_split(args));
 }
@@ -96,30 +95,23 @@ int	fd_error(int fd_in, int fd_out, char *file_in, char *file_out)
 	return (0);
 }
 
-int	ft_pipe(char *envp[], char *argv[], int argc)
+int	ft_pipe(int nb_cmd, char *cmds[], char *envp[], int fd[2])
 {
 	int	pipes[4];
 	int	i;
-	int	fd[2];
 
-	fd[0] = open(argv[1], O_RDONLY);
-	fd[1] = open(argv[argc - 1], O_CREAT | O_RDWR | O_TRUNC, S_IRUSR, S_IWUSR);
-	if (fd[0] < 0)
-		ft_printf("%s: %s\n", fd[0], strerror(errno));
-	if (fd[1] < 0)
-		ft_printf("%s: %s\n", fd[1], strerror(errno));
 	if (pipe(pipes) < 0)
 		return (ft_printf("Error pipe\n"));
-	exec_cmd(envp, argv[2], fd[0], pipes[1]);
-	i = 3;
-	while (i < argc - 2)
+	exec_cmd(envp, cmds[0], fd[0], pipes[1]);
+	i = 1;
+	while (i < nb_cmd - 1)
 	{
 		if ((i % 2 && pipe(pipes + 2) == 0) || (!(i % 2) && pipe(pipes) == 0))
-			exec_cmd(envp, argv[i], pipes[2 *!(i % 2)], pipes[2 *(i % 2) + 1]);
+			exec_cmd(envp, cmds[i], pipes[2 *!(i % 2)], pipes[2 *(i % 2) + 1]);
 		else
 			return (ft_printf("Error pipe\n"));
 		i++;
 	}
-	exec_cmd(envp, argv[i], pipes[2 * !(i % 2)], fd[1]);
+	exec_cmd(envp, cmds[i], pipes[2 * !(i % 2)], fd[1]);
 	return (0);
 }

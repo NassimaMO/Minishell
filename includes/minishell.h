@@ -21,7 +21,7 @@
 # include <sys/wait.h>
 
 /* print.c */
-void	print_shell(void);
+void	print_shell(char *envp[]);
 
 /* signals.c */
 void	control_c(void);
@@ -29,5 +29,9 @@ char	*get_input(void);
 
 /* memory.c */
 void	free_split(char **split);
+
+/* utils.c */
+void	exec_cmd(char *envp[], char *cmd, int fd_in, int fd_out);
+int	ft_pipe(int argc, char *cmds[], char *envp[], int fd[2]);
 
 #endif

@@ -12,11 +12,13 @@
 
 #include "minishell.h"
 
-int	main(void)
+int	main(int argc, char *argv[], char *envp[])
 {
+	(void)argc;
+	(void)argv;
 	while (1)
 	{
-		print_shell();
+		print_shell(envp);
 		control_c();
 		get_input();
 	}
