@@ -19,7 +19,9 @@ void	ft_handler(int signum)
 		printf("\n");
 		print_shell();
 	}
-	if (signum == SIGQUIT){}
+	if (signum == SIGQUIT)
+	{
+	}
 }
 
 void	control_c(void)
