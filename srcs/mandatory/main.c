@@ -6,19 +6,17 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:02:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/09 15:21:07 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/01/09 15:34:01 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	main(int argc, char *argv[])
+int	main(void)
 {
-	(void)argc;
-	(void)argv;
-	print_shell();
 	while (1)
 	{
+		print_shell();
 		control_c();
 		get_input();
 	}
