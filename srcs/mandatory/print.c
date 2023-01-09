@@ -12,24 +12,49 @@
 
 #include "minishell.h"
 
-void	print_shell(void)
+char	*get_current_path(void)
 {
-	char	*user_name;
-	char	*computer_name;
+	char	*home;
 	char	*path;
+	char	*short_path;
+	int		len;
 
-	user_name = getenv("USER");
-	if (!user_name)
-		user_name = "";
-	computer_name = "";
-	path = "";
-	ft_putstr_fd(user_name, STDOUT_FILENO);
-	ft_putchar_fd('@', STDOUT_FILENO);
-	ft_putstr_fd(computer_name, STDOUT_FILENO);
-	ft_putchar_fd(':', STDOUT_FILENO);
-	ft_putstr_fd(path, STDOUT_FILENO);
-	ft_putchar_fd('$', STDOUT_FILENO);
-	ft_putchar_fd(' ', STDOUT_FILENO);
+	path = getcwd(NULL, 0);
+	home = getenv("HOME");
+	if (home && path == ft_strnstr(path, home, ft_strlen(home)))
+	{
+		len = ft_strlen(path) - ft_strlen(home);
+		short_path = malloc(len + 2);
+		short_path[0] = '~';
+		ft_strlcpy(short_path + 1, path + ft_strlen(home), len + 1);
+		free(path);
+		return (short_path);
+	}
+	return (path);
+}
+
+void	print_shell(char *envp[])
+{
+	char		*computer_name;
+	char		*path;
+	int			fd[2];
+	static char	*cmds[3] = {"echo", "hostname", NULL};
+	static char	**env = NULL;
+
+	if (!env && envp)
+		env = envp;
+	else if (!env)
+		return ;
+	if (pipe(fd) < 0)
+		return ;
+	ft_pipe(2, cmds, env, fd);
+	computer_name = get_next_line(fd[0]);
+	if (ft_strchr(computer_name, '.'))
+		*ft_strchr(computer_name, '.') = 0;
+	path = get_current_path();
+	ft_printf("%s@%s:%s$ ", getenv("USER"), computer_name, path);
+	free(computer_name);
+	free(path);
 }
 
 char	*get_input(void)
