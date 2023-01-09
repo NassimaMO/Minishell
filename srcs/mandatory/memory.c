@@ -1,29 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   memory.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/09 13:05:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/09 13:05:40 by nghulam-         ###   ########.fr       */
+/*   Created: 2023/01/09 15:22:27 by nghulam-          #+#    #+#             */
+/*   Updated: 2023/01/09 15:22:29 by nghulam-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
+#include "minishell.h"
 
-# define MINISHELL_H
+void	free_split(char **split)
+{
+	int	i;
 
-# include "libft.h"
-# include "signal.h"
-
-/* print.c */
-void	print_shell(void);
-
-/* signals.c */
-void	control_c(void);
-
-/* memory.c */
-void	free_split(char **split);
-
-#endif
+	i = 0;
+	while (split[i])
+	{
+		free(split[i]);
+		i++;
+	}
+	free(split);
+}
