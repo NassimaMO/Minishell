@@ -64,7 +64,13 @@ void	export_cmd(char *line, char **envp)
 
 	if (ft_strlen(line) == 6)
 		return (print_export(envp));
-	line = ft_strtrim(ft_strchr(line, ' '), " ");
+	if (!ft_strncmp(line, "export", 6))
+		line = ft_strtrim(ft_strchr(line, ' '), " ");
+	if (ft_strchr(line, ' '))
+	{
+		export_cmd(ft_strtrim(ft_strchr(line, ' '), " "), envp);
+		*ft_strchr(line, ' ') = '\0';
+	}
 	name = ft_strdup(line);
 	if (ft_strchr(name, '='))
 		*ft_strchr(name, '=') = '\0';
@@ -76,6 +82,7 @@ void	export_cmd(char *line, char **envp)
 		return (free(name), free(line));
 	}
 	add_var(name, line, envp);
+	ft_printf("exported %s\n", name);
 	free(name);
 	free(line);
 }
