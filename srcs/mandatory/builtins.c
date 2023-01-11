@@ -82,7 +82,6 @@ void	export_cmd(char *line, char **envp)
 		return (free(name), free(line));
 	}
 	add_var(name, line, envp);
-	ft_printf("exported %s\n", name);
 	free(name);
 	free(line);
 }
@@ -94,18 +93,21 @@ void	unset_cmd(char *line, char **envp)
 	if (ft_strlen(line) == 5)
 		return ((void)ft_printf("unset: not enough arguments\n"));
 	i = 0;
-	line = ft_strtrim(ft_strchr(line, ' '), " ");
+	if (!ft_strncmp(line, "unset", 5))
+		line = ft_strtrim(ft_strchr(line, ' '), " ");
+	if (ft_strchr(line, ' '))
+	{
+		unset_cmd(ft_strtrim(ft_strchr(line, ' '), " "), envp);
+		*ft_strchr(line, ' ') = '\0';
+	}
 	while (envp[i])
 	{
 		if (!ft_strncmp(envp[i], line, ft_strlen(line)))
 		{
 			free(envp[i]);
-			while (envp[i + 1])
-			{
-				envp[i] = envp[i + 1];
-				i++;
-			}
-			envp[i] = NULL;
+			while (envp[++i])
+				envp[i - 1] = envp[i];
+			envp[i - 1] = NULL;
 		}
 		else
 			i++;
