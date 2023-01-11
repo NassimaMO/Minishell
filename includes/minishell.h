@@ -19,26 +19,39 @@
 
 # include <errno.h>
 # include <sys/wait.h>
+# include <termios.h>
+# include <sys/ioctl.h>
+# include <linux/kd.h>
+# include <term.h>
 
 # define FULL 0
 # define SHORT 1
 
+# define RESET 0
+# define SET 1
+
+# define EXIT 1
+
+/* terminal.c */
+void	set_terminal(int option);
+
 /* input.c */
 char	*get_input(void);
-void	check_exit(char *input);
+int		check_exit(char *input);
 
 /* print.c */
+void	cd_cmd(char *line);
 void	print_shell(char *envp[]);
 char	*get_current_path(int option);
 
 /* signals.c */
-void	control_c(void);
+void	signals(void);
 
 /* memory.c */
 void	free_split(char **split);
 
 /* commands.c */
-void	handle_cmd(char *line, char *envp[]);
+int		handle_cmd(char *line, char *envp[]);
 
 /* utils.c */
 void	exec_cmd(char *envp[], char *cmd, int fd_in, int fd_out);

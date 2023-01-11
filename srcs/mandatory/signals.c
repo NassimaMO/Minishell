@@ -16,7 +16,7 @@ void	ft_handler(int signum)
 {
 	if (signum == SIGINT)
 	{
-		printf("\n");
+		ft_printf("\n");
 		print_shell(NULL);
 	}
 	if (signum == SIGQUIT)
@@ -24,9 +24,9 @@ void	ft_handler(int signum)
 	}
 }
 
-void	control_c(void)
+void	signals(void)
 {
-	struct sigaction	sa;
+	struct sigaction		sa;
 
 	ft_bzero(&sa, sizeof(struct sigaction));
 	sa.sa_handler = &ft_handler;

@@ -14,13 +14,15 @@
 
 int	main(int argc, char *argv[], char *envp[])
 {
-	(void)argc;
-	(void)argv;
-	control_c();
+	signals();
+	set_terminal(SET);
 	while (1)
 	{
 		print_shell(envp);
-		handle_cmd(get_input(), envp);
+		if (handle_cmd(get_input(), envp) == EXIT)
+			break ;
 	}
-	return (0);
+	(void)argc;
+	(void)argv;
+	return (set_terminal(RESET), 0);
 }

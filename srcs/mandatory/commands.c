@@ -73,12 +73,16 @@ void	echo_handle_function(char *envp[], char *input)
 	}
 }
 
-void	handle_cmd(char *line, char *envp[])
+int	handle_cmd(char *line, char *envp[])
 {
-	check_exit(line);
+	if (check_exit(line) == EXIT)
+		return (EXIT);
 	if (!ft_strncmp(line, "echo", 4))
 		echo_handle_function(envp, line + 4);
 	if (!ft_strncmp(line, "pwd", 3) && ft_strlen(line) == 3)
 		ft_printf("\n%s\n", get_current_path(FULL));
+	if (!ft_strncmp(line, "cd", 2))
+		cd_cmd(line);
 	free(line);
+	return (0);
 }

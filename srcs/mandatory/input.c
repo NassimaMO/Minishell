@@ -14,9 +14,9 @@
 
 char	*get_input(void)
 {
-	char	*str;
-	char	buff[BUFFER_SIZE];
-	int		bytes;
+	char			*str;
+	char			buff[BUFFER_SIZE];
+	int				bytes;
 
 	bytes = read(0, ft_memset(buff, 0, BUFFER_SIZE), BUFFER_SIZE);
 	str = ft_strdup(buff);
@@ -32,17 +32,18 @@ char	*get_input(void)
 	return (str);
 }
 
-void	check_exit(char *input)
+int	check_exit(char *input)
 {
 	if (!input)
 	{
 		printf("\nexit\n");
-		exit(0);
+		return (EXIT);
 	}
 	if (!ft_strncmp(input, "exit", 4))
 	{
 		printf("exit\n");
 		free(input);
-		exit(0);
+		return (EXIT);
 	}
+	return (0);
 }
