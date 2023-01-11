@@ -32,10 +32,12 @@
 
 # define EXIT 1
 
+extern char	**environ;
+
 /* builtins */
 void	cd_cmd(char *line);
-void	export_cmd(char *line, char *envp[]);
-void	unset_cmd(char *line, char *envp[]);
+void	export_cmd(char *line, char **envp);
+void	unset_cmd(char *line, char **envp);
 
 /* terminal.c */
 void	set_terminal(int option);
@@ -45,22 +47,23 @@ char	*get_input(void);
 int		check_exit(char *input);
 
 /* print.c */
-void	print_env(char *envp[]);
-void	print_export(char *envp[]);
-void	print_shell(char *envp[]);
+void	print_env(char **envp);
+void	print_export(char **envp);
+void	print_shell(void);
 char	*get_current_path(int option);
 
 /* signals.c */
 void	signals(void);
+void	exit_code(int code);
 
 /* memory.c */
 void	free_split(char **split);
 
 /* commands.c */
-int		handle_cmd(char *line, char *envp[]);
+int		handle_cmd(char *line, char **envp);
 
 /* utils.c */
-void	exec_cmd(char *envp[], char *cmd, int fd_in, int fd_out);
-int		ft_pipe(int argc, char *cmds[], char *envp[], int fd[2]);
+void	exec_cmd(char **envp, char *cmd, int fd_in, int fd_out);
+int		ft_pipe(int argc, char *cmds[], char **envp, int fd[2]);
 
 #endif

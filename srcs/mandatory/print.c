@@ -72,21 +72,16 @@ void	print_export(char **envp)
 	}
 }
 
-void	print_shell(char **envp)
+void	print_shell(void)
 {
 	char		*computer_name;
 	char		*path;
 	int			fd[2];
 	static char	*cmds[3] = {"echo", "hostname", NULL};
-	static char	**env = NULL;
 
-	if (!env && envp)
-		env = envp;
-	else if (!env)
-		return ;
 	if (pipe(fd) < 0)
 		return ;
-	ft_pipe(2, cmds, env, fd);
+	ft_pipe(2, cmds, environ, fd);
 	computer_name = get_next_line(fd[0]);
 	if (ft_strchr(computer_name, '.'))
 		*ft_strchr(computer_name, '.') = '\0';

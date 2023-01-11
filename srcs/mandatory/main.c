@@ -12,8 +12,6 @@
 
 #include "minishell.h"
 
-extern char	**environ;
-
 int	env_len(char **envp)
 {
 	int	i;
@@ -45,7 +43,7 @@ int	main(int argc, char *argv[])
 	//set_terminal(SET);
 	while (1)
 	{
-		print_shell(environ);
+		print_shell();
 		if (handle_cmd(get_input(), environ) == EXIT)
 			break ;
 	}

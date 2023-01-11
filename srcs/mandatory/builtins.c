@@ -64,29 +64,44 @@ void	export_cmd(char *line, char **envp)
 
 	if (ft_strlen(line) == 6)
 		return (print_export(envp));
-	line = ft_strtrim(ft_strchr(line, ' ') + 1, " ");
+	line = ft_strtrim(ft_strchr(line, ' '), " ");
 	name = ft_strdup(line);
 	if (ft_strchr(name, '='))
-	{
 		*ft_strchr(name, '=') = '\0';
-		if (!valid_var_name(name))
-		{
-			ft_printf("export: not valid in this context: %s\n", name);
-			return (free(name), free(line));
-		}
-		add_var(name, line, envp);
+	else
+		line = (free(line), gnl_join(ft_strdup(name), "=''", 3));
+	if (!valid_var_name(name))
+	{
+		ft_printf("export: not valid in this context: %s\n", name);
+		return (free(name), free(line));
 	}
+	add_var(name, line, envp);
 	free(name);
 	free(line);
 }
 
 void	unset_cmd(char *line, char **envp)
 {
+	int	i;
+
 	if (ft_strlen(line) == 5)
-		;
-	else
+		return ((void)ft_printf("unset: not enough arguments\n"));
+	i = 0;
+	line = ft_strtrim(ft_strchr(line, ' '), " ");
+	while (envp[i])
 	{
+		if (!ft_strncmp(envp[i], line, ft_strlen(line)))
+		{
+			free(envp[i]);
+			while (envp[i + 1])
+			{
+				envp[i] = envp[i + 1];
+				i++;
+			}
+			envp[i] = NULL;
+		}
+		else
+			i++;
 	}
-	(void)line;
-	(void)envp;
+	free(line);
 }
