@@ -29,6 +29,7 @@
 
 # define RESET 0
 # define SET 1
+# define GET 2
 
 # define EXIT 1
 
@@ -54,7 +55,7 @@ char	*get_current_path(int option);
 
 /* signals.c */
 void	signals(void);
-void	exit_code(int code);
+int		exit_code(int mode, int code);
 
 /* memory.c */
 void	free_split(char **split);

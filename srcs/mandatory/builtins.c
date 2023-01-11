@@ -58,6 +58,7 @@ void	add_var(char *name, char *line, char **envp)
 	free(tmp);
 }
 
+/* need error text when '=' alone */
 void	export_cmd(char *line, char **envp)
 {
 	char	*name;

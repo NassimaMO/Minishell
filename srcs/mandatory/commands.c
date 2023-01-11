@@ -78,7 +78,7 @@ int	handle_cmd(char *input, char **envp)
 	char	*line;
 
 	if (check_exit(input) == EXIT)
-		return (EXIT);
+		return (free(input), EXIT);
 	line = ft_strtrim(input, " ");
 	if (!ft_strncmp(line, "echo", 4))
 		echo_handle_function(envp, line + 4);

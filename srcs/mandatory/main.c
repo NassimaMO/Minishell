@@ -34,6 +34,17 @@ void	free_env(int len)
 	}
 }
 
+int	exit_code(int mode, int code)
+{
+	static int	last = 0;
+
+	if (mode == GET)
+		return (last);
+	if (mode == SET)
+		last = code;
+	return (last);
+}
+
 int	main(int argc, char *argv[])
 {
 	int	len;
@@ -51,5 +62,5 @@ int	main(int argc, char *argv[])
 	(void)argv;
 	//set_terminal(RESET);
 	free_env(len);
-	return (0);
+	return (exit_code(GET, 0));
 }
