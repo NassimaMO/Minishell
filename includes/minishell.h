@@ -20,8 +20,12 @@
 # include <errno.h>
 # include <sys/wait.h>
 
+# define FULL 0
+# define SHORT 1
+
 /* print.c */
 void	print_shell(char *envp[]);
+char	*get_current_path(int option);
 
 /* signals.c */
 void	control_c(void);

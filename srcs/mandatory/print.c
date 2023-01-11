@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-char	*get_current_path(void)
+char	*get_current_path(int option)
 {
 	char	*home;
 	char	*path;
@@ -21,7 +21,9 @@ char	*get_current_path(void)
 
 	path = getcwd(NULL, 0);
 	home = getenv("HOME");
-	if (home && path == ft_strnstr(path, home, ft_strlen(home)))
+	if (!home)
+		return (path);
+	if (option == SHORT && path == ft_strnstr(path, home, ft_strlen(home)))
 	{
 		len = ft_strlen(path) - ft_strlen(home);
 		short_path = malloc(len + 2);
@@ -51,7 +53,7 @@ void	print_shell(char *envp[])
 	computer_name = get_next_line(fd[0]);
 	if (ft_strchr(computer_name, '.'))
 		*ft_strchr(computer_name, '.') = 0;
-	path = get_current_path();
+	path = get_current_path(SHORT);
 	ft_printf("%s@%s:%s$ ", getenv("USER"), computer_name, path);
 	free(computer_name);
 	free(path);
