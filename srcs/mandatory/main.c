@@ -15,7 +15,7 @@
 int	main(int argc, char *argv[], char *envp[])
 {
 	signals();
-	set_terminal(SET);
+	//set_terminal(SET);
 	while (1)
 	{
 		print_shell(envp);
@@ -24,5 +24,6 @@ int	main(int argc, char *argv[], char *envp[])
 	}
 	(void)argc;
 	(void)argv;
-	return (set_terminal(RESET), 0);
+	//set_terminal(RESET);
+	return (0);
 }

@@ -41,6 +41,7 @@ int		check_exit(char *input);
 
 /* print.c */
 void	cd_cmd(char *line);
+void	print_env(char *envp[]);
 void	print_shell(char *envp[]);
 char	*get_current_path(int option);
 

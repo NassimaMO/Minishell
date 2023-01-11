@@ -60,6 +60,19 @@ char	*get_current_path(int option)
 	return (path);
 }
 
+void	print_env(char *envp[])
+{
+	int	i;
+
+	i = 0;
+	//ft_printf("\n");
+	while (envp[i])
+	{
+		ft_printf("%s\n", envp[i]);
+		i++;
+	}
+}
+
 void	print_shell(char *envp[])
 {
 	char		*computer_name;
