@@ -30,9 +30,11 @@
 
 /* get_next_line.c */
 char	*get_next_line(int fd);
-int		gnl_close(int fd);
 
 /* get_next_line_utils.c */
+char	*gnl_join(char *dest, char *src, int len);
+char	*init(char *str, int len);
+int		gnl_close(int fd);
 int		gnl_strlen(char *str);
 
 #endif

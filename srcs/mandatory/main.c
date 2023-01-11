@@ -16,10 +16,10 @@ int	main(int argc, char *argv[], char *envp[])
 {
 	(void)argc;
 	(void)argv;
+	control_c();
 	while (1)
 	{
 		print_shell(envp);
-		control_c();
 		handle_cmd(get_input(), envp);
 	}
 	return (0);

@@ -23,13 +23,16 @@
 # define FULL 0
 # define SHORT 1
 
+/* input.c */
+char	*get_input(void);
+void	check_exit(char *input);
+
 /* print.c */
 void	print_shell(char *envp[]);
 char	*get_current_path(int option);
 
 /* signals.c */
 void	control_c(void);
-char	*get_input(void);
 
 /* memory.c */
 void	free_split(char **split);
