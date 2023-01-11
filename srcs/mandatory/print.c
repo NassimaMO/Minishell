@@ -12,31 +12,6 @@
 
 #include "minishell.h"
 
-void	cd_cmd(char *line)
-{
-	char	*str;
-	char	*path;
-
-	str = ft_strtrim(line, " ");
-	if (!ft_strncmp(str, "cd", 2) && ft_strlen(str) == 2)
-		chdir(getenv("HOME"));
-	else if (ft_strchr(str, ' '))
-	{
-		path = ft_strchr(str, ' ') + 1;
-		if (ft_strchr(path, '~'))
-		{
-			path = gnl_join(ft_strdup(getenv("HOME")), path + 1, \
-													ft_strlen(path + 1));
-			if (chdir(path) < 0)
-				perror("");
-			free(path);
-		}
-		else if (chdir(ft_strchr(str, ' ') + 1) < 0)
-			perror("");
-	}
-	free(str);
-}
-
 char	*get_current_path(int option)
 {
 	char	*home;
@@ -60,12 +35,11 @@ char	*get_current_path(int option)
 	return (path);
 }
 
-void	print_env(char *envp[])
+void	print_env(char **envp)
 {
 	int	i;
 
 	i = 0;
-	//ft_printf("\n");
 	while (envp[i])
 	{
 		ft_printf("%s\n", envp[i]);
@@ -73,7 +47,32 @@ void	print_env(char *envp[])
 	}
 }
 
-void	print_shell(char *envp[])
+void	print_export(char **envp)
+{
+	int			i;
+	char		*tmp;
+	static char	*last = NULL;
+
+	tmp = NULL;
+	i = 0;
+	while (envp[i])
+	{
+		if ((i == 0 && !last) || \
+		((!tmp || ft_strncmp(envp[i], tmp, ft_strlen(tmp)) < 0) && \
+		(!last || ft_strncmp(envp[i], last, ft_strlen(last)) > 0)))
+			tmp = envp[i];
+		i++;
+	}
+	last = tmp;
+	if (last)
+	{
+		if (ft_strncmp(last, "_=", 2))
+			ft_printf("%s\n", last);
+		print_export(envp);
+	}
+}
+
+void	print_shell(char **envp)
 {
 	char		*computer_name;
 	char		*path;
@@ -90,9 +89,9 @@ void	print_shell(char *envp[])
 	ft_pipe(2, cmds, env, fd);
 	computer_name = get_next_line(fd[0]);
 	if (ft_strchr(computer_name, '.'))
-		*ft_strchr(computer_name, '.') = 0;
+		*ft_strchr(computer_name, '.') = '\0';
 	else if (ft_strchr(computer_name, '\n'))
-		*ft_strchr(computer_name, '\n') = 0;
+		*ft_strchr(computer_name, '\n') = '\0';
 	path = get_current_path(SHORT);
 	ft_printf("%s@%s:%s$ ", getenv("USER"), computer_name, path);
 	free(computer_name);

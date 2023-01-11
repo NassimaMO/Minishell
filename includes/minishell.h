@@ -32,6 +32,11 @@
 
 # define EXIT 1
 
+/* builtins */
+void	cd_cmd(char *line);
+void	export_cmd(char *line, char *envp[]);
+void	unset_cmd(char *line, char *envp[]);
+
 /* terminal.c */
 void	set_terminal(int option);
 
@@ -40,8 +45,8 @@ char	*get_input(void);
 int		check_exit(char *input);
 
 /* print.c */
-void	cd_cmd(char *line);
 void	print_env(char *envp[]);
+void	print_export(char *envp[]);
 void	print_shell(char *envp[]);
 char	*get_current_path(int option);
 

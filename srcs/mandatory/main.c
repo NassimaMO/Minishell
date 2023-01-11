@@ -12,18 +12,46 @@
 
 #include "minishell.h"
 
-int	main(int argc, char *argv[], char *envp[])
+extern char	**environ;
+
+int	env_len(char **envp)
 {
+	int	i;
+
+	i = 0;
+	while (envp[i])
+		i++;
+	return (i);
+}
+
+void	free_env(int len)
+{
+	int	i;
+
+	i = len;
+	while (environ[i])
+	{
+		free(environ[i]);
+		i++;
+	}
+}
+
+int	main(int argc, char *argv[])
+{
+	int	len;
+
+	len = env_len(environ);
 	signals();
 	//set_terminal(SET);
 	while (1)
 	{
-		print_shell(envp);
-		if (handle_cmd(get_input(), envp) == EXIT)
+		print_shell(environ);
+		if (handle_cmd(get_input(), environ) == EXIT)
 			break ;
 	}
 	(void)argc;
 	(void)argv;
 	//set_terminal(RESET);
+	free_env(len);
 	return (0);
 }

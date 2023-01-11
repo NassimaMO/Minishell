@@ -28,7 +28,7 @@ void	print_echo_input(char *input, int *i, int len)
 	//printf("|||||||||||||||||||||||||||||||||\n");
 }
 
-void	print_variable(char *envp[], char *input, int *i)
+void	print_variable(char **envp, char *input, int *i)
 {
 	int		x;
 	char	*variable;
@@ -54,7 +54,7 @@ void	print_variable(char *envp[], char *input, int *i)
 	free(variable);
 }
 
-void	echo_handle_function(char *envp[], char *input)
+void	echo_handle_function(char **envp, char *input)
 {
 	int	i;
 	int	len;
@@ -73,7 +73,7 @@ void	echo_handle_function(char *envp[], char *input)
 	}
 }
 
-int	handle_cmd(char *input, char *envp[])
+int	handle_cmd(char *input, char **envp)
 {
 	char	*line;
 
@@ -88,6 +88,10 @@ int	handle_cmd(char *input, char *envp[])
 		cd_cmd(line);
 	if (!ft_strncmp(line, "env", 3) && ft_strlen(line) == 3)
 		print_env(envp);
+	if (!ft_strncmp(line, "export", 6))
+		export_cmd(line, envp);
+	if (!ft_strncmp(line, "unset", 5))
+		unset_cmd(line, envp);
 	free(line);
 	free(input);
 	return (0);
