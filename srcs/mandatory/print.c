@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 15:22:40 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/09 15:32:51 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/01/09 15:37:39 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ void	print_shell(char *envp[])
 	computer_name = get_next_line(fd[0]);
 	if (ft_strchr(computer_name, '.'))
 		*ft_strchr(computer_name, '.') = 0;
+	else if (ft_strchr(computer_name, '\n'))
+		*ft_strchr(computer_name, '\n') = 0;
 	path = get_current_path(SHORT);
 	ft_printf("%s@%s:%s$ ", getenv("USER"), computer_name, path);
 	free(computer_name);
