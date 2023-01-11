@@ -35,10 +35,15 @@
 
 extern char	**environ;
 
-/* builtins */
+/* path.c */
+void    pwd_cmd(char *input);
 void	cd_cmd(char *line);
+char	*get_current_path(int option);
+
+/* env */
 void	export_cmd(char *line, char **envp);
 void	unset_cmd(char *line, char **envp);
+void    env_cmd(char *input, char **envp);
 
 /* terminal.c */
 void	set_terminal(int option);
@@ -51,7 +56,6 @@ int		check_exit(char *input);
 void	print_env(char **envp);
 void	print_export(char **envp);
 void	print_shell(void);
-char	*get_current_path(int option);
 
 /* signals.c */
 void	signals(void);

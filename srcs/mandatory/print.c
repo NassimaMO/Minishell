@@ -12,29 +12,6 @@
 
 #include "minishell.h"
 
-char	*get_current_path(int option)
-{
-	char	*home;
-	char	*path;
-	char	*short_path;
-	int		len;
-
-	path = getcwd(NULL, 0);
-	home = getenv("HOME");
-	if (!home)
-		return (path);
-	if (option == SHORT && path == ft_strnstr(path, home, ft_strlen(home)))
-	{
-		len = ft_strlen(path) - ft_strlen(home);
-		short_path = malloc(len + 2);
-		short_path[0] = '~';
-		ft_strlcpy(short_path + 1, path + ft_strlen(home), len + 1);
-		free(path);
-		return (short_path);
-	}
-	return (path);
-}
-
 void	print_env(char **envp)
 {
 	int	i;

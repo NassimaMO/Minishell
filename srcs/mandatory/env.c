@@ -1,30 +1,5 @@
 #include "minishell.h"
 
-void	cd_cmd(char *line)
-{
-	char	*str;
-	char	*path;
-
-	str = ft_strtrim(line, " ");
-	if (ft_strlen(str) == 2)
-		chdir(getenv("HOME"));
-	else if (ft_strchr(str, ' '))
-	{
-		path = ft_strchr(str, ' ') + 1;
-		if (ft_strchr(path, '~'))
-		{
-			path = gnl_join(ft_strdup(getenv("HOME")), path + 1, \
-													ft_strlen(path + 1));
-			if (chdir(path) < 0)
-				perror("");
-			free(path);
-		}
-		else if (chdir(ft_strchr(str, ' ') + 1) < 0)
-			perror("");
-	}
-	free(str);
-}
-
 int	valid_var_name(char *name)
 {
 	int	i;
@@ -114,4 +89,20 @@ void	unset_cmd(char *line, char **envp)
 			i++;
 	}
 	free(line);
+}
+
+void	env_cmd(char *input, char **envp)
+{
+	input = ft_strtrim(input, " ");
+	if (ft_strlen(input) == 3)
+	{
+		print_env(envp);
+		exit_code(SET, 0);
+	}
+	else
+	{
+		ft_printf("env: too many arguments\n");
+		exit_code(SET, 1);
+	}
+	return (free(input));
 }

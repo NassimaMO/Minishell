@@ -82,17 +82,15 @@ int	handle_cmd(char *input, char **envp)
 	line = ft_strtrim(input, " ");
 	if (!ft_strncmp(line, "echo", 4))
 		echo_handle_function(envp, line + 4);
-	if (!ft_strncmp(line, "pwd", 3) && ft_strlen(line) == 3)
-		ft_printf("\n%s\n", get_current_path(FULL));
+	if (!ft_strncmp(line, "pwd", 3))
+		pwd_cmd(line);
 	if (!ft_strncmp(line, "cd", 2))
 		cd_cmd(line);
-	if (!ft_strncmp(line, "env", 3) && ft_strlen(line) == 3)
-		print_env(envp);
+	if (!ft_strncmp(line, "env", 3))
+		env_cmd(line, envp);
 	if (!ft_strncmp(line, "export", 6))
 		export_cmd(line, envp);
 	if (!ft_strncmp(line, "unset", 5))
 		unset_cmd(line, envp);
-	free(line);
-	free(input);
-	return (0);
+	return (free(line), free(input), 0);
 }
