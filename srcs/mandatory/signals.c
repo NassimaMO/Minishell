@@ -16,7 +16,7 @@ void	ft_handler(int signum)
 {
 	if (signum == SIGINT)
 	{
-		ft_printf("\n");
+		ft_printf("^C\n");
 		print_shell();
 	}
 	if (signum == SIGQUIT)

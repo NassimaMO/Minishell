@@ -51,7 +51,7 @@ int	main(int argc, char *argv[])
 
 	len = env_len(environ);
 	signals();
-	//set_terminal(SET);
+	set_terminal(SET);
 	while (1)
 	{
 		print_shell();
@@ -60,7 +60,7 @@ int	main(int argc, char *argv[])
 	}
 	(void)argc;
 	(void)argv;
-	//set_terminal(RESET);
+	set_terminal(RESET);
 	free_env(len);
 	return (exit_code(GET, 0));
 }

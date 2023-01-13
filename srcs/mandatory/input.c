@@ -15,20 +15,24 @@
 char	*get_input(void)
 {
 	char			*str;
-	char			buff[BUFFER_SIZE];
+	char			buff[1];
 	int				bytes;
 
-	bytes = read(0, ft_memset(buff, 0, BUFFER_SIZE), BUFFER_SIZE);
-	str = ft_strdup(buff);
-	while (str && bytes >= 0 && !ft_strchr(buff, '\n'))
+	bytes = read(0, ft_memset(buff, 0, 1), 1);
+	str = ft_strdup("");
+	while (str && bytes >= 0 && *buff != '\n')
 	{
-		if (bytes == 0 && !*str)
+		if ((bytes == 0 || *buff == 0 || *buff == 3 || *buff == 4) && !*str)
 			return (free(str), NULL);
-		bytes = read(0, ft_memset(buff, 0, BUFFER_SIZE), BUFFER_SIZE);
-		str = gnl_join(str, buff, BUFFER_SIZE);
+		if (ft_isprint(*buff))
+		{
+			ft_printf("%c", *buff);
+			str = gnl_join(str, buff, 1);
+		}
+		bytes = read(0, ft_memset(buff, 0, 1), 1);
 	}
-	if (str)
-		*ft_strchr(str, '\n') = 0;
+	if (*buff == '\n')
+		ft_printf("\n");
 	return (str);
 }
 
