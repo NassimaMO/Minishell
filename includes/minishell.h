@@ -36,14 +36,14 @@
 extern char	**environ;
 
 /* path.c */
-void    pwd_cmd(char *input);
+void	pwd_cmd(char *input);
 void	cd_cmd(char *line);
 char	*get_current_path(int option);
 
 /* env */
 void	export_cmd(char *line, char **envp);
 void	unset_cmd(char *line, char **envp);
-void    env_cmd(char *input, char **envp);
+void	env_cmd(char *input, char **envp);
 
 /* terminal.c */
 void	set_terminal(int option);
@@ -63,6 +63,7 @@ int		exit_code(int mode, int code);
 
 /* memory.c */
 void	free_split(char **split);
+void	free_env(int len);
 
 /* commands.c */
 int		handle_cmd(char *line, char **envp);

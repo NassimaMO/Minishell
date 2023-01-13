@@ -1,4 +1,4 @@
-# include "minishell.h"
+#include "minishell.h"
 
 void	cd_cmd(char *line)
 {
@@ -48,7 +48,7 @@ char	*get_current_path(int option)
 	return (path);
 }
 
-void    pwd_cmd(char *input)
+void	pwd_cmd(char *input)
 {
 	char	*path;
 

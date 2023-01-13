@@ -24,3 +24,15 @@ void	free_split(char **split)
 	}
 	free(split);
 }
+
+void	free_env(int len)
+{
+	int	i;
+
+	i = len;
+	while (environ[i])
+	{
+		free(environ[i]);
+		i++;
+	}
+}

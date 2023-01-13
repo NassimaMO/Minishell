@@ -97,7 +97,7 @@ int	fd_error(int fd_in, int fd_out, char *file_in, char *file_out)
 
 int	ft_pipe(int nb_cmd, char *cmds[], char *envp[], int fd[2])
 {
-	int	pipes[4];
+	int	pipes[2];
 	int	i;
 
 	if (pipe(pipes) < 0)
@@ -106,12 +106,9 @@ int	ft_pipe(int nb_cmd, char *cmds[], char *envp[], int fd[2])
 	i = 1;
 	while (i < nb_cmd - 1)
 	{
-		if ((i % 2 && pipe(pipes + 2) == 0) || (!(i % 2) && pipe(pipes) == 0))
-			exec_cmd(envp, cmds[i], pipes[2 *!(i % 2)], pipes[2 *(i % 2) + 1]);
-		else
-			return (ft_printf("Error pipe\n"));
+		exec_cmd(envp, cmds[i], pipes[0], pipes[1]);
 		i++;
 	}
-	exec_cmd(envp, cmds[i], pipes[2 * !(i % 2)], fd[1]);
+	exec_cmd(envp, cmds[i], pipes[0], fd[1]);
 	return (0);
 }

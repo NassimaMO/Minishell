@@ -22,18 +22,6 @@ int	env_len(char **envp)
 	return (i);
 }
 
-void	free_env(int len)
-{
-	int	i;
-
-	i = len;
-	while (environ[i])
-	{
-		free(environ[i]);
-		i++;
-	}
-}
-
 int	exit_code(int mode, int code)
 {
 	static int	last = 0;
