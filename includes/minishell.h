@@ -68,8 +68,12 @@ void	free_env(int len);
 /* commands.c */
 int		handle_cmd(char *line, char **envp);
 
+/* pipex.c */
+void	exec_cmd(const char *cmd, int fd_in, int fd_out, char *envp[]);
+int		ft_pipes(int nb, char *cmds[], int fd[], char *envp[]);
+
 /* utils.c */
-void	exec_cmd(char **envp, char *cmd, int fd_in, int fd_out);
-int		ft_pipe(int argc, char *cmds[], char **envp, int fd[2]);
+char	*get_pathname(char *cmd, char *envp[]);
+char	**get_cmd_args(const char *cmd);
 
 #endif
