@@ -1,25 +1,30 @@
 #include "minishell.h"
 
-void	exec_cmd(const char *cmd, int fd_in, int fd_out, char *envp[])
+void	exec_cmd(char *cmd, int fd_in, int fd_out, char *envp[])
 {
 	char	**args;
+	char	*path;
+	char	*s;
 
 	args = get_cmd_args(cmd);
-	cmd = ft_strdup(cmd);
-	if (ft_strchr(cmd, ' '))
-		*ft_strchr(cmd, ' ') = 0;
+	s = ft_strtrim(cmd, " ");
+	if (ft_strchr(s, ' '))
+		*ft_strchr(s, ' ') = 0;
 	dup2(fd_in, STDIN_FILENO);
 	dup2(fd_out, STDOUT_FILENO);
-	execve(get_pathname((char *)cmd, envp), args, envp);
+	if (!ft_strnstr(s, "echo", ft_strlen(s)) && built_in(s, envp))
+		exit((free_split(args), free(s), free(cmd), 0));
+	path = get_pathname(s, envp);
+	execve(path, args, envp);
 	write(STDERR_FILENO, "pipex: line 1: ", 15);
 	if (errno == ENOENT)
 	{
-		write(STDERR_FILENO, cmd, ft_strlen(cmd));
+		write(STDERR_FILENO, s, ft_strlen(s));
 		write(STDERR_FILENO, ": command not found\n", 20);
-		exit(127);
+		exit((free_split(args), free(path), free(s), free(cmd), 127));
 	}
 	else
-		perror("");
+		exit((free_split(args), free(s), free(path), free(cmd), perror(""), 1));
 }
 
 int	fi(int i, int fd[], int pipes[])

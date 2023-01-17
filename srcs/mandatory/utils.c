@@ -51,7 +51,7 @@ char	**get_cmd_args(const char *cmd)
 			while (cmd[i] && cmd[i] != ' ' && cmd[i] != '\'' && cmd[i] != '"')
 				i++;
 			str[i - j] = 0;
-			split = add_split(split, ft_substr(cmd + i, 0, i - j + 1));
+			split = add_split(split, str);
 		}
 		while (cmd[i] == ' ')
 			i++;
@@ -110,5 +110,5 @@ char	*get_pathname(char *cmd, char *envp[])
 		if (s2)
 			free(s2);
 	}
-	return (free_split(split), free(cmd), s2);
+	return (free_split(split), free(cmd), ft_strdup(""));
 }

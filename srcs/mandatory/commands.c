@@ -73,24 +73,76 @@ void	echo_handle_function(char **envp, char *input)
 	}
 }
 
+void	redirect(char *line, int fd[2])
+{
+	char	*s;
+	char	c;
+
+	fd[0] = 0;
+	fd[1] = 1;
+	c = 0;
+	if (ft_strchr(line, '<'))
+		c = '<';
+	else if (ft_strchr(line, '>'))
+		c = '>';
+	if (!c)
+		return ;
+	s = ft_strtrim(ft_strchr(line, c) + 1, " ");
+	if (ft_strchr(s, ' ') && c == '<')
+		ft_strlcpy(line, ft_strchr(s, ' '), ft_strlen(ft_strchr(s, ' ')) + 1);
+	if (ft_strchr(s, ' '))
+		*ft_strchr(s, ' ') = 0;
+	if (c == '<')
+		fd[0] = open(s, O_RDONLY);
+	if (c == '>')
+		fd[1] = (ft_bzero(ft_strrchr(line, '>'), 1), open(s, O_FLAG, S_FLAG));
+	free(s);
+	if (ft_strchr(line, '>'))
+		redirect(line, fd);
+}
+
 int	handle_cmd(char *input, char **envp)
+{
+	char	**split;
+	int		i;
+	int		fd[2];
+	int		status;
+
+	if (!input)
+		return (check_exit(input));
+	split = ft_split(input, '|');
+	i = 0;
+	redirect(input, fd);
+	while (split && split[i])
+		i++;
+	if (i > 1)
+		return (free_split(split), free(input), ft_pipes(i, split, fd, envp));
+	else if (check_exit(input) == EXIT)
+		return (free_split(split), free(input), EXIT);
+	free_split(split);
+	i = fork();
+	if (i == 0)
+		exec_cmd(input, fd[0], fd[1], envp);
+	waitpid(i, &status, 0);
+	return (free(input), WEXITSTATUS(status));
+}
+
+int	built_in(char *input, char **envp)
 {
 	char	*line;
 
-	if (check_exit(input) == EXIT)
-		return (free(input), EXIT);
 	line = ft_strtrim(input, " ");
 	if (!ft_strncmp(line, "echo", 4))
-		echo_handle_function(envp, line + 4);
+		return (echo_handle_function(envp, line + 4), free(line), 1);
 	if (!ft_strncmp(line, "pwd", 3))
-		pwd_cmd(line);
+		return (pwd_cmd(line), free(line), 1);
 	if (!ft_strncmp(line, "cd", 2))
-		cd_cmd(line);
+		return (cd_cmd(line), free(line), 1);
 	if (!ft_strncmp(line, "env", 3))
-		env_cmd(line, envp);
+		return (env_cmd(line, envp), free(line), 1);
 	if (!ft_strncmp(line, "export", 6))
-		export_cmd(line, envp);
+		return (export_cmd(line, envp), free(line), 1);
 	if (!ft_strncmp(line, "unset", 5))
-		unset_cmd(line, envp);
-	return (free(line), free(input), 0);
+		return (unset_cmd(line, envp), free(line), 1);
+	return (free(line), 0);
 }

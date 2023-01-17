@@ -31,7 +31,12 @@
 # define SET 1
 # define GET 2
 
-# define EXIT 1
+# define EXIT -1
+
+/* (O_RDWR | O_CREAT | O_TRUNC) */
+# define O_FLAG 578
+/* (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) */
+# define S_FLAG 420
 
 extern char	**environ;
 
@@ -66,10 +71,11 @@ void	free_split(char **split);
 void	free_env(int len);
 
 /* commands.c */
-int		handle_cmd(char *line, char **envp);
+int		built_in(char *line, char **envp);
+int		handle_cmd(char *input, char **envp);
 
 /* pipex.c */
-void	exec_cmd(const char *cmd, int fd_in, int fd_out, char *envp[]);
+void	exec_cmd(char *cmd, int fd_in, int fd_out, char *envp[]);
 int		ft_pipes(int nb, char *cmds[], int fd[], char *envp[]);
 
 /* utils.c */

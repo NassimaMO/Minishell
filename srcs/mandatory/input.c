@@ -26,7 +26,7 @@ char	*get_input(void)
 			return (free(str), NULL);
 		if (ft_isprint(*buff))
 		{
-			ft_printf("%c", *buff);
+			//ft_printf("%c", *buff);
 			str = gnl_join(str, buff, 1);
 		}
 		bytes = read(0, ft_memset(buff, 0, 1), 1);
