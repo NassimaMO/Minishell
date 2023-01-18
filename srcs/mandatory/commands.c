@@ -12,27 +12,40 @@
 
 #include "minishell.h"
 
-void	print_echo_input(char *input, int *i, int len)
+void	print_echo_input(char *input, int *i)
 {
 	static int	nl;
+	static char	p;
 
-	(void)len;
 	if (!ft_strncmp(input, "-n", 2) && *i == 1)
 		nl++;
 	while (input[*i] && input[*i] != ' ')
 	{
-		//printf("||%c||\n", input[*i]);
+		while (input[*i] == '\'' || input[*i] == '\"')
+		{
+			if (!p)
+				p = input[(*i)++];
+			else if (input[*i] == p && ft_strchr(input + (i + 1), p))
+				p = '\0';
+			else
+				break;
+		}
+		if (nl && intput[*i] == '\n' && !input[(*i) + 1])
+			return ((void)(*i)++);
 		write(1, &input[*i], 1);
 		(*i)++;
 	}
-	//printf("|||||||||||||||||||||||||||||||||\n");
 }
 
-void	print_variable(char **envp, char *input, int *i)
+void	print_variable(char *input, int *i)
 {
 	int		x;
 	char	*variable;
+	char	*to_print;
 
+	if (input[*i] == '\'' || input[*i] == '\"')
+		return (print_echo_input(input, i));
+	input = input + (*i);
 	x = 0;
 	while (input[x] != ' ')
 		x++;
@@ -44,30 +57,28 @@ void	print_variable(char **envp, char *input, int *i)
 		x++;
 	}
 	variable[x] = '\0';
-	while (envp[x])
+	to_print = getenv(variable);
+	if (to_print)
 	{
-		if (ft_strnstr(envp[x], variable, ft_strlen(envp[x])) == envp[x])
-			return (write(1, envp[x] + ft_strlen(variable), ft_strlen(envp[x] + \
-			ft_strlen(variable))), *i += ft_strlen(variable), free(variable));
-		x++;
+		write(1, to_print, ft_strlen(to_print));
+		*i += ft_strlen(variable);
 	}
 	free(variable);
 }
 
-void	echo_handle_function(char **envp, char *input)
+void	echo_handle_function(char *input)
 {
 	int	i;
 	int	len;
 
 	i = 1;
-	len = ft_strlen(input + i);
+	len = ft_strlen(input);
 	while (i < len)
 	{
-		//printf("||%c||\n", input[i]);
 		if (input[i] == '$')
-			print_variable(envp, input + i, &i);
+			print_variable(input, &(++i));
 		else
-			print_echo_input(input + (i - 1), &i, len);
+			print_echo_input(input, &i);
 		if (input[i] == ' ')
 			write(1, &input[i++], 1);
 	}
@@ -133,7 +144,7 @@ int	built_in(char *input, char **envp)
 
 	line = ft_strtrim(input, " ");
 	if (!ft_strncmp(line, "echo", 4))
-		return (echo_handle_function(envp, line + 4), free(line), 1);
+		return (echo_handle_function(line + 4), free(line), 1);
 	if (!ft_strncmp(line, "pwd", 3))
 		return (pwd_cmd(line), free(line), 1);
 	if (!ft_strncmp(line, "cd", 2))

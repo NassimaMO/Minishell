@@ -22,7 +22,7 @@
 # include <termios.h>
 # include <sys/ioctl.h>
 # include <linux/kd.h>
-# include <term.h>
+//# include <term.h>
 
 # define FULL 0
 # define SHORT 1
