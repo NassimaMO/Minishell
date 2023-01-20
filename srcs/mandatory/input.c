@@ -31,8 +31,6 @@ char	*get_input(void)
 		}
 		bytes = read(0, ft_memset(buff, 0, 1), 1);
 	}
-	if (*buff == '\n')
-		ft_printf("\n");
 	return (str);
 }
 
