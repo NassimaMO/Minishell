@@ -33,6 +33,15 @@ int	exit_code(int mode, int code)
 	return (last);
 }
 
+/* TO DO LIST :
+- executable with relative or absolute path (for now only commands are working)
+- proper history
+- checks : fds (need all close when piping)
+- file redirection : << and >>
+- quotes ?
+- echo ?
+- built_in variable "$?" (last exit code) */
+
 int	main(int argc, char *argv[])
 {
 	int	len;
