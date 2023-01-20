@@ -14,7 +14,7 @@ void	exec_cmd(char *cmd, int fd_in, int fd_out, char *envp[])
 	dup2(fd_out, STDOUT_FILENO);
 	path = get_pathname(s, envp);
 	execve(path, args, envp);
-	write(STDERR_FILENO, "minishell: line 1: ", 15);
+	write(STDERR_FILENO, "minishell: line 1: ", 19);
 	if (errno == ENOENT)
 	{
 		write(STDERR_FILENO, s, ft_strlen(s));
@@ -87,18 +87,17 @@ int	ft_pipes(int nb, char *cmds[], int fd[], char *envp[])
 	{
 		if ((!(i % 2) && pipe(pipes) < 0) || ((i % 2) && pipe(pipes + 2) < 0))
 			return (perror("pipe failed"), EXIT_FAILURE);
-		if (!built_in(cmds[i], envp))
+		if (built_in(cmds[i], envp) && ++i)
+			continue ;
+		pid = fork();
+		if (pid == -1)
+			return (perror("fork failed"), EXIT_FAILURE);
+		if (pid == 0)
+			exec_cmd(cmds[i], fi(i, fd, pipes), fo(i, nb, fd, pipes), envp);
+		if (i != 0)
 		{
-			pid = fork();
-			if (pid == -1)
-				return (perror("fork failed"), EXIT_FAILURE);
-			if (pid == 0)
-				exec_cmd(cmds[i], fi(i, fd, pipes), fo(i, nb, fd, pipes), envp);
-			if (i != 0)
-			{
-				close(fi(i, fd, pipes));
-				waitpid(pid, &status, 0);
-			}
+			close(fi(i, fd, pipes));
+			waitpid(pid, &status, 0);
 		}
 		i++;
 	}

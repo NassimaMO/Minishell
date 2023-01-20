@@ -15,7 +15,10 @@
 void	ft_handler(int signum)
 {
 	if (signum == SIGINT)
+	{
+		ft_printf("\n");
 		print_shell();
+	}
 	if (signum == SIGQUIT)
 	{
 	}

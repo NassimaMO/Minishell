@@ -11,7 +11,7 @@ void	set_terminal(int option)
 		tmp = tty;
 		//tty.c_lflag &= ~ECHO;
 		//tty.c_lflag &= ~ICANON;
-		tty.c_lflag &= ~ECHOCTL;
+		//tty.c_lflag &= ~ECHOCTL;
 		tcsetattr(STDIN_FILENO, TCSANOW, &tty);
 	}
 	else if (option == RESET)

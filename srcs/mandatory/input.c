@@ -22,7 +22,7 @@ char	*get_input(void)
 	str = ft_strdup("");
 	while (str && bytes >= 0 && *buff != '\n')
 	{
-		if ((bytes == 0 || *buff == 0 || *buff == 3 || *buff == 4) && !*str)
+		if ((bytes == 0 || *buff == 0 || *buff == 4) && !*str)
 			return (free(str), NULL);
 		if (ft_isprint(*buff))
 		{
@@ -85,7 +85,7 @@ int	check_exit(char *input)
 	code = 0;
 	if (!ft_strncmp(input, "exit", 4))
 	{
-		printf("exit\n");
+		ft_printf("exit\n");
 		if (ft_strchr(cmd, ' '))
 		{
 			input = ft_strtrim(ft_strchr(cmd, ' '), " ");

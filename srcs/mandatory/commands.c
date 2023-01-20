@@ -121,9 +121,9 @@ int	handle_cmd(char *input, char **envp)
 
 	if (!input)
 		return (check_exit(input));
+	redirect(input, fd);
 	split = ft_split(input, '|');
 	i = 0;
-	redirect(input, fd);
 	while (split && split[i])
 		i++;
 	if (i > 1)
