@@ -25,12 +25,12 @@ void	print_echo_input(char *input, int *i)
 		{
 			if (!p)
 				p = input[(*i)++];
-			else if (input[*i] == p && ft_strchr(input + (i + 1), p))
+			else if (input[*i] == p && ft_strchr(input + (*i + 1), p))
 				p = '\0';
 			else
-				break;
+				break ;
 		}
-		if (nl && intput[*i] == '\n' && !input[(*i) + 1])
+		if (nl && input[*i] == '\n' && !input[(*i) + 1])
 			return ((void)(*i)++);
 		write(1, &input[*i], 1);
 		(*i)++;
@@ -76,7 +76,7 @@ void	echo_handle_function(char *input)
 	while (i < len)
 	{
 		if (input[i] == '$')
-			print_variable(input, &(++i));
+			print_variable(input, (++i, &i));
 		else
 			print_echo_input(input, &i);
 		if (input[i] == ' ')
