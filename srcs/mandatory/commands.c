@@ -127,15 +127,17 @@ int	handle_cmd(char *input, char **envp)
 	while (split && split[i])
 		i++;
 	if (i > 1)
-		return (free_split(split), free(input), ft_pipes(i, split, fd, envp));
+		status = ft_pipes(i, split, fd, envp);
 	else if (check_exit(input) == EXIT)
 		return (free_split(split), free(input), EXIT);
-	free_split(split);
-	i = fork();
-	if (i == 0)
-		exec_cmd(input, fd[0], fd[1], envp);
-	waitpid(i, &status, 0);
-	return (free(input), WEXITSTATUS(status));
+	else if (i == 0)
+	{
+		i = fork();
+		if (i == 0)
+			exec_cmd(input, fd[0], fd[1], envp);
+		waitpid(i, &status, 0);
+	}
+	return (free_split(split), free(input), WEXITSTATUS(status));
 }
 
 int	built_in(char *input, char **envp)
