@@ -130,7 +130,7 @@ int	handle_cmd(char *input, char **envp)
 		status = ft_pipes(i, split, fd, envp);
 	else if (check_exit(input) == EXIT)
 		return (free_split(split), free(input), EXIT);
-	else if (i == 0)
+	else
 	{
 		i = fork();
 		if (i == 0)

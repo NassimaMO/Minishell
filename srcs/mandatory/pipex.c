@@ -101,7 +101,5 @@ int	ft_pipes(int nb, char *cmds[], int fd[], char *envp[])
 		}
 		i++;
 	}
-	close(fd[0]);
-	close(fd[1]);
 	return (WEXITSTATUS(status));
 }

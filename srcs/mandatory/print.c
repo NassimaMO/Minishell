@@ -65,7 +65,7 @@ void	print_shell(void)
 	else if (pid == 0)
 	{
 		ft_pipes(2, cmds, fd, environ);
-		exit(0);
+		exit((close(fd[0]), close(fd[1]), 0));
 	}
 	computer_name = get_next_line(fd[0]);
 	wait(NULL);
