@@ -12,11 +12,9 @@ void	exec_cmd(char *cmd, int fd_in, int fd_out, char *envp[])
 		*ft_strchr(s, ' ') = 0;
 	dup2(fd_in, STDIN_FILENO);
 	dup2(fd_out, STDOUT_FILENO);
-	if (!ft_strnstr(s, "echo", ft_strlen(s)) && built_in(s, envp))
-		exit((free_split(args), free(s), free(cmd), 0));
 	path = get_pathname(s, envp);
 	execve(path, args, envp);
-	write(STDERR_FILENO, "pipex: line 1: ", 15);
+	write(STDERR_FILENO, "minishell: line 1: ", 15);
 	if (errno == ENOENT)
 	{
 		write(STDERR_FILENO, s, ft_strlen(s));
@@ -89,15 +87,18 @@ int	ft_pipes(int nb, char *cmds[], int fd[], char *envp[])
 	{
 		if ((!(i % 2) && pipe(pipes) < 0) || ((i % 2) && pipe(pipes + 2) < 0))
 			return (perror("pipe failed"), EXIT_FAILURE);
-		pid = fork();
-		if (pid == -1)
-			return (perror("fork failed"), EXIT_FAILURE);
-		if (pid == 0)
-			exec_cmd(cmds[i], fi(i, fd, pipes), fo(i, nb, fd, pipes), envp);
-		if (i != 0)
+		if (!built_in(cmds[i], envp))
 		{
-			close(fi(i, fd, pipes));
-			waitpid(pid, &status, 0);
+			pid = fork();
+			if (pid == -1)
+				return (perror("fork failed"), EXIT_FAILURE);
+			if (pid == 0)
+				exec_cmd(cmds[i], fi(i, fd, pipes), fo(i, nb, fd, pipes), envp);
+			if (i != 0)
+			{
+				close(fi(i, fd, pipes));
+				waitpid(pid, &status, 0);
+			}
 		}
 		i++;
 	}
