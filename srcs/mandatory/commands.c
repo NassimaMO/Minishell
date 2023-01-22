@@ -14,27 +14,27 @@
 
 void	print_echo_input(char *input, int *i)
 {
-	static int	nl;
 	static char	p;
 
-	if (!ft_strncmp(input, "-n", 2) && *i == 1)
-		nl++;
 	while (input[*i] && input[*i] != ' ')
 	{
 		while (input[*i] == '\'' || input[*i] == '\"')
 		{
 			if (!p)
 				p = input[(*i)++];
-			else if (input[*i] == p && ft_strchr(input + (*i + 1), p))
+			else if (input[*i] == p && !ft_strchr(input +(*i + 1), p))
+			{
 				p = '\0';
+				(*i)++;
+			}
 			else
 				break ;
 		}
-		if (nl && input[*i] == '\n' && !input[(*i) + 1])
-			return ((void)(*i)++);
 		write(1, &input[*i], 1);
 		(*i)++;
 	}
+	if (!input[*i])
+		p = '\0';
 }
 
 void	print_variable(char *input, int *i)
@@ -47,11 +47,11 @@ void	print_variable(char *input, int *i)
 		return (print_echo_input(input, i));
 	input = input + (*i);
 	x = 0;
-	while (input[x] != ' ')
+	while (input[x] && input[x] != ' ')
 		x++;
 	variable = malloc(sizeof(char) * x + 1);
 	x = 0;
-	while (input[x] != ' ')
+	while (input[x] && input[x] != ' ')
 	{
 		variable[x] = input[x];
 		x++;
@@ -63,6 +63,8 @@ void	print_variable(char *input, int *i)
 		write(1, to_print, ft_strlen(to_print));
 		*i += ft_strlen(variable);
 	}
+	else
+		*i += ft_strlen(variable);
 	free(variable);
 }
 
@@ -71,7 +73,14 @@ void	echo_handle_function(char *input)
 	int	i;
 	int	len;
 
-	i = 1;
+	i = 0;
+	input = ft_strtrim(input, " ");
+	if (input[0] && input[1] && input[0] == '-' && input[1] == 'n')
+	{
+		i += 2;
+		while (input[i] && input[i] == ' ')
+			i++;
+	}
 	len = ft_strlen(input);
 	while (i < len)
 	{
@@ -82,6 +91,8 @@ void	echo_handle_function(char *input)
 		if (input[i] == ' ')
 			write(1, &input[i++], 1);
 	}
+	if (i && ft_strncmp(input, "-n", 2))
+		write(1, "\n", 1);
 }
 
 void	redirect(char *line, int fd[2])
