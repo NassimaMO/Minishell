@@ -21,17 +21,20 @@ void	print_echo_input(char *input, int *i)
 		while (input[*i] == '\'' || input[*i] == '\"')
 		{
 			if (!p)
+			{
 				p = input[(*i)++];
+				//printf("(1)|%c, %d|\n", p, *i);
+			}
 			else if (input[*i] == p)
 			{
+				//printf("(2)|%c, %d|\n", p, *i);
 				p = '\0';
 				(*i)++;
 			}
 			else
 				break ;
 		}
-		printf("(p=%c, i=%d)\n", p, *i);
-		if (input[*i] == '$' && p == '\"')
+		if (input[*i] == '$' && (p == '\"' || !p))
 		{
 			(*i)++;
 			print_variable(input, i);
