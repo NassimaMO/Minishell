@@ -22,13 +22,20 @@ void	print_echo_input(char *input, int *i)
 		{
 			if (!p)
 				p = input[(*i)++];
-			else if (input[*i] == p && !ft_strchr(input +(*i + 1), p))
+			else if (input[*i] == p)
 			{
 				p = '\0';
 				(*i)++;
 			}
 			else
 				break ;
+		}
+		printf("(p=%c, i=%d)\n", p, *i);
+		if (input[*i] == '$' && p == '\"')
+		{
+			(*i)++;
+			print_variable(input, i);
+			continue ;
 		}
 		write(1, &input[*i], 1);
 		(*i)++;
@@ -47,11 +54,11 @@ void	print_variable(char *input, int *i)
 		return (print_echo_input(input, i));
 	input = input + (*i);
 	x = 0;
-	while (input[x] && input[x] != ' ')
+	while (input[x] && input[x] != ' ' && input[x] != '\'' && input[x] != '\"')
 		x++;
 	variable = malloc(sizeof(char) * x + 1);
 	x = 0;
-	while (input[x] && input[x] != ' ')
+	while (input[x] && input[x] != ' ' && input[x] != '\'' && input[x] != '\"')
 	{
 		variable[x] = input[x];
 		x++;

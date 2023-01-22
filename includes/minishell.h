@@ -73,6 +73,7 @@ void	free_env(int len);
 /* commands.c */
 int		built_in(char *line, char **envp);
 int		handle_cmd(char *input, char **envp);
+void	print_variable(char *input, int *i);
 
 /* pipex.c */
 void	exec_cmd(char *cmd, int fd_in, int fd_out, char *envp[]);
