@@ -18,32 +18,27 @@ void	print_echo_input(char *input, int *i)
 
 	while (input[*i] && input[*i] != ' ')
 	{
-		while (input[*i] == '\'' || input[*i] == '\"')
+		while (input[*i] && (input[*i] == '\'' || input[*i] == '\"'))
 		{
 			if (!p)
-			{
 				p = input[(*i)++];
-				//printf("(1)|%c, %d|\n", p, *i);
-			}
 			else if (input[*i] == p)
 			{
-				//printf("(2)|%c, %d|\n", p, *i);
 				p = '\0';
 				(*i)++;
 			}
 			else
 				break ;
 		}
-		if (input[*i] == '$' && (p == '\"' || !p))
+		if (input[*i] && input[*i] == '$' && (p == '\"' || !p) && input[*i + 1] != '\"') //problem: "$"VARIABLE
 		{
-			(*i)++;
 			print_variable(input, i);
 			continue ;
 		}
 		write(1, &input[*i], 1);
 		(*i)++;
 	}
-	if (!input[*i])
+	if (p && !input[*i])
 		p = '\0';
 }
 
@@ -53,7 +48,8 @@ void	print_variable(char *input, int *i)
 	char	*variable;
 	char	*to_print;
 
-	if (input[*i] == '\'' || input[*i] == '\"')
+	(*i)++;
+	if (input[*i] && (input[*i] == '\'' || input[*i] == '\"'))
 		return (print_echo_input(input, i));
 	input = input + (*i);
 	x = 0;
@@ -68,20 +64,16 @@ void	print_variable(char *input, int *i)
 	}
 	variable[x] = '\0';
 	to_print = getenv(variable);
-	if (to_print)
-	{
-		write(1, to_print, ft_strlen(to_print));
-		*i += ft_strlen(variable);
-	}
-	else
-		*i += ft_strlen(variable);
 	free(variable);
+	if (!to_print)
+		return (*i += x, (void)0);
+	write(1, to_print, ft_strlen(to_print));
+	*i += x;
 }
 
 void	echo_handle_function(char *input)
 {
 	int	i;
-	int	len;
 
 	i = 0;
 	input = ft_strtrim(input, " ");
@@ -91,18 +83,18 @@ void	echo_handle_function(char *input)
 		while (input[i] && input[i] == ' ')
 			i++;
 	}
-	len = ft_strlen(input);
-	while (i < len)
+	while (input[i])
 	{
 		if (input[i] == '$')
-			print_variable(input, (++i, &i));
+			print_variable(input, &i);
 		else
 			print_echo_input(input, &i);
-		if (input[i] == ' ')
+		while (input[i] == ' ')
 			write(1, &input[i++], 1);
 	}
 	if (i && ft_strncmp(input, "-n", 2))
 		write(1, "\n", 1);
+	free(input);
 }
 
 void	redirect(char *line, int fd[2])
