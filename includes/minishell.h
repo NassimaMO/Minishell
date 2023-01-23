@@ -22,6 +22,8 @@
 # include <termios.h>
 # include <sys/ioctl.h>
 # include <linux/kd.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 //# include <term.h>
 
 # define FULL 0

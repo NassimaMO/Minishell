@@ -52,7 +52,7 @@ all							:		${NAME}
 bonus						:		${NAME}_bonus
 
 ${NAME}						:		${MANDATORY_OBJS} ${LIBFT}
-								${CC} ${CFLAGS} -o ${NAME} ${MANDATORY_OBJS} -L${LIB_DIR} -lft
+								${CC} ${CFLAGS} -o ${NAME} ${MANDATORY_OBJS} -L${LIB_DIR} -lft -lreadline
 
 ${NAME}_bonus				:		${BONUS_OBJS} ${LIBFT}
 								${CC} ${CFLAGS} -o ${NAME}_bonus ${BONUS_OBJS} -L${LIB_DIR} -lft

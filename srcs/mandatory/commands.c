@@ -30,7 +30,7 @@ void	print_echo_input(char *input, int *i)
 			else
 				break ;
 		}
-		if (input[*i] && input[*i] == '$' && (p == '\"' || !p) && input[*i + 1] != '\"') //problem: "$"VARIABLE
+		if (input[*i] && input[*i] == '$' && (p == '\"' || !p) && input[*i + 1] != '\"')
 		{
 			print_variable(input, i);
 			continue ;
@@ -158,6 +158,7 @@ int	built_in(char *input, char **envp)
 	char	*line;
 
 	line = ft_strtrim(input, " ");
+	//add_history(line);
 	if (!ft_strncmp(line, "echo", 4))
 		return (echo_handle_function(line + 4), free(line), 1);
 	if (!ft_strncmp(line, "pwd", 3))
