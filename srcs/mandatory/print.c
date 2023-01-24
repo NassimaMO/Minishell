@@ -54,7 +54,7 @@ void	print_shell(void)
 	char		*computer_name;
 	char		*path;
 	int			fd[2];
-	static char	*cmds[3] = {"echo ", "hostname", NULL};
+	static char	*cmds[3] = {"echo -n ", "hostname", NULL};
 	int			pid;
 
 	if (pipe(fd) < 0)

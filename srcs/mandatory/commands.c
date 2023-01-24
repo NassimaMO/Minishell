@@ -23,21 +23,19 @@ void	print_echo_input(char *input, int *i)
 			if (!p)
 				p = input[(*i)++];
 			else if (input[*i] == p)
-			{
-				p = '\0';
-				(*i)++;
-			}
+				p = ((*i)++, '\0');
 			else
 				break ;
 		}
-		if (input[*i] && input[*i] == '$' && (p == '\"' || !p) && input[*i + 1] != '\"')
+		if (input[*i] && input[*i] == '$' && ((p == '\"' && input[*i + 1] != '\"') || !p))
 		{
 			print_variable(input, i);
 			continue ;
 		}
-		write(1, &input[*i], 1);
-		(*i)++;
+		write(1, &input[(*i)++], 1);
 	}
+	if (input[*i] == ' ')
+		write(1, &input[(*i)++], 1);
 	if (p && !input[*i])
 		p = '\0';
 }
@@ -48,10 +46,7 @@ void	print_variable(char *input, int *i)
 	char	*variable;
 	char	*to_print;
 
-	(*i)++;
-	if (input[*i] && (input[*i] == '\'' || input[*i] == '\"'))
-		return (print_echo_input(input, i));
-	input = input + (*i);
+	input = input + ++(*i);
 	x = 0;
 	while (input[x] && input[x] != ' ' && input[x] != '\'' && input[x] != '\"')
 		x++;
@@ -71,13 +66,13 @@ void	print_variable(char *input, int *i)
 	*i += x;
 }
 
-void	echo_handle_function(char *input)
+void	echo_cmd(char *input)
 {
 	int	i;
 
 	i = 0;
 	input = ft_strtrim(input, " ");
-	if (input[0] && input[1] && input[0] == '-' && input[1] == 'n')
+	if (!ft_strncmp(input, "-n", 2))
 	{
 		i += 2;
 		while (input[i] && input[i] == ' ')
@@ -90,9 +85,9 @@ void	echo_handle_function(char *input)
 		else
 			print_echo_input(input, &i);
 		while (input[i] == ' ')
-			write(1, &input[i++], 1);
+			i++;
 	}
-	if (i && ft_strncmp(input, "-n", 2))
+	if (ft_strncmp(input, "-n", 2))
 		write(1, "\n", 1);
 	free(input);
 }
@@ -158,9 +153,8 @@ int	built_in(char *input, char **envp)
 	char	*line;
 
 	line = ft_strtrim(input, " ");
-	//add_history(line);
 	if (!ft_strncmp(line, "echo", 4))
-		return (echo_handle_function(line + 4), free(line), 1);
+		return (echo_cmd(line + 4), free(line), 1);
 	if (!ft_strncmp(line, "pwd", 3))
 		return (pwd_cmd(line), free(line), 1);
 	if (!ft_strncmp(line, "cd", 2))
