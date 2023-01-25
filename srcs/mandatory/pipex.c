@@ -87,7 +87,7 @@ int	ft_pipes(int nb, char *cmds[], int fd[], char *envp[])
 	{
 		if ((!(i % 2) && pipe(pipes) < 0) || ((i % 2) && pipe(pipes + 2) < 0))
 			return (perror("pipe failed"), EXIT_FAILURE);
-		if (built_in(cmds[i], envp) && ++i)
+		if (built_in(cmds[i], fd, envp) && ++i)
 			continue ;
 		pid = fork();
 		if (pid == -1)

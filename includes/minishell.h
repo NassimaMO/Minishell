@@ -35,6 +35,8 @@
 
 /* (O_RDWR | O_CREAT | O_TRUNC) */
 # define O_FLAG 578
+/* (O_RDWR | O_CREAT | O_APPEND) */
+# define O_FLAG2 1090
 /* (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) */
 # define S_FLAG 420
 
@@ -71,7 +73,7 @@ void	free_split(char **split);
 void	free_env(int len);
 
 /* commands.c */
-int		built_in(char *line, char **envp);
+int		built_in(char *input, int fd[2], char **envp);
 int		handle_cmd(char *input, char **envp);
 void	print_variable(char *input, int *i);
 

@@ -97,32 +97,54 @@ void	echo_handle_function(char *input)
 	free(input);
 }
 
-void	redirect(char *line, int fd[2])
+/* change str to remove redirection and change fd[0] */
+void	redirect_stdin(char *str, int fd[2])
 {
-	char	*s;
-	char	c;
+	char	*name;
+	char	*line;
 
 	fd[0] = 0;
-	fd[1] = 1;
-	c = 0;
-	if (ft_strchr(line, '<'))
-		c = '<';
-	else if (ft_strchr(line, '>'))
-		c = '>';
-	if (!c)
+	if (!ft_strchr(str, '<'))
 		return ;
-	s = ft_strtrim(ft_strchr(line, c) + 1, " ");
-	if (ft_strchr(s, ' ') && c == '<')
-		ft_strlcpy(line, ft_strchr(s, ' '), ft_strlen(ft_strchr(s, ' ')) + 1);
-	if (ft_strchr(s, ' '))
-		*ft_strchr(s, ' ') = 0;
-	if (c == '<')
-		fd[0] = open(s, O_RDONLY);
-	if (c == '>')
-		fd[1] = (ft_bzero(ft_strrchr(line, '>'), 1), open(s, O_FLAG, S_FLAG));
-	free(s);
-	if (ft_strchr(line, '>'))
-		redirect(line, fd);
+	line = ft_strdup(str);
+	name = ft_strtrim(ft_strchr(line, '<') + 1, " ");
+	*ft_strchr(line, '<') = 0;
+	line = gnl_join(line, ft_strchr(name, 32), ft_strlen(ft_strchr(name, 32)));
+	if (ft_strchr(name, ' '))
+		*ft_strchr(name, ' ') = 0;
+	fd[0] = open(name, O_RDONLY);
+	ft_strlcpy(str, line, ft_strlen(line) + 1);
+	return (free(name), free(line));
+}
+
+/* change str to remove redirection and change fd[1] */
+void	redirect_stdout(char *str, int fd[2])
+{
+	char	*name;
+	int		append;
+	char	*line;
+
+	fd[1] = 1;
+	if (!ft_strchr(str, '>'))
+		return ;
+	line = ft_strdup(str);
+	name = ft_strchr(line, '>') + 1;
+	append = 0;
+	if (name[0] == '>')
+	{
+		append = 1;
+		name ++;
+	}
+	name = ft_strtrim(name, " ");
+	*ft_strchr(line, '>') = 0;
+	line = gnl_join(line, ft_strchr(name, 32), ft_strlen(ft_strchr(name, 32)));
+	if (ft_strchr(name, ' '))
+		*ft_strchr(name, ' ') = 0;
+	if (append)
+		fd[1] = open(name, O_FLAG2, S_FLAG);
+	else
+		fd[1] = open(name, O_FLAG, S_FLAG);
+	return (ft_strlcpy(str, line, ft_strlen(line) + 1), free(name), free(line));
 }
 
 int	handle_cmd(char *input, char **envp)
@@ -134,7 +156,8 @@ int	handle_cmd(char *input, char **envp)
 
 	if (!input)
 		return (check_exit(input));
-	redirect(input, fd);
+	redirect_stdin(input, fd);
+	redirect_stdout(input, fd);
 	split = ft_split(input, '|');
 	i = 0;
 	while (split && split[i])
@@ -143,7 +166,7 @@ int	handle_cmd(char *input, char **envp)
 		status = ft_pipes(i, split, fd, envp);
 	else if (check_exit(input) == EXIT)
 		return (free_split(split), free(input), EXIT);
-	else if (!built_in(input, envp))
+	else if (!built_in(input, fd, envp))
 	{
 		i = fork();
 		if (i == 0)
@@ -153,22 +176,31 @@ int	handle_cmd(char *input, char **envp)
 	return (free_split(split), free(input), WEXITSTATUS(status));
 }
 
-int	built_in(char *input, char **envp)
+int	built_in(char *input, int fd[2], char **envp)
 {
 	char	*line;
+	int		std[2];
+	int		b;
 
+	b = 1;
 	line = ft_strtrim(input, " ");
+	std[0] = dup(STDIN_FILENO);
+	std[1] = dup(STDOUT_FILENO);
+	dup2(fd[1], (dup2(fd[0], 0), 1));
 	if (!ft_strncmp(line, "echo", 4))
-		return (echo_handle_function(line + 4), free(line), 1);
-	if (!ft_strncmp(line, "pwd", 3))
-		return (pwd_cmd(line), free(line), 1);
-	if (!ft_strncmp(line, "cd", 2))
-		return (cd_cmd(line), free(line), 1);
-	if (!ft_strncmp(line, "env", 3))
-		return (env_cmd(line, envp), free(line), 1);
-	if (!ft_strncmp(line, "export", 6))
-		return (export_cmd(line, envp), free(line), 1);
-	if (!ft_strncmp(line, "unset", 5))
-		return (unset_cmd(line, envp), free(line), 1);
-	return (free(line), 0);
+		echo_handle_function(line + 4);
+	else if (!ft_strncmp(line, "pwd", 3))
+		pwd_cmd(line);
+	else if (!ft_strncmp(line, "cd", 2))
+		cd_cmd(line);
+	else if (!ft_strncmp(line, "env", 3))
+		env_cmd(line, envp);
+	else if (!ft_strncmp(line, "export", 6))
+		export_cmd(line, envp);
+	else if (!ft_strncmp(line, "unset", 5))
+		unset_cmd(line, envp);
+	else
+		b = 0;
+	dup2(std[1], (dup2(std[0], 0), 1));
+	return (free(line), close(std[0]), close(std[1]), b);
 }
