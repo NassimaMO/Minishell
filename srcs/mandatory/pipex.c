@@ -24,7 +24,10 @@ void	exec_cmd(char *cmd, int fd_in, int fd_out, char *envp[])
 		*ft_strchr(s, ' ') = 0;
 	dup2(fd_in, STDIN_FILENO);
 	dup2(fd_out, STDOUT_FILENO);
-	path = get_pathname(s, envp);
+	if (ft_strchr(s, '/'))
+		path = relative_path(s);
+	else
+		path = get_pathname(s, envp);
 	execve(path, args, envp);
 	write(STDERR_FILENO, "minishell: line 1: ", 19);
 	if (errno == ENOENT)

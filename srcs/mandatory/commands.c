@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-/* change str to remove redirection and change fd[0] */
+/* changes str to remove redirection and changes fd[0] */
 void	redirect_stdin(char *str, int fd[2])
 {
 	char	*name;
@@ -32,7 +32,7 @@ void	redirect_stdin(char *str, int fd[2])
 	return (free(name), free(line));
 }
 
-/* change str to remove redirection and change fd[1] */
+/* changes str to remove redirection and changes fd[1] */
 void	redirect_stdout(char *str, int fd[2])
 {
 	char	*name;
@@ -79,7 +79,7 @@ int	handle_cmd(char *input, char **envp)
 		status = ft_pipes(i, split, fd, envp);
 	else if (check_exit(input) == EXIT)
 		return (free_split(split), free(input), EXIT);
-	else if (!built_in(input, fd, envp))
+	else if ((free_split(split), 1) && !built_in(input, fd, envp))
 	{
 		i = fork();
 		if (i == 0)
@@ -88,7 +88,7 @@ int	handle_cmd(char *input, char **envp)
 	}
 	if ((fd[0] > 0 && (close(fd[0]), 0)) || (fd[1] > 1 && (close(fd[1]), 1)))
 		i = 0;
-	return (free_split(split), free(input), WEXITSTATUS(status));
+	return (free(input), WEXITSTATUS(status));
 }
 
 int	built_in(char *input, int fd[2], char **envp)

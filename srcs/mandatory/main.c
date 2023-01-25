@@ -12,16 +12,6 @@
 
 #include "minishell.h"
 
-int	env_len(char **envp)
-{
-	int	i;
-
-	i = 0;
-	while (envp[i])
-		i++;
-	return (i);
-}
-
 int	exit_code(int mode, int code)
 {
 	static int	last = 0;

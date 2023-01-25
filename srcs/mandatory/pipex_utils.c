@@ -12,27 +12,6 @@
 
 #include "minishell.h"
 
-static char	**add_split(char **split, char *str)
-{
-	int		i;
-	char	**new_split;
-
-	i = 0;
-	while (split && split[i])
-		i++;
-	new_split = malloc(sizeof(char *) * (i + 2));
-	i = 0;
-	while (split && split[i])
-	{
-		new_split[i] = split[i];
-		i++;
-	}
-	new_split[i] = str;
-	new_split[i + 1] = NULL;
-	free(split);
-	return (new_split);
-}
-
 static char	**get_arg(char **split, const char *cmd, int *i)
 {
 	char	*str;
@@ -129,4 +108,33 @@ char	*get_pathname(char *cmd, char *envp[])
 			free(s2);
 	}
 	return (free_split(split), free(cmd), ft_strdup(""));
+}
+
+char	*relative_path(char *path)
+{
+	char	*new_path;
+	char	**split;
+	int		i;
+	int		len;
+
+	if (*path == '/')
+		return (ft_strdup(path));
+	new_path = get_current_path(0);
+	if (*path == '~')
+		new_path = (free(new_path), ft_strdup(getenv("HOME")));
+	split = ft_split(path, '/');
+	i = 0;
+	while (split[i])
+	{
+		len = ft_strlen(split[i]);
+		if (!ft_strncmp(split[i], "..", len) && len == 2)
+		{
+			if (ft_strrchr(new_path, '/'))
+				*ft_strrchr(new_path, '/') = 0;
+		}
+		else if ((*(split[i]) != '.' && *(split[i]) != '~') || len > 1)
+			new_path = gnl_join(gnl_join(new_path, "/", 1), split[i], len);
+		i++;
+	}
+	return (free_split(split), new_path);
 }

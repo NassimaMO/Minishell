@@ -73,8 +73,10 @@ void	print_shell(void);
 void	signals(void);
 int		exit_code(int mode, int code);
 
-/* memory.c */
+/* split.c */
+char	**add_split(char **split, char *str);
 void	free_split(char **split);
+int		env_len(char **envp);
 void	free_env(int len);
 
 /* commands.c */
@@ -85,8 +87,9 @@ int		handle_cmd(char *input, char **envp);
 void	exec_cmd(char *cmd, int fd_in, int fd_out, char *envp[]);
 int		ft_pipes(int nb, char *cmds[], int fd[], char *envp[]);
 
-/* utils.c */
+/* pipex_utils.c */
 char	*get_pathname(char *cmd, char *envp[]);
 char	**get_cmd_args(const char *cmd);
+char	*relative_path(char *path);
 
 #endif

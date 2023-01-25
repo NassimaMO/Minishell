@@ -37,6 +37,7 @@ void	cd_cmd(char *line)
 	free(str);
 }
 
+/* give SHORT (or 0 for full path) as option */
 char	*get_current_path(int option)
 {
 	char	*home;
