@@ -1,4 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   terminal.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/01/25 09:36:14 by nghulam-          #+#    #+#             */
+/*   Updated: 2023/01/25 09:36:15 by nghulam-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
+
+/* 
+tty.c_lflag &= ~ECHO;
+tty.c_lflag &= ~ICANON;
+tty.c_lflag &= ~ECHOCTL;
+*/
 
 void	set_terminal(int option)
 {
@@ -9,9 +27,6 @@ void	set_terminal(int option)
 	{
 		tcgetattr(STDIN_FILENO, &tty);
 		tmp = tty;
-		//tty.c_lflag &= ~ECHO;
-		//tty.c_lflag &= ~ICANON;
-		//tty.c_lflag &= ~ECHOCTL;
 		tcsetattr(STDIN_FILENO, TCSANOW, &tty);
 	}
 	else if (option == RESET)

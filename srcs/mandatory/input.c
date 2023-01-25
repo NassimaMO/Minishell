@@ -12,17 +12,18 @@
 
 #include "minishell.h"
 
+/*while (!ft_strncmp((str = readline(" ")), "\n", 1))
+{
+	if (strlen(str) > 0)
+		add_history(str);
+}*/
+
 char	*get_input(void)
 {
 	char			*str;
 	char			buff[1];
 	int				bytes;
 
-	/*while (!ft_strncmp((str = readline(" ")), "\n", 1))
-	{
-    	if (strlen(str) > 0)
-      		add_history(str);
-    }*/
 	bytes = read(0, ft_memset(buff, 0, 1), 1);
 	str = ft_strdup("");
 	while (str && bytes >= 0 && *buff != '\n')
@@ -30,10 +31,7 @@ char	*get_input(void)
 		if ((bytes == 0 || *buff == 0 || *buff == 4) && !*str)
 			return (free(str), NULL);
 		if (ft_isprint(*buff))
-		{
-			//ft_printf("%c", *buff);
 			str = gnl_join(str, buff, 1);
-		}
 		bytes = read(0, ft_memset(buff, 0, 1), 1);
 	}
 	return (str);
