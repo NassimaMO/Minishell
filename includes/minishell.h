@@ -80,7 +80,7 @@ int		env_len(char **envp);
 void	free_env(int len);
 
 /* commands.c */
-int		built_in(char *input, int fd[2], char **envp);
+int		built_in(char *input, int fd_in, int fd_out, char **envp);
 int		handle_cmd(char *input, char **envp);
 
 /* pipex.c */

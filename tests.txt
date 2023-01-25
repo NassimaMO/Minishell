@@ -1,0 +1,37 @@
+/* CE FICHIER SERT A REGROUPER LES TESTS ET LES ERREURS A GERER DANS MINISHELL */
+
+// COMMANDE ECHO : TESTS
+
+1) Option -n :
+
+->	echo -nn hello
+	echo -n -n hello
+	echo "-n" hello
+	doivent afficher: hello (sans \n)
+
+->	echo -n"-n" hello
+	echo -n-n hello
+	doivent afficher: -n-n hello (avec \n)
+
+->	echo "-n -n" hello
+	doit afficher: -n -n hello (avec \n)
+
+2) Meta caracteres :
+
+->	echo ~ equivaut a echo $HOME
+	echo ~/ equivaut a echo $HOME/
+	echo ~/x equivaut a echo $HOME/x
+
+->	echo "~" doit afficher: ~
+	echo '~' doit afficher: ~
+	echo ~x doit afficher: ~x
+
+->	echo "|" doit afficher: | (et ne pas interpreter "|" comme une pipe)
+
+3) Variables :
+
+->	echo $VAR1$VAR2 doit afficher la valeur de VAR1 suivie de celle de VAR2 
+	(et non pas interpreter "VAR1$VAR2" comme un seul nom de variable)
+
+->	echo $PWD/ doit afficher la valeur de PWD suivie de /
+	(et non pas interpreter "PWD/" comme un seul nom de variable)

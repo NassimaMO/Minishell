@@ -79,7 +79,7 @@ int	handle_cmd(char *input, char **envp)
 		status = ft_pipes(i, split, fd, envp);
 	else if (check_exit(input) == EXIT)
 		return (free_split(split), free(input), EXIT);
-	else if ((free_split(split), 1) && !built_in(input, fd, envp))
+	if ((free_split(split), 1) && i <= 1 && !built_in(input, fd[0], fd[1], envp))
 	{
 		i = fork();
 		if (i == 0)
@@ -91,7 +91,7 @@ int	handle_cmd(char *input, char **envp)
 	return (free(input), WEXITSTATUS(status));
 }
 
-int	built_in(char *input, int fd[2], char **envp)
+int	built_in(char *input, int fd_in, int fd_out, char **envp)
 {
 	char	*line;
 	int		std[2];
@@ -101,7 +101,7 @@ int	built_in(char *input, int fd[2], char **envp)
 	line = ft_strtrim(input, " ");
 	std[0] = dup(STDIN_FILENO);
 	std[1] = dup(STDOUT_FILENO);
-	dup2(fd[1], (dup2(fd[0], 0), 1));
+	dup2(fd_out, (dup2(fd_in, 0), 1));
 	if (!ft_strncmp(line, "echo", 4))
 		echo_cmd(line + 4);
 	else if (!ft_strncmp(line, "pwd", 3))

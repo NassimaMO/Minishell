@@ -90,6 +90,21 @@ int	fo(int i, int nb, int fd[], int pipes[])
 	return (fd_out);
 }
 
+int	is_built_in(char *cmd)
+{
+	static char *cmds[6] = {"echo", "cd", "pwd", "env", "export", "unset"};
+	int			i;
+
+	i = 0;
+	while (i < 6)
+	{
+		if (!strncmp(cmd, cmds[i], ft_strlen(cmd)))
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 int	ft_pipes(int nb, char *cmds[], int fd[], char *envp[])
 {
 	int		pipes[4];
@@ -103,7 +118,7 @@ int	ft_pipes(int nb, char *cmds[], int fd[], char *envp[])
 		if (i != (nb -1) && ((!(i % 2) && pipe(pipes) < 0) || \
 		((i % 2) && pipe(pipes +2) < 0)))
 			return (perror("pipe failed: "), EXIT_FAILURE);
-		if (built_in(cmds[i], fd, envp) && ++i)
+		if (is_built_in(cmds[i]) && built_in(cmds[i], fi(i, fd, pipes), fo(i, nb, fd, pipes), envp) && ++i)
 			continue ;
 		pid = fork();
 		if (pid == -1)
