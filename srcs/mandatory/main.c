@@ -24,8 +24,9 @@ int	exit_code(int mode, int code)
 }
 
 /* TO DO LIST :
-- executable with relative or absolute path (for now only commands are working)
+- executable with relative or absolute path : may leak with SIGINT
 - proper history
+- built_in redirection
 - file redirection : <<
 - built_in variable "$?" (last exit code) */
 
