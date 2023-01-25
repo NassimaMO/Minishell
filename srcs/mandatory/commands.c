@@ -151,10 +151,8 @@ int	handle_cmd(char *input, char **envp)
 
 	if (!input)
 		return (check_exit(input));
-	redirect_stdin(input, fd);
-	redirect_stdout(input, fd);
-	split = ft_split(input, '|');
-	i = 0;
+	redirect_stdout((redirect_stdin(input, fd), input), fd);
+	split = ft_split((ft_bzero(&i, sizeof(int)), input), '|');
 	while (split && split[i])
 		i++;
 	if (i > 1)
@@ -168,6 +166,8 @@ int	handle_cmd(char *input, char **envp)
 			exec_cmd(input, fd[0], fd[1], envp);
 		waitpid(i, &status, 0);
 	}
+	if ((fd[0] > 0 && (close(fd[0]), 0)) || (fd[1] > 1 && (close(fd[1]), 1)))
+		i = 0;
 	return (free_split(split), free(input), WEXITSTATUS(status));
 }
 
@@ -183,7 +183,7 @@ int	built_in(char *input, int fd[2], char **envp)
 	std[1] = dup(STDOUT_FILENO);
 	dup2(fd[1], (dup2(fd[0], 0), 1));
 	if (!ft_strncmp(line, "echo", 4))
-		echo_handle_function(line + 4);
+		echo_cmd(line + 4);
 	else if (!ft_strncmp(line, "pwd", 3))
 		pwd_cmd(line);
 	else if (!ft_strncmp(line, "cd", 2))

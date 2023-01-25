@@ -85,21 +85,20 @@ int	ft_pipes(int nb, char *cmds[], int fd[], char *envp[])
 	i = 0;
 	while (i < nb)
 	{
-		if ((!(i % 2) && pipe(pipes) < 0) || ((i % 2) && pipe(pipes + 2) < 0))
-			return (perror("pipe failed"), EXIT_FAILURE);
+		if (i != (nb -1) && ((!(i % 2) && pipe(pipes) < 0) || \
+		((i % 2) && pipe(pipes +2) < 0)))
+			return (perror("pipe failed: "), EXIT_FAILURE);
 		if (built_in(cmds[i], fd, envp) && ++i)
 			continue ;
 		pid = fork();
 		if (pid == -1)
-			return (perror("fork failed"), EXIT_FAILURE);
+			return (perror("fork failed: "), EXIT_FAILURE);
 		if (pid == 0)
 			exec_cmd(cmds[i], fi(i, fd, pipes), fo(i, nb, fd, pipes), envp);
-		if (i != 0)
-		{
-			close(fi(i, fd, pipes));
-			waitpid(pid, &status, 0);
-		}
-		i++;
+		if (!i++)
+			continue ;
+		close(fi(i - 1, fd, pipes));
+		waitpid(pid, &status, 0);
 	}
 	return (WEXITSTATUS(status));
 }

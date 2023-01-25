@@ -75,5 +75,5 @@ void	print_shell(void)
 		*ft_strchr(computer_name, '\n') = '\0';
 	path = get_current_path(SHORT);
 	ft_printf("%s@%s:%s$ ", getenv("USER"), computer_name, path);
-	return (free(computer_name), free(path));
+	return (close(fd[0]), close(fd[1]), free(computer_name), free(path));
 }
