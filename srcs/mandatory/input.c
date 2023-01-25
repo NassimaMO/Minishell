@@ -18,6 +18,11 @@ char	*get_input(void)
 	char			buff[1];
 	int				bytes;
 
+	/*while (!ft_strncmp((str = readline(" ")), "\n", 1))
+	{
+    	if (strlen(str) > 0)
+      		add_history(str);
+    }*/
 	bytes = read(0, ft_memset(buff, 0, 1), 1);
 	str = ft_strdup("");
 	while (str && bytes >= 0 && *buff != '\n')
