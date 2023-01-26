@@ -104,7 +104,7 @@ int	handle_cmd(char *input, char **envp)
 		waitpid(i, &status, 0);
 		free(input);
 	}
-	return (ft_close(fd[0], fd[1]), WEXITSTATUS(status));
+	return (ft_close(2, fd[0], fd[1]), WEXITSTATUS(status));
 }
 
 int	built_in(char *input, int fd_in, int fd_out, char **envp)

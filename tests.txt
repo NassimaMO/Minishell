@@ -38,10 +38,14 @@
 
 // CD
 
-many args not working
+many args
 quotes
 variables
 
 // EXIT 
 
 quotes
+
+// REDIRECT 
+
+->

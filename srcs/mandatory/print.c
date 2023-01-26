@@ -51,33 +51,27 @@ void	print_export(char **envp)
 
 void	print_shell(void)
 {
-	char		*computer_name;
+	char		*name;
 	char		*path;
 	int			fd[2];
-	char		**cmds;
-	int			pid;
+	pid_t		pid;
 
-	cmds = ft_calloc(3, sizeof(char *));
-	cmds[0] = ft_strdup("echo -n");
-	cmds[1] = ft_strdup("hostname");
+	ft_bzero(fd, sizeof(int) * 2);
 	if (pipe(fd) < 0)
-		return ;
+		return (perror(""), ft_close(2, fd[0], fd[1]));
 	pid = fork();
 	if (pid < 0)
-		return ;
-	else if (pid == 0)
-	{
-		ft_pipes(2, cmds, fd, environ);
-		exit((close(fd[0]), close(fd[1]), 0));
-	}
-	computer_name = get_next_line(fd[0]);
+		return (perror(""), ft_close(2, fd[0], fd[1]));
+	if (pid == 0)
+		exit((exec_cmd("hostname", STDIN_FILENO, fd[1], environ), 0));	
+	name = get_next_line(fd[0]);
 	wait(NULL);
-	if (ft_strchr(computer_name, '.'))
-		*ft_strchr(computer_name, '.') = '\0';
-	else if (ft_strchr(computer_name, '\n'))
-		*ft_strchr(computer_name, '\n') = '\0';
+	if (ft_strchr(name, '.'))
+		*ft_strchr(name, '.') = '\0';
+	else if (ft_strchr(name, '\n'))
+		*ft_strchr(name, '\n') = '\0';
 	path = get_current_path(SHORT);
-	ft_printf("%s@%s:%s$ ", getenv("USER"), computer_name, path);
-	free_split(cmds);
-	return (close(fd[0]), close(fd[1]), free(computer_name), free(path));
+	ft_printf("%s@%s:%s$ ", getenv("USER"), name, path);
+	ft_close(2, fd[0], fd[1]);
+	return (free(name), free(path));
 }
