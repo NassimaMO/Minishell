@@ -3,35 +3,45 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:23 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/25 09:36:24 by nghulam-         ###   ########.fr       */
+/*   Updated: 2023/01/26 13:40:44 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+char	*get_variable(char *input, int *x)
+{
+	char	*variable;
+	char	*to_return;
+
+	x = 0;
+	while (input[*x] && input[*x] != ' ' && input[*x] != '\'' && input[*x] != '\"')
+		(*x)++;
+	variable = malloc(sizeof(char) * (*x + 1));
+	x = 0;
+	while (input[*x] && input[*x] != ' ' && input[*x] != '\'' && input[*x] != '\"')
+	{
+		variable[*x] = input[*x];
+		(*x)++;
+	}
+	variable[*x] = '\0';
+	to_return = getenv(variable);
+	free(variable);
+	if (to_return)
+		return (NULL);
+	return (to_return);
+}
+
 static void	print_variable(char *input, int *i)
 {
-	int		x;
-	char	*variable;
 	char	*to_print;
+	int		x;
 
 	input = input + ++(*i);
-	x = 0;
-	while (input[x] && input[x] != ' ' && input[x] != '\'' && input[x] != '\"')
-		x++;
-	variable = malloc(sizeof(char) * x + 1);
-	x = 0;
-	while (input[x] && input[x] != ' ' && input[x] != '\'' && input[x] != '\"')
-	{
-		variable[x] = input[x];
-		x++;
-	}
-	variable[x] = '\0';
-	to_print = getenv(variable);
-	free(variable);
+	to_print = get_variable(input, &x);
 	if (!to_print)
 		return (*i += x, (void)0);
 	write(1, to_print, ft_strlen(to_print));
