@@ -54,9 +54,12 @@ void	print_shell(void)
 	char		*computer_name;
 	char		*path;
 	int			fd[2];
-	static char	*cmds[3] = {"echo -n ", "hostname", NULL};
+	char		**cmds;
 	int			pid;
 
+	cmds = ft_calloc(3, sizeof(char *));
+	cmds[0] = ft_strdup("echo -n");
+	cmds[1] = ft_strdup("hostname");
 	if (pipe(fd) < 0)
 		return ;
 	pid = fork();
@@ -75,5 +78,6 @@ void	print_shell(void)
 		*ft_strchr(computer_name, '\n') = '\0';
 	path = get_current_path(SHORT);
 	ft_printf("%s@%s:%s$ ", getenv("USER"), computer_name, path);
+	free_split(cmds);
 	return (close(fd[0]), close(fd[1]), free(computer_name), free(path));
 }

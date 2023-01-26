@@ -35,3 +35,13 @@
 
 ->	echo $PWD/ doit afficher la valeur de PWD suivie de /
 	(et non pas interpreter "PWD/" comme un seul nom de variable)
+
+// CD
+
+many args not working
+quotes
+variables
+
+// EXIT 
+
+quotes

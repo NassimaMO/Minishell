@@ -62,6 +62,23 @@ void	redirect_stdout(char *str, int fd[2])
 	return (ft_strlcpy(str, line, ft_strlen(line) + 1), free(name), free(line));
 }
 
+void	ft_close(int nb, ...)
+{
+	va_list	args;
+	int		i;
+	int		fd;
+
+	va_start(args, nb);
+	i = 0;
+	while (i < nb)
+	{
+		fd = va_arg(args, int);
+		if (fd > 2)
+			close(fd);
+		i++;
+	}
+}
+
 int	handle_cmd(char *input, char **envp)
 {
 	char	**split;
@@ -76,19 +93,18 @@ int	handle_cmd(char *input, char **envp)
 	while (split && split[i])
 		i++;
 	if (i > 1)
-		status = ft_pipes(i, split, fd, envp);
+		status = (free(input), ft_pipes(i, split, fd, envp));
 	else if (check_exit(input) == EXIT)
 		return (free_split(split), free(input), EXIT);
-	if ((free_split(split), 1) && i <= 1 && !built_in(input, fd[0], fd[1], envp))
+	if (i <= 1 && (free_split(split), 1))
 	{
 		i = fork();
 		if (i == 0)
 			exec_cmd(input, fd[0], fd[1], envp);
 		waitpid(i, &status, 0);
+		free(input);
 	}
-	if ((fd[0] > 0 && (close(fd[0]), 0)) || (fd[1] > 1 && (close(fd[1]), 1)))
-		i = 0;
-	return (free(input), WEXITSTATUS(status));
+	return (ft_close(fd[0], fd[1]), WEXITSTATUS(status));
 }
 
 int	built_in(char *input, int fd_in, int fd_out, char **envp)
