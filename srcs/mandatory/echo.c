@@ -17,12 +17,11 @@ char	*get_variable(char *input, int *x)
 	char	*variable;
 	char	*to_return;
 
-	x = 0;
-	while (input[*x] && input[*x] != ' ' && input[*x] != '\'' && input[*x] != '\"')
+	while (input[*x] && (ft_isalpha(input[*x]) || input[*x] == '_'))
 		(*x)++;
 	variable = malloc(sizeof(char) * (*x + 1));
-	x = 0;
-	while (input[*x] && input[*x] != ' ' && input[*x] != '\'' && input[*x] != '\"')
+	*x = 0;
+	while (input[*x] && (ft_isalpha(input[*x]) || input[*x] == '_'))
 	{
 		variable[*x] = input[*x];
 		(*x)++;
@@ -30,7 +29,7 @@ char	*get_variable(char *input, int *x)
 	variable[*x] = '\0';
 	to_return = getenv(variable);
 	free(variable);
-	if (to_return)
+	if (!to_return)
 		return (NULL);
 	return (to_return);
 }
@@ -40,8 +39,11 @@ static void	print_variable(char *input, int *i)
 	char	*to_print;
 	int		x;
 
+	x = 0;
 	input = input + ++(*i);
 	to_print = get_variable(input, &x);
+	if (!to_print && !input[0])
+		return ((void)write(1, "$", 1));
 	if (!to_print)
 		return (*i += x, (void)0);
 	write(1, to_print, ft_strlen(to_print));
@@ -65,13 +67,11 @@ static void	print_echo_input(char *input, int *i)
 		}
 		if (input[*i] && input[*i] == '$' && \
 		((p == '\"' && input[*i + 1] != '\"') || !p))
-		{
 			print_variable(input, i);
-			continue ;
-		}
-		write(1, &input[(*i)++], 1);
+		else if (input[*i])
+			write(1, &input[(*i)++], 1);
 	}
-	if (input[*i] == ' ')
+	if (input[*i] && input[*i] == ' ')
 		write(1, &input[(*i)++], 1);
 	if (p && !input[*i])
 		p = '\0';
@@ -95,7 +95,7 @@ void	echo_cmd(char *input)
 			print_variable(input, &i);
 		else
 			print_echo_input(input, &i);
-		while (input[i] == ' ')
+		while (input[i] && input[i] == ' ')
 			i++;
 	}
 	if (ft_strncmp(input, "-n", 2))
