@@ -55,7 +55,6 @@ void	exec_cmd(char *cmd, int fd_in, int fd_out, char *envp[])
 		exit((free_split(args), free(path), free(s), free(cmd), status));
 	}
 	execve(path, args, envp);
-	write(STDERR_FILENO, "minishell: line 1: ", 19);
 	if (errno == ENOENT)
 	{
 		write(STDERR_FILENO, s, ft_strlen(s));

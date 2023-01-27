@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void	cd_cmd(char *line)
+/* void	cd_cmd(char *line)
 {
 	char	*str;
 	char	*path;
@@ -31,13 +31,43 @@ void	cd_cmd(char *line)
 				perror("");
 			free(path);
 		}
+		if (ft_strchr(str, '-'))
 		else if (chdir(ft_strchr(str, ' ') + 1) < 0)
 			perror("");
 	}
 	free(str);
 }
+ */
 
-/* give SHORT (or 0 for full path) as option */
+int	cd_cmd(char *line)
+{
+	char	*path;
+	char	**split;
+	int		i;
+
+	split = ft_split(line, ' ');
+	i = 0;
+	while (split[i])
+		i++;
+	if (i == 1)
+		path = ft_strdup(getenv("HOME"));
+	else if (i > 2)
+		return (write(2, "minishell: cd: too many arguments\n", 34), 1);
+	else if (!ft_strncmp(split[1], "-", 1) && ft_strlen(split[1]) == 1)
+		path = ft_strdup(getenv("OLDPWD"));
+	else if (split[1][0] == '~')
+		path = ft_strjoin(getenv("HOME"), split[1] + 1);
+	else
+	{
+		path = ft_strdup(split[1]);
+		ft_printf("%s\n", path);
+	}
+	if ((free_split(split), chdir(path)) < 0)
+		return (perror(""), free(path), EXIT_FAILURE);
+	return (free(path), 0);
+}
+
+/* option=SHORT: path with ~ ; option=0: full path */
 char	*get_current_path(int option)
 {
 	char	*home;

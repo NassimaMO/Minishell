@@ -49,7 +49,7 @@ void	echo_cmd(char *input);
 
 /* path.c */
 void	pwd_cmd(char *input);
-void	cd_cmd(char *line);
+int		cd_cmd(char *line);
 char	*get_current_path(int option);
 
 /* env */
