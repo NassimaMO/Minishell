@@ -96,7 +96,7 @@ int	handle_cmd(char *input, char **envp)
 		status = (free(input), ft_pipes(i, split, fd, envp));
 	else if (check_exit(input) == EXIT)
 		return (free_split(split), free(input), EXIT);
-	if (i <= 1 && (free_split(split), 1))
+	if (i == 1 && (free_split(split), 1) && !ft_strnstr(input, "cd", ft_strlen(input)))
 	{
 		i = fork();
 		if (i == 0)
@@ -104,6 +104,8 @@ int	handle_cmd(char *input, char **envp)
 		waitpid(i, &status, 0);
 		free(input);
 	}
+	else if (i == 1 && ft_strnstr(input, "cd", ft_strlen(input)))
+		free((cd_cmd(input), input));
 	return (ft_close(2, fd[0], fd[1]), WEXITSTATUS(status));
 }
 

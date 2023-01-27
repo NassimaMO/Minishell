@@ -16,15 +16,19 @@ int	is_built_in(char *cmd)
 {
 	static char	*cmds[6] = {"echo", "cd", "pwd", "env", "export", "unset"};
 	int			i;
+	char		*s;
 
 	i = 0;
+	cmd = ft_strdup(cmd);
+	s = ft_strtrim(cmd, " ");
+	free(cmd);
 	while (i < 6)
 	{
-		if (!strncmp(cmd, cmds[i], ft_strlen(cmds[i])))
-			return (1);
+		if (!strncmp(s, cmds[i], ft_strlen(cmds[i])))
+			return (free(s), 1);
 		i++;
 	}
-	return (0);
+	return (free(s), 0);
 }
 
 void	exec_cmd(char *cmd, int fd_in, int fd_out, char *envp[])
@@ -133,7 +137,6 @@ int	ft_pipes(int nb, char **cmds, int fd[], char *envp[])
 		{
 			cmd = ft_strdup(cmds[i]);
 			free_split(cmds);
-			//ft_close(2, fd[0], fd[1]);
 			exec_cmd(cmd, fi(i, fd, pipes), fo(i, nb, fd, pipes), envp);
 		}
 		if (!i++)
