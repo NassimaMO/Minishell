@@ -71,34 +71,60 @@ static void	print_echo_input(char *input, int *i)
 		else if (input[*i])
 			write(1, &input[(*i)++], 1);
 	}
-	if (input[*i] && input[*i] == ' ')
-		write(1, &input[(*i)++], 1);
 	if (p && !input[*i])
 		p = '\0';
+}
+
+int	skip_newline(char *input, int *tmp)
+{
+	int	i;
+
+	i = 0;
+	while (!ft_strncmp(input + i, "-n", 2) || !ft_strncmp(input + i, "\"-n\"", 2))
+	{
+		*tmp = i;
+		if (!ft_strncmp(input + i, "-n", 2))
+			i += 2;
+		else
+			i += 4;
+		while (input[i] && input[i] == 'n')
+			i++;
+		if (input[i] && input[i] != 'n' && input[i] != ' ')
+		{
+			i = *tmp;
+			break ;
+		}
+			while (input[i] && input[i] == ' ')
+				i++;
+	}
+	*tmp = i;
+	return (i);
 }
 
 void	echo_cmd(char *input)
 {
 	int	i;
+	int	tmp;
+	int temp;
 
-	i = 0;
+	temp = 0;
+	tmp = 0;
 	input = ft_strtrim(input, " ");
-	if (!ft_strncmp(input, "-n", 2))
-	{
-		i += 2;
-		while (input[i] && input[i] == ' ')
-			i++;
-	}
+	i = skip_newline(input, &tmp);
 	while (input[i])
 	{
 		if (input[i] == '$')
 			print_variable(input, &i);
+		else if (input[i] == '~' && !ft_isalpha(input[i + 1]))
+			(print_variable("$HOME", &temp), temp = 0, i++);
 		else
 			print_echo_input(input, &i);
+		if (input[i] && input[i] == ' ')
+			write(1, &input[i++], 1);
 		while (input[i] && input[i] == ' ')
 			i++;
 	}
-	if (ft_strncmp(input, "-n", 2))
+	if (!tmp)
 		write(1, "\n", 1);
 	free(input);
 }
