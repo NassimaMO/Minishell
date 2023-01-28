@@ -7,7 +7,7 @@
 ->	#echo -nn hello#
 	#echo -n -n hello#
 	#echo "-n" hello#
-	echo -nn"nn" hello !!!!!!!!!!
+	#echo -nn"nn" hello#
 	doivent afficher: hello (sans \n)
 
 ->	#echo -n"-n" hello#
@@ -15,6 +15,7 @@
 	doivent afficher: -n-n hello (avec \n)
 
 ->	#echo "-n -n" hello#
+	#echo -n" -n" hello#
 	doit afficher: -n -n hello (avec \n)
 
 2) Meta caracteres :
@@ -22,10 +23,8 @@
 ->	#echo ~ equivaut a echo $HOME#
 	#echo ~/ equivaut a echo $HOME/#
 	#echo ~/x equivaut a echo $HOME/x#
-	echo ~:x equivaut a echo $HOME:x !!!!
-	echo ~. equivaut a echo ~. !!!!!
-	echo ~, equivaut a echo ~, !!!!!
-	echo ~; equivaut a echo $HOME !!!!!!
+	#echo ~:x equivaut a echo $HOME:x#
+	#echo ~; equivaut a echo $HOME#
 
 ->	#echo "~" doit afficher: ~#
 	#echo '~' doit afficher: ~#
