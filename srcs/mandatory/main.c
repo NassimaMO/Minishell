@@ -30,6 +30,8 @@ int	exit_code(int mode, int code)
 - file redirection : <<
 - built_in variable "$?" (last exit code) */
 
+pid_t g_pid;
+
 int	main(int argc, char *argv[])
 {
 	int	env_len;
@@ -40,6 +42,7 @@ int	main(int argc, char *argv[])
 	while (1)
 	{
 		print_shell();
+		g_pid = getpid();
 		if (handle_cmd(get_input(), &env_len) == EXIT)
 			break ;
 	}

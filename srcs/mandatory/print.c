@@ -55,7 +55,6 @@ char	*get_name(char *cmd)
 	int		len;
 	int		stdclone;
 	char	*name;
-	int		status;
 	pid_t	pid;
 
 	ft_bzero(fd, sizeof(int) * 2);
@@ -70,11 +69,8 @@ char	*get_name(char *cmd)
 	name = ft_strdup(cmd);
 	if (pid == 0)
 		exec_cmd(name, STDIN_FILENO, (close(stdclone), close(fd[0]), fd[1]), &len);
-	wait(&status);
-	if (!status)
-		name = (free(name), get_next_line(fd[0]));
-	else
-		*name = 0;
+	wait(NULL);
+	name = (free(name), get_next_line(fd[0]));
 	close((dup2(stdclone, STDERR_FILENO), stdclone));
 	if (ft_strchr(name, '.'))
 		*ft_strchr(name, '.') = '\0';
