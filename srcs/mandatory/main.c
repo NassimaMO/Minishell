@@ -40,7 +40,7 @@ int	main(int argc, char *argv[])
 	while (1)
 	{
 		print_shell();
-		if (handle_cmd(get_input(), env_len) == EXIT)
+		if (handle_cmd(get_input(), &env_len) == EXIT)
 			break ;
 	}
 	(void)argc;

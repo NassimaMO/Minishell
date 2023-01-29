@@ -55,17 +55,29 @@ void	print_shell(void)
 	char		*path;
 	int			fd[2];
 	pid_t		pid;
+	int			len;
+	int			status;
+	int			stdclone;
 
 	ft_bzero(fd, sizeof(int) * 2);
+	len = split_len(environ);
 	if (pipe(fd) < 0)
 		return (perror(""), ft_close(2, fd[0], fd[1]));
+	stdclone = dup(STDERR_FILENO);
+	close(STDERR_FILENO);
 	pid = fork();
 	if (pid < 0)
 		return (perror(""), ft_close(2, fd[0], fd[1]));
+	name = ft_strdup("/bin/hostname");
 	if (pid == 0)
-		exit((exec_cmd("hostname", STDIN_FILENO, fd[1], split_len(environ)), 0));
-	name = get_next_line(fd[0]);
-	wait(NULL);
+		exec_cmd(name, STDIN_FILENO, (close(stdclone), close(fd[0]), fd[1]), &len);
+	wait(&status);
+	if (!status)
+		name = (free(name), get_next_line(fd[0]));
+	else
+		*name = 0;
+	dup2(stdclone, STDERR_FILENO);
+	close(stdclone);
 	if (ft_strchr(name, '.'))
 		*ft_strchr(name, '.') = '\0';
 	else if (ft_strchr(name, '\n'))

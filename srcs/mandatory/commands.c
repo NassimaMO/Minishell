@@ -22,7 +22,7 @@ void	redirect_stdin(char *str, int fd[2])
 	if (!ft_strchr(str, '<'))
 		return ;
 	line = ft_strdup(str);
-	name = ft_strtrim(ft_strchr(line, '<') + 1, " ");
+	name = ft_strtrim(ft_strchr(line, '<') + 1, " \t");
 	*ft_strchr(line, '<') = 0;
 	line = gnl_join(line, ft_strchr(name, 32), ft_strlen(ft_strchr(name, 32)));
 	if (ft_strchr(name, ' '))
@@ -50,7 +50,7 @@ void	redirect_stdout(char *str, int fd[2])
 		append = 1;
 		name ++;
 	}
-	name = ft_strtrim(name, " ");
+	name = ft_strtrim(name, " \t");
 	*ft_strchr(line, '>') = 0;
 	line = gnl_join(line, ft_strchr(name, 32), ft_strlen(ft_strchr(name, 32)));
 	if (ft_strchr(name, ' '))
@@ -79,7 +79,7 @@ void	ft_close(int nb, ...)
 	}
 }
 
-int	handle_cmd(char *input, int env_len)
+int	handle_cmd(char *input, int *env_len)
 {
 	char	**split;
 	int		i;
@@ -96,7 +96,7 @@ int	handle_cmd(char *input, int env_len)
 		status = (free(input), ft_pipes(i, split, fd, env_len));
 	else if (check_exit(input) == EXIT)
 		return (free_split(split), free(input), EXIT);
-	if (i == 1 && (free_split(split), 1) && !is_built_in(input))
+	if (i == 1 && !is_built_in(input) && (free_split(split), 1))
 	{
 		i = fork();
 		if (i == 0)
@@ -104,19 +104,19 @@ int	handle_cmd(char *input, int env_len)
 		waitpid(i, &status, 0);
 		free(input);
 	}
-	else if (i == 1)
-		free((built_in(input, fd[0], fd[1], environ), input));
+	else if (i <= 1 && (split && (free_split(split), 1)))
+		free((built_in(input, fd[0], fd[1], env_len), input));
 	return (ft_close(2, fd[0], fd[1]), WEXITSTATUS(status));
 }
 
-int	built_in(char *input, int fd_in, int fd_out, char **envp)
+int	built_in(char *input, int fd_in, int fd_out, int *env_len)
 {
 	char	*line;
 	int		std[2];
 	int		b;
 
 	b = 1;
-	line = ft_strtrim(input, " ");
+	line = ft_strtrim(input, " \t");
 	std[0] = dup(STDIN_FILENO);
 	std[1] = dup(STDOUT_FILENO);
 	dup2(fd_out, (dup2(fd_in, 0), 1));
@@ -127,11 +127,11 @@ int	built_in(char *input, int fd_in, int fd_out, char **envp)
 	else if (!ft_strncmp(line, "cd", 2))
 		cd_cmd(line);
 	else if (!ft_strncmp(line, "env", 3))
-		env_cmd(line, envp);
+		env_cmd(line);
 	else if (!ft_strncmp(line, "export", 6))
-		export_cmd(line, envp);
+		export_cmd(line);
 	else if (!ft_strncmp(line, "unset", 5))
-		unset_cmd(line, envp);
+		unset_cmd(line, env_len);
 	else
 		b = 0;
 	dup2(std[1], (dup2(std[0], 0), 1));

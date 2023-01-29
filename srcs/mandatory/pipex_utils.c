@@ -91,7 +91,7 @@ char	*get_pathname(char *cmd, char *envp[])
 
 	split = get_path(envp);
 	i = 0;
-	cmd = ft_strtrim(cmd, " ");
+	cmd = ft_strtrim(cmd, " \t");
 	if (!cmd || !split)
 		return (cmd);
 	while (split[i])

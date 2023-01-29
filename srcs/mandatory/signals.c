@@ -31,6 +31,6 @@ void	signals(void)
 	ft_bzero(&sa, sizeof(struct sigaction));
 	sa.sa_handler = &ft_handler;
 	sa.sa_flags = SA_RESTART;
-	sigaction(SIGINT, &sa, NULL);
+	//sigaction(SIGINT, &sa, NULL);
 	sigaction(SIGQUIT, &sa, NULL);
 }

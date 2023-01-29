@@ -26,55 +26,59 @@ int	valid_var_name(char *name)
 	return (1);
 }
 
-void	add_var(char *name, char *line, char **envp)
+void	add_var(char *name, char *line)
 {
 	int		i;
 	char	*tmp;
 
 	tmp = ft_strjoin(name, "=");
 	i = 0;
-	while (envp[i])
+	while (environ[i])
 	{
-		if (!ft_strncmp(envp[i], tmp, ft_strlen(tmp)))
-			return (ft_strlcpy(envp[i], line, ft_strlen(line) + 1), free(tmp));
+		if (!ft_strncmp(environ[i], tmp, ft_strlen(tmp)))
+		{
+			if (ft_strchr(line, '='))
+				return (ft_strlcpy(environ[i], line, ft_strlen(line) + 1), free(tmp));
+			return (free(tmp));
+		}
 		i++;
 	}
-	envp[i] = ft_strdup(line);
-	ft_strlcpy(envp[i], line, ft_strlen(line) + 1);
-	envp[i + 1] = NULL;
+	environ[i] = ft_strdup(line);
+	ft_strlcpy(environ[i], line, ft_strlen(line) + 1);
+	environ[i + 1] = NULL;
 	free(tmp);
 }
 
 /* need error text when '=' alone */
-void	export_cmd(char *line, char **envp)
+void	export_cmd(char *line)
 {
 	char	*name;
 
 	if (ft_strlen(line) == 6)
-		return (print_export(envp));
+		return (print_export(environ));
 	if (!ft_strncmp(line, "export", 6))
-		line = ft_strtrim(ft_strchr(line, ' '), " ");
+		line = ft_strtrim(ft_strchr(line, ' '), " \t");
 	if (ft_strchr(line, ' '))
 	{
-		export_cmd(ft_strtrim(ft_strchr(line, ' '), " "), envp);
+		export_cmd(ft_strtrim(ft_strchr(line, ' '), " \t"));
 		*ft_strchr(line, ' ') = '\0';
 	}
 	name = ft_strdup(line);
 	if (ft_strchr(name, '='))
 		*ft_strchr(name, '=') = '\0';
 	else
-		line = (free(line), gnl_join(ft_strdup(name), "=''", 3));
+		return (free(line));
 	if (!valid_var_name(name))
 	{
 		ft_printf("export: not valid in this context: %s\n", name);
 		return (free(name), free(line));
 	}
-	add_var(name, line, envp);
+	add_var(name, line);
 	free(name);
 	free(line);
 }
 
-void	unset_cmd(char *line, char **envp)
+void	unset_cmd(char *line, int *env_len)
 {
 	int	i;
 
@@ -82,20 +86,22 @@ void	unset_cmd(char *line, char **envp)
 		return ((void)ft_printf("unset: not enough arguments\n"));
 	i = 0;
 	if (!ft_strncmp(line, "unset", 5))
-		line = ft_strtrim(ft_strchr(line, ' '), " ");
+		line = ft_strtrim(ft_strchr(line, ' '), " \t");
 	if (ft_strchr(line, ' '))
 	{
-		unset_cmd(ft_strtrim(ft_strchr(line, ' '), " "), envp);
+		unset_cmd(ft_strtrim(ft_strchr(line, ' '), " \t"), env_len);
 		*ft_strchr(line, ' ') = '\0';
 	}
-	while (envp[i])
+	while (environ[i])
 	{
-		if (!ft_strncmp(envp[i], line, ft_strlen(line)))
+		if (!ft_strncmp(environ[i], line, ft_strlen(line)))
 		{
-			free(envp[i]);
-			while (envp[++i])
-				envp[i - 1] = envp[i];
-			envp[i - 1] = NULL;
+			if (i >= *env_len)
+				free(environ[i]);
+			(*env_len) -= (i < *env_len);
+			while (environ[++i])
+				environ[i - 1] = environ[i];
+			environ[i - 1] = NULL;
 		}
 		else
 			i++;
@@ -103,12 +109,12 @@ void	unset_cmd(char *line, char **envp)
 	free(line);
 }
 
-void	env_cmd(char *input, char **envp)
+void	env_cmd(char *input)
 {
-	input = ft_strtrim(input, " ");
+	input = ft_strtrim(input, " \t");
 	if (ft_strlen(input) == 3)
 	{
-		print_env(envp);
+		print_env(environ);
 		exit_code(SET, 0);
 	}
 	else

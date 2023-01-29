@@ -114,7 +114,7 @@ void	echo_cmd(char *input)
 
 	temp = 0;
 	tmp = 0;
-	input = ft_strtrim(input, " ");
+	input = ft_strtrim(input, " \t");
 	i = newline_opt(input, &tmp);
 	while (i)
 	{

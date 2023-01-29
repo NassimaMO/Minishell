@@ -53,9 +53,9 @@ int		cd_cmd(char *line);
 char	*get_current_path(int option);
 
 /* env */
-void	export_cmd(char *line, char **envp);
-void	unset_cmd(char *line, char **envp);
-void	env_cmd(char *input, char **envp);
+void	export_cmd(char *line);
+void	unset_cmd(char *line, int *env_len);
+void	env_cmd(char *input);
 
 /* terminal.c */
 void	set_terminal(int option);
@@ -76,18 +76,18 @@ int		exit_code(int mode, int code);
 /* split.c */
 char	**add_split(char **split, char *str);
 void	free_split(char **split);
-int	    split_len(char **split);
+int		split_len(char **split);
 void	free_env(int len);
 
 /* commands.c */
 void	ft_close(int nb, ...);
-int		built_in(char *input, int fd_in, int fd_out, char **envp);
-int	    handle_cmd(char *input, int len_env);
+int		built_in(char *input, int fd_in, int fd_out, int *env_len);
+int		handle_cmd(char *input, int *env_len);
 
 /* pipex.c */
-int 	is_built_in(char *cmd);
-void	exec_cmd(char *cmd, int fd_in, int fd_out, int len_env);
-int	    ft_pipes(int nb, char **cmds, int fd[2], int len_env);
+int		is_built_in(char *cmd);
+void	exec_cmd(char *cmd, int fd_in, int fd_out, int *len_env);
+int		ft_pipes(int nb, char **cmds, int fd[2], int *len_env);
 
 /* pipex_utils.c */
 char	*get_pathname(char *cmd, char *envp[]);

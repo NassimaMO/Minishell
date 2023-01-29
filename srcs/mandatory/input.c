@@ -84,14 +84,14 @@ int	check_exit(char *input)
 
 	if (!input)
 		return (ft_printf("\nexit\n"), EXIT);
-	cmd = ft_strtrim(input, " ");
+	cmd = ft_strtrim(input, " \t");
 	code = 0;
 	if (!ft_strncmp(input, "exit", 4))
 	{
 		ft_printf("exit\n");
 		if (ft_strchr(cmd, ' '))
 		{
-			input = ft_strtrim(ft_strchr(cmd, ' '), " ");
+			input = ft_strtrim(ft_strchr(cmd, ' '), " \t");
 			if (ft_strchr(input, ' '))
 				return (ft_printf("exit: too many arguments\n"), \
 				exit_code(SET, 1), free(input), free(cmd), 0);
