@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:23 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/26 13:40:44 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/01/28 14:19:28 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,53 +52,99 @@ static void	print_variable(char *input, int *i)
 
 static void	print_echo_input(char *input, int *i)
 {
-	static char	p;
+	static char	quotes;
 
 	while (input[*i] && input[*i] != ' ')
 	{
 		while (input[*i] && (input[*i] == '\'' || input[*i] == '\"'))
 		{
-			if (!p)
-				p = input[(*i)++];
-			else if (input[*i] == p)
-				p = ((*i)++, '\0');
+			if (!quotes)
+				quotes = input[(*i)++];
+			else if (input[*i] == quotes)
+				quotes = ((*i)++, '\0');
 			else
 				break ;
 		}
 		if (input[*i] && input[*i] == '$' && \
-		((p == '\"' && input[*i + 1] != '\"') || !p))
+		((quotes == '\"' && input[*i + 1] != '\"') || !quotes))
 			print_variable(input, i);
 		else if (input[*i])
 			write(1, &input[(*i)++], 1);
 	}
-	if (input[*i] && input[*i] == ' ')
-		write(1, &input[(*i)++], 1);
-	if (p && !input[*i])
-		p = '\0';
+	if (quotes && !input[*i])
+		quotes = '\0';
+}
+
+int	newline_opt(char *input, int *tmp)
+{
+	int	i;
+	int quote;
+
+	i = 0;
+	quote = 0;
+	if (!ft_strncmp(input + i, "-n", 2) || !ft_strncmp(input + i, "\"-n\"", 3))
+	{
+		*tmp = i;
+		while (input[i] && input[i] != 'n')
+		{
+			if (input[i] == '\'' || input[i] == '\"')
+				quote++;
+			i++;
+		}
+		while (input[i] == 'n')
+		{
+			i++;
+			while (input[i] == '\'' || input[i] == '\"')
+				(quote++, i++);
+		}
+		if (input[i] && ((input[i] != 'n' && input[i] != ' ') \
+			|| (quote % 2 != 0 && input[i] == ' ')))
+			return (i = *tmp, i);
+		while (input[i] && input[i] == ' ')
+			i++;
+	}
+	return (*tmp = i, i);
 }
 
 void	echo_cmd(char *input)
 {
 	int	i;
+	int	tmp;
+	int temp;
 
-	i = 0;
+	temp = 0;
+	tmp = 0;
 	input = ft_strtrim(input, " ");
-	if (!ft_strncmp(input, "-n", 2))
+	i = newline_opt(input, &tmp);
+	while (i)
 	{
-		i += 2;
-		while (input[i] && input[i] == ' ')
-			i++;
+		i += newline_opt(input + i, &temp);
+		if (tmp == i)
+			break;
+		tmp += temp;
 	}
+	temp = 0;
 	while (input[i])
 	{
 		if (input[i] == '$')
 			print_variable(input, &i);
+		else if (input[i] == '~' && (!input[i + 1] || input[i + 1] == '/' \
+			|| input[i + 1] == ':' || input[i + 1] == ';' || input[i + 1] == ' '))
+		{
+			print_variable("$HOME", &temp);
+			temp = 0;
+			i++;
+			if (input[i] == ';')
+				i++;
+		}
 		else
 			print_echo_input(input, &i);
+		if (input[i] && input[i] == ' ')
+			write(1, &input[i++], 1);
 		while (input[i] && input[i] == ' ')
 			i++;
 	}
-	if (ft_strncmp(input, "-n", 2))
+	if (!tmp)
 		write(1, "\n", 1);
 	free(input);
 }
