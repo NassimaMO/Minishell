@@ -17,11 +17,7 @@ extern pid_t g_pid;
 void	ft_handler(int signum, siginfo_t *info, void *context)
 {
 	if (signum == SIGINT)
-	{
-		//ft_printf("|%d|\n", info->si_pid);
 		ft_printf("\n");
-		//print_shell();
-	}
 	if (signum == SIGQUIT && info->si_pid == g_pid)
 	{
 	}
