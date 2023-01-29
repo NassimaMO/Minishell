@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 15:22:40 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/09 15:37:39 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/01/29 11:14:00 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,19 +49,20 @@ void	print_export(char **envp)
 	}
 }
 
-void	print_shell(void)
+char	*print_shell(void)
 {
 	char		*name;
 	char		*path;
+	char		*to_return;
 	int			fd[2];
 	pid_t		pid;
 
 	ft_bzero(fd, sizeof(int) * 2);
 	if (pipe(fd) < 0)
-		return (perror(""), ft_close(2, fd[0], fd[1]));
+		return (perror(""), ft_close(2, fd[0], fd[1]), NULL);
 	pid = fork();
 	if (pid < 0)
-		return (perror(""), ft_close(2, fd[0], fd[1]));
+		return (perror(""), ft_close(2, fd[0], fd[1]), NULL);
 	if (pid == 0)
 		exit((exec_cmd("hostname", STDIN_FILENO, fd[1], environ), 0));
 	name = get_next_line(fd[0]);
@@ -71,7 +72,11 @@ void	print_shell(void)
 	else if (ft_strchr(name, '\n'))
 		*ft_strchr(name, '\n') = '\0';
 	path = get_current_path(SHORT);
-	ft_printf("%s@%s:%s$ ", getenv("USER"), name, path);
+	to_return = ft_strjoin(getenv("USER"), "@");
+	to_return = gnl_join(to_return, name, ft_strlen(name));
+	to_return = gnl_join(to_return, ":", ft_strlen(":"));
+	to_return = gnl_join(to_return, path, ft_strlen(path));
+	to_return = gnl_join(to_return, "$ ", ft_strlen("$ "));
 	ft_close(2, fd[0], fd[1]);
-	return (free(name), free(path));
+	return (free(name), free(path), to_return);
 }

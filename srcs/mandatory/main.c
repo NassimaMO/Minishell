@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:02:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/09 18:31:21 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/01/29 11:04:54 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ int	main(int argc, char *argv[])
 	set_terminal(SET);
 	while (1)
 	{
-		print_shell();
 		if (handle_cmd(get_input(), environ) == EXIT)
 			break ;
 	}

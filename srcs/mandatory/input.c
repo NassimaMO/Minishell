@@ -3,37 +3,49 @@
 /*                                                        :::      ::::::::   */
 /*   input.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 06:51:04 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/11 06:51:05 by nghulam-         ###   ########.fr       */
+/*   Updated: 2023/01/29 13:31:47 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/*while (!ft_strncmp((str = readline(" ")), "\n", 1))
+void	ft_add_history(char *str)
 {
-	if (strlen(str) > 0)
-		add_history(str);
-}*/
+	static char *BUF;
+	static int	len;
+
+	if (!len)
+	{}
+}
 
 char	*get_input(void)
 {
 	char			*str;
-	char			buff[1];
-	int				bytes;
+	char			*shell;
+	//char			buff[1];
+	//int				bytes;
 
-	bytes = read(0, ft_memset(buff, 0, 1), 1);
-	str = ft_strdup("");
-	while (str && bytes >= 0 && *buff != '\n')
+	shell = print_shell();
+	while (ft_strchr((str = readline(shell)), '\n'))
+	{
+		//if (strlen(str))
+		ft_add_history(str);
+		free(str);
+	}
+	free(shell);
+	/*bytes = read(0, ft_memset(buff, 0, 1), 1);
+		str = ft_strdup("");
+		while (str && bytes >= 0 && *buff != '\n')
 	{
 		if ((bytes == 0 || *buff == 0 || *buff == 4) && !*str)
 			return (free(str), NULL);
 		if (ft_isprint(*buff))
 			str = gnl_join(str, buff, 1);
 		bytes = read(0, ft_memset(buff, 0, 1), 1);
-	}
+	}*/
 	return (str);
 }
 
