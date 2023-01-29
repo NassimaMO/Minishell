@@ -49,26 +49,25 @@ void	print_export(char **envp)
 	}
 }
 
-void	print_shell(void)
+char	*get_name(char *cmd)
 {
-	char		*name;
-	char		*path;
-	int			fd[2];
-	pid_t		pid;
-	int			len;
-	int			status;
-	int			stdclone;
+	int		fd[2];
+	int		len;
+	int		stdclone;
+	char	*name;
+	int		status;
+	pid_t	pid;
 
 	ft_bzero(fd, sizeof(int) * 2);
 	len = split_len(environ);
 	if (pipe(fd) < 0)
-		return (perror(""), ft_close(2, fd[0], fd[1]));
+		return (perror(""), ft_close(2, fd[0], fd[1]), NULL);
 	stdclone = dup(STDERR_FILENO);
 	close(STDERR_FILENO);
 	pid = fork();
 	if (pid < 0)
-		return (perror(""), ft_close(2, fd[0], fd[1]));
-	name = ft_strdup("/bin/hostname");
+		return (perror(""), ft_close(2, fd[0], fd[1]), NULL);
+	name = ft_strdup(cmd);
 	if (pid == 0)
 		exec_cmd(name, STDIN_FILENO, (close(stdclone), close(fd[0]), fd[1]), &len);
 	wait(&status);
@@ -76,14 +75,23 @@ void	print_shell(void)
 		name = (free(name), get_next_line(fd[0]));
 	else
 		*name = 0;
-	dup2(stdclone, STDERR_FILENO);
-	close(stdclone);
+	close((dup2(stdclone, STDERR_FILENO), stdclone));
 	if (ft_strchr(name, '.'))
 		*ft_strchr(name, '.') = '\0';
 	else if (ft_strchr(name, '\n'))
 		*ft_strchr(name, '\n') = '\0';
+	return (ft_close(2, fd[0], fd[1]), name);
+}
+
+void	print_shell(void)
+{
+	char	*name;
+	char	*user;
+	char	*path;
+
+	name = get_name("/bin/hostname");
+	user = get_name("/bin/users");
 	path = get_current_path(SHORT);
-	ft_printf("%s@%s:%s$ ", getenv("USER"), name, path);
-	ft_close(2, fd[0], fd[1]);
-	return (free(name), free(path));
+	ft_printf("%s@%s:%s$ ", user, name, path);
+	return (free(name), free(path), free(user));
 }
