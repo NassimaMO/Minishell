@@ -90,7 +90,7 @@ void	print_shell(void)
 	char	*path;
 
 	name = get_name("/bin/hostname");
-	user = get_name("/bin/users");
+	user = get_name("/bin/id -u -n");
 	path = get_current_path(SHORT);
 	ft_printf("%s@%s:%s$ ", user, name, path);
 	return (free(name), free(path), free(user));
