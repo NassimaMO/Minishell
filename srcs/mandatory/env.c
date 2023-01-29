@@ -35,7 +35,7 @@ void	add_var(char *name, char *line, char **envp)
 	i = 0;
 	while (envp[i])
 	{
-		if (!strncmp(envp[i], tmp, ft_strlen(tmp)))
+		if (!ft_strncmp(envp[i], tmp, ft_strlen(tmp)))
 			return (ft_strlcpy(envp[i], line, ft_strlen(line) + 1), free(tmp));
 		i++;
 	}

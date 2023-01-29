@@ -63,7 +63,7 @@ void	print_shell(void)
 	if (pid < 0)
 		return (perror(""), ft_close(2, fd[0], fd[1]));
 	if (pid == 0)
-		exit((exec_cmd("hostname", STDIN_FILENO, fd[1], environ), 0));
+		exit((exec_cmd("hostname", STDIN_FILENO, fd[1], split_len(environ)), 0));
 	name = get_next_line(fd[0]);
 	wait(NULL);
 	if (ft_strchr(name, '.'))

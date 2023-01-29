@@ -46,12 +46,12 @@ void	free_split(char **split)
 	free(split);
 }
 
-int	env_len(char **envp)
+int	split_len(char **split)
 {
 	int	i;
 
 	i = 0;
-	while (envp[i])
+	while (split[i])
 		i++;
 	return (i);
 }

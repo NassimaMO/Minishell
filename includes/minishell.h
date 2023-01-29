@@ -76,17 +76,18 @@ int		exit_code(int mode, int code);
 /* split.c */
 char	**add_split(char **split, char *str);
 void	free_split(char **split);
-int		env_len(char **envp);
+int	    split_len(char **split);
 void	free_env(int len);
 
 /* commands.c */
 void	ft_close(int nb, ...);
 int		built_in(char *input, int fd_in, int fd_out, char **envp);
-int		handle_cmd(char *input, char **envp);
+int	    handle_cmd(char *input, int len_env);
 
 /* pipex.c */
-void	exec_cmd(char *cmd, int fd_in, int fd_out, char *envp[]);
-int		ft_pipes(int nb, char *cmds[], int fd[], char *envp[]);
+int 	is_built_in(char *cmd);
+void	exec_cmd(char *cmd, int fd_in, int fd_out, int len_env);
+int	    ft_pipes(int nb, char **cmds, int fd[2], int len_env);
 
 /* pipex_utils.c */
 char	*get_pathname(char *cmd, char *envp[]);

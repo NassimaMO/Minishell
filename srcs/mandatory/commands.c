@@ -79,7 +79,7 @@ void	ft_close(int nb, ...)
 	}
 }
 
-int	handle_cmd(char *input, char **envp)
+int	handle_cmd(char *input, int env_len)
 {
 	char	**split;
 	int		i;
@@ -93,19 +93,19 @@ int	handle_cmd(char *input, char **envp)
 	while (split && split[i])
 		i++;
 	if (i > 1)
-		status = (free(input), ft_pipes(i, split, fd, envp));
+		status = (free(input), ft_pipes(i, split, fd, env_len));
 	else if (check_exit(input) == EXIT)
 		return (free_split(split), free(input), EXIT);
-	if (i == 1 && (free_split(split), 1) && !ft_strnstr(input, "cd", ft_strlen(input)))
+	if (i == 1 && (free_split(split), 1) && !is_built_in(input))
 	{
 		i = fork();
 		if (i == 0)
-			exec_cmd(input, fd[0], fd[1], envp);
+			exec_cmd(input, fd[0], fd[1], env_len);
 		waitpid(i, &status, 0);
 		free(input);
 	}
-	else if (i == 1 && ft_strnstr(input, "cd", ft_strlen(input)))
-		free((cd_cmd(input), input));
+	else if (i == 1)
+		free((built_in(input, fd[0], fd[1], environ), input));
 	return (ft_close(2, fd[0], fd[1]), WEXITSTATUS(status));
 }
 

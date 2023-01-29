@@ -32,20 +32,20 @@ int	exit_code(int mode, int code)
 
 int	main(int argc, char *argv[])
 {
-	int	len;
+	int	env_len;
 
-	len = env_len(environ);
+	env_len = split_len(environ);
 	signals();
 	set_terminal(SET);
 	while (1)
 	{
 		print_shell();
-		if (handle_cmd(get_input(), environ) == EXIT)
+		if (handle_cmd(get_input(), env_len) == EXIT)
 			break ;
 	}
 	(void)argc;
 	(void)argv;
 	set_terminal(RESET);
-	free_env(len);
+	free_env(env_len);
 	return (exit_code(GET, 0));
 }
