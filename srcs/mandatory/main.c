@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:02:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/29 11:04:54 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/01/29 13:39:13 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,19 +32,20 @@ int	exit_code(int mode, int code)
 
 int	main(int argc, char *argv[])
 {
-	int	len;
+	int	env_len;
 
-	len = env_len(environ);
+	env_len = split_len(environ);
 	signals();
 	set_terminal(SET);
 	while (1)
 	{
-		if (handle_cmd(get_input(), environ) == EXIT)
+		print_shell();
+		if (handle_cmd(get_input(), &env_len) == EXIT)
 			break ;
 	}
 	(void)argc;
 	(void)argv;
 	set_terminal(RESET);
-	free_env(len);
+	free_env(env_len);
 	return (exit_code(GET, 0));
 }

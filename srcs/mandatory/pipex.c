@@ -20,7 +20,7 @@ int	is_built_in(char *cmd)
 
 	i = 0;
 	cmd = ft_strdup(cmd);
-	s = ft_strtrim(cmd, " ");
+	s = ft_strtrim(cmd, " \t");
 	free(cmd);
 	while (i < 6)
 	{
@@ -31,7 +31,7 @@ int	is_built_in(char *cmd)
 	return (free(s), 0);
 }
 
-void	exec_cmd(char *cmd, int fd_in, int fd_out, char *envp[])
+void	exec_cmd(char *cmd, int fd_in, int fd_out, int *len_env)
 {
 	char	**args;
 	char	*path;
@@ -39,7 +39,9 @@ void	exec_cmd(char *cmd, int fd_in, int fd_out, char *envp[])
 	int		status;
 
 	args = get_cmd_args(cmd);
-	s = ft_strtrim(cmd, " ");
+	if (!args)
+		exit((free(cmd), free_env(*len_env), 0));
+	s = ft_strtrim(cmd, " \t");
 	if (ft_strchr(s, ' '))
 		*ft_strchr(s, ' ') = 0;
 	dup2(fd_in, STDIN_FILENO);
@@ -47,22 +49,26 @@ void	exec_cmd(char *cmd, int fd_in, int fd_out, char *envp[])
 	if (ft_strchr(s, '/'))
 		path = relative_path(s);
 	else
-		path = get_pathname(s, envp);
+		path = get_pathname(s, environ);
 	if (is_built_in(cmd))
 	{
-		status = built_in(cmd, fd_in, fd_out, envp);
+		status = built_in(cmd, fd_in, fd_out, len_env);
 		ft_close(2, fd_in, fd_out);
-		exit((free_split(args), free(path), free(s), free(cmd), status));
+		exit((free_split(args), free(path), free(s), free(cmd), free_env(*len_env), status));
 	}
-	execve(path, args, envp);
+	execve(path, args, environ);
 	if (errno == ENOENT)
 	{
 		write(STDERR_FILENO, s, ft_strlen(s));
 		write(STDERR_FILENO, ": command not found\n", 20);
-		exit((free_split(args), free(path), free(s), free(cmd), 127));
+		ft_close(2, fd_in, fd_out);
+		exit((free_split(args), free(path), free(s), free(cmd), free_env(*len_env), 127));
 	}
 	else
-		exit((free_split(args), free(s), free(path), free(cmd), perror(""), 1));
+	{
+		ft_close(2, fd_in, fd_out);
+		exit((free_split(args), free(s), free(path), free(cmd), free_env(*len_env), perror(""), 1));
+	}
 }
 
 int	fi(int i, int fd[], int pipes[])
@@ -115,7 +121,7 @@ int	fo(int i, int nb, int fd[], int pipes[])
 	return (fd_out);
 }
 
-int	ft_pipes(int nb, char **cmds, int fd[], char *envp[])
+int	ft_pipes(int nb, char **cmds, int fd[2], int *len_env)
 {
 	int		pipes[4];
 	pid_t	pid;
@@ -136,7 +142,7 @@ int	ft_pipes(int nb, char **cmds, int fd[], char *envp[])
 		{
 			cmd = ft_strdup(cmds[i]);
 			free_split(cmds);
-			exec_cmd(cmd, fi(i, fd, pipes), fo(i, nb, fd, pipes), envp);
+			exec_cmd(cmd, fi(i, fd, pipes), fo(i, nb, fd, pipes), len_env);
 		}
 		if (!i++)
 			continue ;

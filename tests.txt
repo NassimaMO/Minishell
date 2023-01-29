@@ -52,4 +52,8 @@ quotes
 
 // REDIRECT 
 
-->
+// PATH
+
+-> env -i ./minishell puis ls : doit fonctionner
+-> ./minishell puis unset PATH puis ls : ne doit pas fonctionner
+-> ./minishell puis unset PATH puis /bin/ls : doit fonctionner
