@@ -12,16 +12,16 @@
 
 #include "minishell.h"
 
-void	ft_handler(int signum)
+extern pid_t g_pid;
+
+void	ft_handler(int signum, siginfo_t *info, void *context)
 {
 	if (signum == SIGINT)
-	{
 		ft_printf("\n");
-		print_shell();
-	}
-	if (signum == SIGQUIT)
+	if (signum == SIGQUIT && info->si_pid == g_pid)
 	{
 	}
+	(void)context;
 }
 
 void	signals(void)
@@ -29,8 +29,8 @@ void	signals(void)
 	struct sigaction		sa;
 
 	ft_bzero(&sa, sizeof(struct sigaction));
-	sa.sa_handler = &ft_handler;
-	sa.sa_flags = SA_RESTART;
-	//sigaction(SIGINT, &sa, NULL);
+	sa.sa_sigaction = &ft_handler;
+	sa.sa_flags = SA_SIGINFO;
+	sigaction(SIGINT, &sa, NULL);
 	sigaction(SIGQUIT, &sa, NULL);
 }
