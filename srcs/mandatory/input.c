@@ -3,27 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   input.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 06:51:04 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/11 06:51:05 by nghulam-         ###   ########.fr       */
+/*   Updated: 2023/01/29 14:45:02 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/*while (!ft_strncmp((str = readline(" ")), "\n", 1))
-{
-	if (strlen(str) > 0)
-		add_history(str);
-}*/
-
 char	*get_input(void)
 {
 	char			*str;
+	//char			*shell;
 	char			buff[1];
 	int				bytes;
 
+	/*shell = print_shell();
+	while (ft_strchr((str = readline(shell)), '\n'))
+	{
+		//if (strlen(str))
+		ft_add_history(str);
+		free(str);
+	}
+	free(shell);*/
 	bytes = read(0, ft_memset(buff, 0, 1), 1);
 	str = ft_strdup("");
 	while (str && bytes >= 0 && *buff != '\n')

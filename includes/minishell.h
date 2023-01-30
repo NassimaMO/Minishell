@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:05:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/09 18:31:09 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/01/29 13:40:39 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ int		check_exit(char *input);
 /* print.c */
 void	print_env(char **envp);
 void	print_export(char **envp);
-void	print_shell(void);
+void    print_shell(void);
 
 /* signals.c */
 void	signals(void);
