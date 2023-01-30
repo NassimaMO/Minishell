@@ -33,8 +33,22 @@ char	*get_input(void)
 	{
 		if ((bytes == 0 || *buff == 0 || *buff == 4) && !*str)
 			return (free(str), NULL);
-		if (ft_isprint(*buff))
+		if (*buff == 27)
+		{
+			bytes = read(0, ft_memset(buff, 0, 1), 1);
+			if (*buff == 91)
+			{
+				bytes = read(0, ft_memset(buff, 0, 1), 1);
+				if ('A' <= *buff && *buff <= 'D')
+					ft_printf("\033[1%c", *buff);
+			}
+			*buff = 0;
+		}
+		else if (ft_isprint(*buff))
+		{
 			str = gnl_join(str, buff, 1);
+			ft_printf("%c",  *buff);
+		}
 		bytes = read(0, ft_memset(buff, 0, 1), 1);
 	}
 	return (str);
