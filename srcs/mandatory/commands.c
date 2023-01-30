@@ -79,6 +79,37 @@ void	ft_close(int nb, ...)
 	}
 }
 
+char	**split_pipes(char *input)
+{
+	static char	**split = NULL;
+	char		**final;
+	int			i;
+	char		c;
+
+	i = 0;
+	while (input[i] && input[i] != '|')
+	{
+		if (input[i] == '"' || input[i] == '\'')
+		{
+			c = input[i++];
+			while (input[i] && input[i] != c)
+				i++;
+		}
+		if (input[i])
+			i++;
+	}
+	if (input[i] == '|')
+	{
+		split = add_split(split, ft_substr(input, 0, i));
+		return (split_pipes(input + i + 1));
+	}
+	else
+	{
+		final = add_split(split, ft_strdup(input));
+		return (ft_bzero(&split, sizeof(char **)), final);
+	}
+}
+
 int	handle_cmd(char *input, int *env_len)
 {
 	char	**split;
@@ -89,7 +120,8 @@ int	handle_cmd(char *input, int *env_len)
 	if (!input)
 		return (check_exit(input));
 	redirect_stdout((redirect_stdin(input, fd), input), fd);
-	split = ft_split((ft_bzero(&i, sizeof(int)), input), '|');
+	i = 0;
+	split = split_pipes(input);
 	while (split && split[i])
 		i++;
 	if (i > 1)

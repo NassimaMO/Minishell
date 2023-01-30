@@ -44,6 +44,9 @@
 
 extern char	**environ;
 
+/* ft_split_set.c */
+char	**ft_split_set(char *str, char *charset);
+
 /* echo.c */
 void	echo_cmd(char *input);
 
