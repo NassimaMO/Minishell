@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 06:51:04 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/31 08:41:50 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/01/31 11:52:14 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,14 @@
 
 char	*get_input(void)
 {
-	char			*str;
+	char				*str;
+	long unsigned int	move;
+	static char			**history;
+	static int			len_history;
+	int					history_move;
 	//char			*shell;
-	char			buff[1];
-	int				bytes;
+	char				buff[1];
+	int					bytes;
 
 	/*shell = print_shell();
 	while (ft_strchr((str = readline(shell)), '\n'))
@@ -27,6 +31,8 @@ char	*get_input(void)
 		free(str);
 	}
 	free(shell);*/
+	move = 0;
+	history_move = 0;
 	bytes = read(0, ft_memset(buff, 0, 1), 1);
 	str = ft_strdup("");
 	while (str && bytes >= 0 && *buff != '\n')
@@ -39,17 +45,68 @@ char	*get_input(void)
 			if (*buff == 91)
 			{
 				bytes = read(0, ft_memset(buff, 0, 1), 1);
-				if ('A' <= *buff && *buff <= 'D')
-					ft_printf("\033[1%c", *buff);
+				if ('C' == *buff)
+				{
+					if (move < ft_strlen(str))
+					{
+						ft_printf("\033[1%c", *buff);
+						move++;
+					}
+				}
+				else if (*buff == 'D')
+				{
+					if (move > 0)
+					{
+						ft_printf("\033[1%c", *buff);
+						move--;
+					}
+				}
+				else if (*buff == 'A')
+				{
+					if (history && history_move < len_history)
+					{
+						history_move++;
+						free(str);
+						str = ft_strdup("");
+						str = gnl_join(str, history[len_history - history_move], ft_strlen(history[len_history - history_move]));
+						ft_printf("%s", str);
+						move = 0;
+					}
+				}
+				else if (*buff == 'B')
+				{
+					if (history && history_move > 0)
+					{
+						history_move--;
+						free(str);
+						str = ft_strdup("");
+						str = gnl_join(str, history[len_history - history_move], ft_strlen(history[len_history - history_move]));
+						ft_printf("%s", str);
+						move = 0;
+					}
+				}
 			}
 			*buff = 0;
 		}
 		else if (ft_isprint(*buff))
 		{
 			str = gnl_join(str, buff, 1);
+			move++;
 			ft_printf("%c",  *buff);
 		}
 		bytes = read(0, ft_memset(buff, 0, 1), 1);
+	}
+	if (str)
+	{
+		if (!history)
+		{
+			history = malloc(sizeof(char *) * 2);
+			history[0] = ft_strdup(str);
+			history[1] = NULL;
+		}
+		else
+			history = add_split(history, str);
+		len_history++;
 	}
 	return (str);
 }

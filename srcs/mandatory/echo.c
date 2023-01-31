@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:23 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/28 14:19:28 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/01/31 10:52:15 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,26 +34,20 @@ char	*get_variable(char *input, int *x)
 	return (to_return);
 }
 
-static void	print_variable(char *input, int *i)
+/*void	variables(char *input, int *i)
 {
-	char	*to_print;
-	int		x;
+	
+}*/
 
-	x = 0;
-	input = input + ++(*i);
-	to_print = get_variable(input, &x);
-	if (!to_print && !input[0])
-		return ((void)write(1, "$", 1));
-	if (!to_print)
-		return (*i += x, (void)0);
-	write(1, to_print, ft_strlen(to_print));
-	*i += x;
-}
-
-static void	print_echo_input(char *input, int *i)
+char	*quote_gestion(char *input, int *i)
 {
 	static char	quotes;
+	int			x;
+	char		*variable_tmp;
+	char		*to_return;
 
+	to_return = ft_strdup("");
+	x = 0;
 	while (input[*i] && input[*i] != ' ')
 	{
 		while (input[*i] && (input[*i] == '\'' || input[*i] == '\"'))
@@ -67,18 +61,41 @@ static void	print_echo_input(char *input, int *i)
 		}
 		if (input[*i] && input[*i] == '$' && \
 		((quotes == '\"' && input[*i + 1] != '\"') || !quotes))
-			print_variable(input, i);
+		{
+			variable_tmp = ((*i)++, get_variable(input + *i, &x));
+			if (!variable_tmp && (!input[*i] || input[*i] == ' '))
+				to_return = gnl_join(to_return, "$", 1);
+			else if (variable_tmp)
+				to_return = gnl_join(to_return, variable_tmp, \
+					ft_strlen(variable_tmp));
+			*i += x;
+			x = 0;
+		}
+		else if (input[*i] && input[*i] == '~' && (!input[*i + 1] \
+			|| input[*i + 1] == '/' || input[*i + 1] == ':' \
+			|| input[*i + 1] == ';' || input[*i + 1] == ' '))
+		{
+			variable_tmp = get_variable("HOME", &x);
+			if (variable_tmp)
+				to_return = gnl_join(to_return, variable_tmp, \
+					ft_strlen(variable_tmp));
+			(*i)++;
+			x = 0;
+			if (input[*i] && input[*i] == ';')
+				i++;
+		}
 		else if (input[*i])
-			write(1, &input[(*i)++], 1);
+			to_return = gnl_join(to_return, input + (*i)++, 1);
 	}
 	if (quotes && !input[*i])
 		quotes = '\0';
+	return (to_return);
 }
 
 int	newline_opt(char *input, int *tmp)
 {
 	int	i;
-	int quote;
+	int	quote;
 
 	i = 0;
 	quote = 0;
@@ -95,7 +112,10 @@ int	newline_opt(char *input, int *tmp)
 		{
 			i++;
 			while (input[i] == '\'' || input[i] == '\"')
-				(quote++, i++);
+			{
+				quote++;
+				i++;
+			}
 		}
 		if (input[i] && ((input[i] != 'n' && input[i] != ' ') \
 			|| (quote % 2 != 0 && input[i] == ' ')))
@@ -108,43 +128,35 @@ int	newline_opt(char *input, int *tmp)
 
 void	echo_cmd(char *input)
 {
-	int	i;
-	int	tmp;
-	int temp;
+	char	*output;
+	int		i;
+	int		tmp;
+	int		temp;
 
 	temp = 0;
 	tmp = 0;
+	 write(1, "\n", 1);
+	if (input[0] && input[0] != ' ' && input[0] != '\t')
+		return (ft_printf("echo%s: command not found\n", input), (void)0);
 	input = ft_strtrim(input, " \t");
 	i = newline_opt(input, &tmp);
 	while (i)
 	{
 		i += newline_opt(input + i, &temp);
 		if (tmp == i)
-			break;
+			break ;
 		tmp += temp;
 	}
-	temp = 0;
 	while (input[i])
 	{
-		if (input[i] == '$')
-			print_variable(input, &i);
-		else if (input[i] == '~' && (!input[i + 1] || input[i + 1] == '/' \
-			|| input[i + 1] == ':' || input[i + 1] == ';' || input[i + 1] == ' '))
-		{
-			print_variable("$HOME", &temp);
-			temp = 0;
-			i++;
-			if (input[i] == ';')
-				i++;
-		}
-		else
-			print_echo_input(input, &i);
+		output = quote_gestion(input, &i);
+		(ft_printf("%s", output), free(output));
 		if (input[i] && input[i] == ' ')
 			write(1, &input[i++], 1);
 		while (input[i] && input[i] == ' ')
 			i++;
 	}
-	if (!tmp)
+	if (!tmp || !i)
 		write(1, "\n", 1);
 	free(input);
 }
