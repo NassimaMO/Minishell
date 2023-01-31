@@ -64,7 +64,7 @@ void	env_cmd(char *input);
 void	set_terminal(int option);
 
 /* input.c */
-char	*get_input(void);
+char	*get_input(char ***history);
 int		check_exit(char *input);
 
 /* print.c */
@@ -79,7 +79,7 @@ int		exit_code(int mode, int code);
 /* split.c */
 char	**add_split(char **split, char *str);
 void	free_split(char **split);
-int		split_len(char **split);
+size_t	split_len(char **split);
 void	free_env(int len);
 
 /* commands.c */

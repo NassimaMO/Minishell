@@ -46,9 +46,9 @@ void	free_split(char **split)
 	free(split);
 }
 
-int	split_len(char **split)
+size_t	split_len(char **split)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	while (split[i])

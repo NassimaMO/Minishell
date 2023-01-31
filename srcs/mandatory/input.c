@@ -12,7 +12,58 @@
 
 #include "minishell.h"
 
-char	*get_input(void)
+void	ft_escape(size_t *cursor, size_t *moves, char **str, char **history)
+{
+	char	buff[1];
+
+	if (read(0, ft_memset(buff, 0, 1), 1) == 1 && *buff == '[')
+	{
+		read(0, ft_memset(buff, 0, 1), 1);
+		if ((*buff == 'C' && *cursor < ft_strlen(*str) && ++(*cursor)) || \
+			(*buff == 'D' && *cursor > 0 && (--(*cursor), 1)))
+		{
+			ft_printf("\033[1%c", *buff);
+		}
+		if (history && ((*buff == 'A' && *moves < split_len(history) && \
+		++(*moves)) || (*buff == 'B' && *moves > 0 && (--(*moves), 1))))
+		{
+			ft_printf("\33[2K\r");
+			print_shell();
+			if (*moves == 0)
+				ft_printf("%s", *str);
+			else
+				ft_printf("%s", history[split_len(history) - *moves]);
+		}
+	}
+}
+
+char	*get_input(char ***history)
+{
+	char	*str;
+	char	buff[1];
+	int		bytes;
+	size_t	cursor;
+	size_t	history_moves;
+
+	bytes = read(0, ft_memset(buff, 0, 1), 1);
+	str = ft_strdup("");
+	cursor = 0;
+	history_moves = 0;
+	while (str && bytes >= 0 && *buff != '\n')
+	{
+		if ((bytes == 0 || *buff == 0 || *buff == 4) && !*str)
+			return (free(str), NULL);
+		if (*buff == 27)
+			ft_escape(&cursor, &history_moves, &str, *history);
+		else if (ft_isprint(*buff))
+			str = (cursor++, ft_printf("%c", *buff), gnl_join(str, buff, 1));
+		bytes = read(0, ft_memset(buff, 0, 1), 1);
+	}
+	*history = add_split(*history, ft_strdup(str));
+	return (ft_printf("\n"), str);
+}
+
+/* char	*get_input(void)
 {
 	char				*str;
 	long unsigned int	move;
@@ -23,14 +74,14 @@ char	*get_input(void)
 	char				buff[1];
 	int					bytes;
 
-	/*shell = print_shell();
+	shell = print_shell();
 	while (ft_strchr((str = readline(shell)), '\n'))
 	{
 		//if (strlen(str))
 		ft_add_history(str);
 		free(str);
 	}
-	free(shell);*/
+	free(shell);
 	move = 0;
 	history_move = 0;
 	bytes = read(0, ft_memset(buff, 0, 1), 1);
@@ -109,7 +160,7 @@ char	*get_input(void)
 		len_history++;
 	}
 	return (str);
-}
+} */
 
 int	str_into_int(char *s, void *ptr, int size, int p)
 {
