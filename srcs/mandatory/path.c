@@ -18,7 +18,7 @@ int	cd_cmd(char *line)
 	char	**split;
 	int		i;
 
-	split = ft_split(line, ' ');
+	split = ft_split_set(line, " \t");
 	i = 0;
 	while (split[i])
 		i++;

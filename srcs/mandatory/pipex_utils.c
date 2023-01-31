@@ -28,11 +28,12 @@ static char	**get_arg(char **split, const char *cmd, int *i)
 			(*i)++;
 		(*i)++;
 	}
-	else if (cmd[*i] && cmd[*i] != ' ')
+	else if (cmd[*i] && cmd[*i] != ' ' && cmd[*i] != '\t')
 	{
 		str = ft_strdup(cmd + *i);
 		j = *i;
-		while (cmd[*i] && cmd[*i] != ' ' && cmd[*i] != '\'' && cmd[*i] != '"')
+		while (cmd[*i] && cmd[*i] != ' ' && cmd[*i] != '\t' \
+		&& cmd[*i] != '\'' && cmd[*i] != '"')
 			(*i)++;
 		str[*i - j] = 0;
 		split = add_split(split, str);
@@ -50,7 +51,7 @@ char	**get_cmd_args(const char *cmd)
 	while (cmd[i])
 	{
 		split = get_arg(split, cmd, &i);
-		while (cmd[i] == ' ')
+		while (cmd[i] == ' ' || cmd[i] == '\t')
 			i++;
 	}
 	return (split);
