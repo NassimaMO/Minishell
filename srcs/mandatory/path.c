@@ -74,7 +74,7 @@ int	pwd_cmd(char *input)
 		path = get_current_path(FULL);
 	else
 	{
-		ft_printf("pwd: too many arguments\n");
+		ft_printf("pwd: %s\n", S2ARG);
 		return (free(input), EXIT_FAILURE);
 	}
 	ft_printf("%s\n", path);

@@ -31,9 +31,12 @@
 
 # define RESET 0
 # define SET 1
-# define GET 2
 
-# define EXIT -1
+# define EXIT 1
+
+# define S2ARG "not enough arguments"
+# define SARG "too many arguments"
+# define SNUM "numeric argument required"
 
 /* (O_RDWR | O_CREAT | O_TRUNC) */
 # define O_FLAG 578
@@ -48,7 +51,7 @@ extern char	**environ;
 char	**ft_split_set(char *str, char *charset);
 
 /* echo.c */
-void	echo_cmd(char *input);
+int		echo_cmd(char *input);
 
 /* path.c */
 int		pwd_cmd(char *input);
@@ -71,21 +74,20 @@ int		check_exit(char *input, int *exit_code);
 /* print.c */
 void	print_env(char **envp);
 void	print_export(char **envp);
-void    print_shell(void);
+void	print_shell(void);
 
 /* signals.c */
 void	signals(void);
-/* int		exit_code(int mode, int code);
- */
+
 /* split.c */
 char	**add_split(char **split, char *str);
 void	free_split(char **split);
 size_t	split_len(char **split);
-void	free_env();
+void	free_env(void);
 
 /* commands.c */
 void	ft_close(int nb, ...);
-int		built_in(char *input, int fd_in, int fd_out);
+void	built_in(char *input, int fd_in, int fd_out, int *exit_code);
 int		handle_cmd(char *input, int *env_len);
 
 /* pipex.c */

@@ -35,6 +35,10 @@ void	ft_escape(size_t *cursor, size_t *moves, char **str, char **history)
 				ft_printf("%s", history[split_len(history) - *moves]);
 		}
 	}
+	else
+	{
+		// delete
+	}
 }
 
 char	*get_input(char ***history)
@@ -226,12 +230,11 @@ int	check_exit(char *input, int *exit_code)
 			input = ft_strtrim(ft_strchr(cmd, ' '), " \t");
 			if (ft_strchr(input, ' '))
 			{
-				*exit_code = 1;
-				return (ft_printf("exit: too many arguments\n"), \
-				free(input), free(cmd), 0);
+				*exit_code = (free(input), free(cmd), 1);
+				return (ft_printf("exit: %s\n", S2ARG), 0);
 			}
 			if (ft_atoi_error(input, &exit_code, sizeof(char)) < 0)
-				*exit_code = (ft_printf("exit: %s: numeric argument required\n"), 2);
+				*exit_code = (ft_printf("exit: %s: %s\n", input, SNUM), 2);
 			free(input);
 		}
 		return (free(cmd), EXIT);

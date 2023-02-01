@@ -126,7 +126,7 @@ int	newline_opt(char *input, int *tmp)
 	return (*tmp = i, i);
 }
 
-void	echo_cmd(char *input)
+int	echo_cmd(char *input)
 {
 	char	*output;
 	int		i;
@@ -135,9 +135,9 @@ void	echo_cmd(char *input)
 
 	temp = 0;
 	tmp = 0;
-	 write(1, "\n", 1);
+	write(1, "\n", 1);
 	if (input[0] && input[0] != ' ' && input[0] != '\t')
-		return (ft_printf("echo%s: command not found\n", input), (void)0);
+		return (ft_printf("echo %s: command not found\n", input), 1);
 	input = ft_strtrim(input, " \t");
 	i = newline_opt(input, &tmp);
 	while (i)
@@ -158,5 +158,5 @@ void	echo_cmd(char *input)
 	}
 	if (!tmp || !i)
 		write(1, "\n", 1);
-	free(input);
+	return (free(input), 0);
 }

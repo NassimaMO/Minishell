@@ -12,18 +12,7 @@
 
 #include "minishell.h"
 
-/* int	exit_code(int mode, int code)
-{
-	static int	last = 0;
-
-	if (mode == GET)
-		return (last);
-	if (mode == SET)
-		last = code;
-	return (last);
-} */
-
-void	init_env()
+void	init_env(void)
 {
 	int	i;
 
@@ -38,7 +27,6 @@ void	init_env()
 /* TO DO LIST :
 - executable with relative or absolute path : may leak with SIGINT
 - proper history
-- built_in redirection
 - file redirection : <<
 - built_in variable "$?" (last exit code) */
 

@@ -31,12 +31,25 @@ int	is_built_in(char *cmd)
 	return (free(s), 0);
 }
 
-void	exec_cmd(char *cmd, int fd_in, int fd_out)
+void	ft_error(char *s, int fd_in, int fd_out)
+{
+	if (errno == ENOENT)
+	{
+		write(STDERR_FILENO, s, ft_strlen(s));
+		write(STDERR_FILENO, ": command not found\n", 20);
+		ft_close(2, fd_in, fd_out);
+		exit((free(s), free_env(), 127));
+	}
+	ft_close(2, fd_in, fd_out);
+	exit((free(s), free_env(), perror(""), EXIT_FAILURE));
+}
+
+void	exec_cmd(char *cmd, int fd_i, int fd_o)
 {
 	char	**args;
 	char	*path;
 	char	*s;
-	int		status;
+	int		code;
 
 	args = get_cmd_args(cmd);
 	if (!args)
@@ -44,31 +57,19 @@ void	exec_cmd(char *cmd, int fd_in, int fd_out)
 	s = ft_strtrim(cmd, " \t");
 	if (ft_strchr(s, ' '))
 		*ft_strchr(s, ' ') = 0;
-	dup2(fd_in, STDIN_FILENO);
-	dup2(fd_out, STDOUT_FILENO);
+	if (ft_strchr(s, '\t'))
+		*ft_strchr(s, '\t') = 0;
+	dup2(fd_i, STDIN_FILENO);
+	dup2(fd_o, STDOUT_FILENO);
 	if (ft_strchr(s, '/'))
 		path = relative_path(s);
 	else
 		path = get_pathname(s, environ);
-	if (is_built_in(cmd))
-	{
-		status = built_in(cmd, fd_in, fd_out);
-		ft_close(2, fd_in, fd_out);
-		exit((free_split(args), free(path), free(s), free(cmd), free_env(), status));
-	}
+	if (is_built_in(cmd) && (built_in(cmd, fd_i, fd_o, &code), 1))
+		exit((ft_close(2, fd_i, fd_o), free_split(args), free(path), free(s), \
+		free(cmd), free_env(), code));
 	execve(path, args, environ);
-	if (errno == ENOENT)
-	{
-		write(STDERR_FILENO, s, ft_strlen(s));
-		write(STDERR_FILENO, ": command not found\n", 20);
-		ft_close(2, fd_in, fd_out);
-		exit((free_split(args), free(path), free(s), free(cmd), free_env(), 127));
-	}
-	else
-	{
-		ft_close(2, fd_in, fd_out);
-		exit((free_split(args), free(s), free(path), free(cmd), free_env(), perror(""), 1));
-	}
+	return (free_split(args), free(path), free(cmd), ft_error(s, fd_i, fd_o));
 }
 
 int	fi(int i, int fd[], int pipes[])
@@ -123,7 +124,7 @@ int	fo(int i, int nb, int fd[], int pipes[])
 
 int	ft_pipes(int nb, char **cmds, int fd[2])
 {
-	int		pipes[4];
+	int		p[4];
 	pid_t	pid;
 	int		status;
 	int		i;
@@ -132,8 +133,8 @@ int	ft_pipes(int nb, char **cmds, int fd[2])
 	i = 0;
 	while (i < nb)
 	{
-		if (i != (nb -1) && ((!(i % 2) && pipe(pipes) < 0) || \
-		((i % 2) && pipe(pipes +2) < 0)))
+		if (i != (nb -1) && ((!(i % 2) && pipe(p) < 0) || \
+		((i % 2) && pipe(p +2) < 0)))
 			return (perror("pipe failed: "), EXIT_FAILURE);
 		pid = fork();
 		if (pid == -1)
@@ -141,13 +142,11 @@ int	ft_pipes(int nb, char **cmds, int fd[2])
 		if (pid == 0)
 		{
 			cmd = ft_strdup(cmds[i]);
-			free_split(cmds);
-			exec_cmd(cmd, fi(i, fd, pipes), fo(i, nb, fd, pipes));
+			exec_cmd((free_split(cmds), cmd), fi(i, fd, p), fo(i, nb, fd, p));
 		}
 		if (!i++)
 			continue ;
-		close(fi(i - 1, fd, pipes));
-		waitpid(pid, &status, 0);
+		waitpid(pid, &status, (close(fi(i - 1, fd, p)), 0));
 	}
 	return (free_split(cmds), WEXITSTATUS(status));
 }

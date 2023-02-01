@@ -56,7 +56,7 @@ size_t	split_len(char **split)
 	return (i);
 }
 
-void	free_env()
+void	free_env(void)
 {
 	int	i;
 

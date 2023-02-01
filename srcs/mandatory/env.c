@@ -85,7 +85,7 @@ int	unset_cmd(char *line)
 	int	i;
 
 	if (ft_strlen(line) == 5)
-		return (ft_printf("unset: not enough arguments\n"), EXIT_FAILURE);
+		return (ft_printf("unset: %s\n", SARG), EXIT_FAILURE);
 	i = 0;
 	if (!ft_strncmp(line, "unset", 5))
 		line = ft_strtrim(ft_strchr(line, ' '), " \t");
@@ -113,6 +113,6 @@ int	env_cmd(char *input)
 	if (ft_strlen(input) == 3)
 		return (print_env(environ), 0);
 	else
-		return (ft_printf("env: too many arguments\n"), EXIT_FAILURE);
+		return (ft_printf("env: %s\n", S2ARG), EXIT_FAILURE);
 	return (free(input), 0);
 }
