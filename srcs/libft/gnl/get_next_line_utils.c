@@ -31,6 +31,8 @@ char	*gnl_join(char *dest, char *src, int len)
 {
 	char	*new_dest;
 
+	if (len < 0)
+		len = ft_strlen(src);
 	new_dest = malloc(ft_strlen(dest) + len + 1);
 	ft_strlcpy(new_dest, dest, ft_strlen(dest) + 1);
 	ft_strlcpy(new_dest + ft_strlen(dest), src, len + 1);

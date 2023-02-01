@@ -110,38 +110,37 @@ char	**split_pipes(char *input)
 	}
 }
 
-int	handle_cmd(char *input, int *env_len)
+int	handle_cmd(char *input, int *exit_code)
 {
 	char	**split;
 	int		i;
 	int		fd[2];
-	int		status;
 
 	if (!input)
-		return (check_exit(input));
+		return (check_exit(input, exit_code));
 	redirect_stdout((redirect_stdin(input, fd), input), fd);
 	i = 0;
 	split = split_pipes(input);
 	while (split && split[i])
 		i++;
 	if (i > 1)
-		status = (free(input), ft_pipes(i, split, fd, env_len));
-	else if (check_exit(input) == EXIT)
+		*exit_code = (free(input), ft_pipes(i, split, fd));
+	else if (check_exit(input, exit_code) == EXIT)
 		return (free_split(split), free(input), EXIT);
 	if (i == 1 && !is_built_in(input) && (free_split(split), 1))
 	{
 		i = fork();
 		if (i == 0)
-			exec_cmd(input, fd[0], fd[1], env_len);
-		waitpid(i, &status, 0);
-		free(input);
+			exec_cmd(input, fd[0], fd[1]);
+		waitpid(i, exit_code, 0);
+		*exit_code =(free(input), WEXITSTATUS(*exit_code));
 	}
 	else if (i <= 1 && (split && (free_split(split), 1)))
-		free((built_in(input, fd[0], fd[1], env_len), input));
-	return (ft_close(2, fd[0], fd[1]), WEXITSTATUS(status));
+		free((built_in(input, fd[0], fd[1]), input));
+	return (ft_close(2, fd[0], fd[1]), 0);
 }
 
-int	built_in(char *input, int fd_in, int fd_out, int *env_len)
+int	built_in(char *input, int fd_in, int fd_out)
 {
 	char	*line;
 	int		std[2];
@@ -163,7 +162,7 @@ int	built_in(char *input, int fd_in, int fd_out, int *env_len)
 	else if (!ft_strncmp(line, "export", 6))
 		export_cmd(line);
 	else if (!ft_strncmp(line, "unset", 5))
-		unset_cmd(line, env_len);
+		unset_cmd(line);
 	else
 		b = 0;
 	dup2(std[1], (dup2(std[0], 0), 1));

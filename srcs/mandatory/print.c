@@ -52,13 +52,11 @@ void	print_export(char **envp)
 char	*get_name(char *cmd)
 {
 	int		fd[2];
-	int		len;
 	int		stdclone;
 	char	*name;
 	pid_t	pid;
 
 	ft_bzero(fd, sizeof(int) * 2);
-	len = split_len(environ);
 	if (pipe(fd) < 0)
 		return (perror(""), ft_close(2, fd[0], fd[1]), NULL);
 	stdclone = dup(STDERR_FILENO);
@@ -68,7 +66,7 @@ char	*get_name(char *cmd)
 		return (perror(""), ft_close(2, fd[0], fd[1]), NULL);
 	name = ft_strdup(cmd);
 	if (pid == 0)
-		exec_cmd(name, STDIN_FILENO, (close(stdclone), close(fd[0]), fd[1]), &len);
+		exec_cmd(name, STDIN_FILENO, (close(stdclone), close(fd[0]), fd[1]));
 	wait(NULL);
 	name = (free(name), get_next_line(fd[0]));
 	close((dup2(stdclone, STDERR_FILENO), stdclone));

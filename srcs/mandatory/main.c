@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int	exit_code(int mode, int code)
+/* int	exit_code(int mode, int code)
 {
 	static int	last = 0;
 
@@ -21,6 +21,18 @@ int	exit_code(int mode, int code)
 	if (mode == SET)
 		last = code;
 	return (last);
+} */
+
+void	init_env()
+{
+	int	i;
+
+	i = 0;
+	while (environ[i])
+	{
+		environ[i] = ft_strdup(environ[i]);
+		i++;
+	}
 }
 
 /* TO DO LIST :
@@ -30,25 +42,24 @@ int	exit_code(int mode, int code)
 - file redirection : <<
 - built_in variable "$?" (last exit code) */
 
-int	main(int argc, char *argv[])
+int	main(void)
 {
-	int		env_len;
 	char	**history;
+	int		exit_code;
 
-	env_len = split_len(environ);
+	history = NULL;
+	exit_code = 0;
 	signals();
 	set_terminal(SET);
-	history = NULL;
+	init_env();
 	while (1)
 	{
 		print_shell();
-		if (handle_cmd(get_input(&history), &env_len) == EXIT)
+		if (handle_cmd(get_input(&history), &exit_code) == EXIT)
 			break ;
 	}
-	(void)argc;
-	(void)argv;
-	set_terminal(RESET);
-	free_env(env_len);
+	free_env();
 	free_split(history);
-	return (exit_code(GET, 0));
+	set_terminal(RESET);
+	return (exit_code);
 }

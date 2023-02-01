@@ -56,11 +56,11 @@ size_t	split_len(char **split)
 	return (i);
 }
 
-void	free_env(int len)
+void	free_env()
 {
 	int	i;
 
-	i = len;
+	i = 0;
 	while (environ[i])
 	{
 		free(environ[i]);

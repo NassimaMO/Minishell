@@ -63,6 +63,14 @@ char	*get_input(char ***history)
 	return (ft_printf("\n"), str);
 }
 
+char	*add_char(char *str, char c, size_t cursor)
+{
+	(void)str;
+	(void)c;
+	(void)cursor;
+	return (NULL);
+}
+
 /* char	*get_input(void)
 {
 	char				*str;
@@ -202,15 +210,14 @@ int	ft_atoi_error(const char *s, void *n, int size)
 	return (str_into_int((char *)s + i, n, size, p));
 }
 
-int	check_exit(char *input)
+int	check_exit(char *input, int *exit_code)
 {
-	char	code;
 	char	*cmd;
 
 	if (!input)
 		return (ft_printf("\nexit\n"), EXIT);
 	cmd = ft_strtrim(input, " \t");
-	code = 0;
+	*exit_code = 0;
 	if (!ft_strncmp(input, "exit", 4))
 	{
 		ft_printf("exit\n");
@@ -218,13 +225,16 @@ int	check_exit(char *input)
 		{
 			input = ft_strtrim(ft_strchr(cmd, ' '), " \t");
 			if (ft_strchr(input, ' '))
+			{
+				*exit_code = 1;
 				return (ft_printf("exit: too many arguments\n"), \
-				exit_code(SET, 1), free(input), free(cmd), 0);
-			if (ft_atoi_error(input, &code, sizeof(char)) < 0)
-				code = (ft_printf("exit: %s: numeric argument required\n"), 2);
+				free(input), free(cmd), 0);
+			}
+			if (ft_atoi_error(input, &exit_code, sizeof(char)) < 0)
+				*exit_code = (ft_printf("exit: %s: numeric argument required\n"), 2);
 			free(input);
 		}
-		return (free(cmd), exit_code(SET, code), EXIT);
+		return (free(cmd), EXIT);
 	}
 	return (free(cmd), 0);
 }
