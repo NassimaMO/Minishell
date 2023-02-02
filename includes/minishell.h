@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:05:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/31 15:40:17 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/02 15:25:46 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,9 @@ char	**ft_split_set(char *str, char *charset);
 
 /* echo.c */
 int		echo_cmd(char *input);
+
+/* quotes.c */
+char	*quote_gestion(char *input, int *i);
 
 /* path.c */
 int		pwd_cmd(char *input);

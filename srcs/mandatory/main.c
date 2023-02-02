@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:02:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/02 13:40:38 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/02 13:41:54 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,14 +46,8 @@ int	main(void)
 		if (handle_cmd(get_input(&history), &exit_code) == EXIT)
 			break ;
 	}
-<<<<<<< HEAD
-	(void)argc;
-	(void)argv;
-	//free_split(history);
-=======
 	free_env();
 	free_split(history);
->>>>>>> b5ff8cd995b3e64d0460b64220fd001474562bed
 	set_terminal(RESET);
 	return (exit_code);
 }
