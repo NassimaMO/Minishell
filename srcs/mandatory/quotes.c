@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 15:23:10 by nmouslim          #+#    #+#             */
-/*   Updated: 2023/02/02 15:33:19 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/02 15:41:43 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ void	go_through_input(char *input, char **to_return, int *i, char quotes)
 			*to_return = gnl_join(*to_return, variable_tmp, \
 				ft_strlen(variable_tmp));
 		*i += x;
-		x = 0;
 	}
 	else if (input[*i] && input[*i] == '~' && (!input[*i + 1] \
 			|| input[*i + 1] == '/' || input[*i + 1] == ':' \
@@ -61,7 +60,6 @@ void	go_through_input(char *input, char **to_return, int *i, char quotes)
 			*to_return = gnl_join(*to_return, variable_tmp, \
 				ft_strlen(variable_tmp));
 		(*i)++;
-		x = 0;
 		if (input[*i] && input[*i] == ';')
 			i++;
 	}
@@ -86,7 +84,8 @@ char	*quote_gestion(char *input, int *i)
 			else
 				break ;
 		}
-		if (input[*i] && input[*i] == '$' && \
+		go_through_input(input, &to_return, i, quotes);
+		/*if (input[*i] && input[*i] == '$' && \
 		((quotes == '\"' && input[*i + 1] != '\"') || !quotes))
 		{
 			variable_tmp = ((*i)++, get_variable(input + *i, &x));
@@ -112,7 +111,7 @@ char	*quote_gestion(char *input, int *i)
 				i++;
 		}
 		else if (input[*i])
-			to_return = gnl_join(to_return, input + (*i)++, 1);
+			to_return = gnl_join(to_return, input + (*i)++, 1);*/
 	}
 	if (quotes && !input[*i])
 		quotes = '\0';
