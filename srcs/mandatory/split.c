@@ -46,9 +46,9 @@ void	free_split(char **split)
 	free(split);
 }
 
-int	split_len(char **split)
+size_t	split_len(char **split)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	while (split[i])
@@ -56,11 +56,11 @@ int	split_len(char **split)
 	return (i);
 }
 
-void	free_env(int len)
+void	free_env(void)
 {
 	int	i;
 
-	i = len;
+	i = 0;
 	while (environ[i])
 	{
 		free(environ[i]);

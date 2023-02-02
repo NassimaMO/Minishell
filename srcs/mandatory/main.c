@@ -6,51 +6,54 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:02:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/31 15:40:39 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/02 13:40:38 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	exit_code(int mode, int code)
+void	init_env(void)
 {
-	static int	last = 0;
+	int	i;
 
-	if (mode == GET)
-		return (last);
-	if (mode == SET)
-		last = code;
-	return (last);
+	i = 0;
+	while (environ[i])
+	{
+		environ[i] = ft_strdup(environ[i]);
+		i++;
+	}
 }
 
 /* TO DO LIST :
 - executable with relative or absolute path : may leak with SIGINT
 - proper history
-- built_in redirection
 - file redirection : <<
 - built_in variable "$?" (last exit code) */
 
-pid_t g_pid;
-
-int	main(int argc, char *argv[])
+int	main(void)
 {
-	int		env_len;
-	//char	**history;
+	char	**history;
+	int		exit_code;
 
-	env_len = split_len(environ);
+	history = NULL;
+	exit_code = 0;
 	signals();
 	set_terminal(SET);
+	init_env();
 	while (1)
 	{
 		print_shell();
-		g_pid = getpid();
-		if (handle_cmd(get_input(), &env_len) == EXIT)
+		if (handle_cmd(get_input(&history), &exit_code) == EXIT)
 			break ;
 	}
+<<<<<<< HEAD
 	(void)argc;
 	(void)argv;
 	//free_split(history);
+=======
+	free_env();
+	free_split(history);
+>>>>>>> b5ff8cd995b3e64d0460b64220fd001474562bed
 	set_terminal(RESET);
-	free_env(env_len);
-	return (exit_code(GET, 0));
+	return (exit_code);
 }

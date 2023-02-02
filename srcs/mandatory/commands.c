@@ -103,69 +103,62 @@ char	**split_pipes(char *input)
 		split = add_split(split, ft_substr(input, 0, i));
 		return (split_pipes(input + i + 1));
 	}
-	else
-	{
-		final = add_split(split, ft_strdup(input));
-		return (ft_bzero(&split, sizeof(char **)), final);
-	}
+	final = add_split(split, ft_strdup(input));
+	return (ft_bzero(&split, sizeof(char **)), final);
 }
 
-int	handle_cmd(char *input, int *env_len)
+int	handle_cmd(char *input, int *exit_code)
 {
 	char	**split;
 	int		i;
 	int		fd[2];
-	int		status;
 
 	if (!input)
-		return (check_exit(input));
+		return (check_exit(input, exit_code));
 	redirect_stdout((redirect_stdin(input, fd), input), fd);
-	i = 0;
-	split = split_pipes(input);
+	split = (ft_bzero(&i, sizeof(int)), split_pipes(input));
 	while (split && split[i])
 		i++;
 	if (i > 1)
-		status = (free(input), ft_pipes(i, split, fd, env_len));
-	else if (check_exit(input) == EXIT)
+		*exit_code = (free(input), ft_pipes(i, split, fd));
+	else if (check_exit(input, exit_code) == EXIT)
 		return (free_split(split), free(input), EXIT);
 	if (i == 1 && !is_built_in(input) && (free_split(split), 1))
 	{
 		i = fork();
 		if (i == 0)
-			exec_cmd(input, fd[0], fd[1], env_len);
-		waitpid(i, &status, 0);
-		free(input);
+			exec_cmd(input, fd[0], fd[1]);
+		waitpid(i, exit_code, 0);
+		*exit_code = (free(input), WEXITSTATUS(*exit_code));
 	}
 	else if (i <= 1 && (split && (free_split(split), 1)))
-		free((built_in(input, fd[0], fd[1], env_len), input));
-	return (ft_close(2, fd[0], fd[1]), WEXITSTATUS(status));
+		free((built_in(input, fd[0], fd[1], exit_code), input));
+	return (ft_close(2, fd[0], fd[1]), 0);
 }
 
-int	built_in(char *input, int fd_in, int fd_out, int *env_len)
+void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
 {
 	char	*line;
 	int		std[2];
-	int		b;
 
-	b = 1;
 	line = ft_strtrim(input, " \t");
 	std[0] = dup(STDIN_FILENO);
 	std[1] = dup(STDOUT_FILENO);
 	dup2(fd_out, (dup2(fd_in, 0), 1));
 	if (!ft_strncmp(line, "echo", 4))
-		echo_cmd(line + 4);
+		*exit_code = echo_cmd(line + 4);
 	else if (!ft_strncmp(line, "pwd", 3))
-		pwd_cmd(line);
+		*exit_code = pwd_cmd(line);
 	else if (!ft_strncmp(line, "cd", 2))
-		cd_cmd(line);
+		*exit_code = cd_cmd(line);
 	else if (!ft_strncmp(line, "env", 3))
-		env_cmd(line);
+		*exit_code = env_cmd(line);
 	else if (!ft_strncmp(line, "export", 6))
-		export_cmd(line);
+		*exit_code = export_cmd(line);
 	else if (!ft_strncmp(line, "unset", 5))
-		unset_cmd(line, env_len);
-	else
-		b = 0;
+		*exit_code = unset_cmd(line);
 	dup2(std[1], (dup2(std[0], 0), 1));
-	return (free(line), close(std[0]), close(std[1]), b);
+	close(std[0]);
+	close(std[1]);
+	return (free(line));
 }

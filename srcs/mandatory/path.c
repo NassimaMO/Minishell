@@ -17,6 +17,7 @@ int	cd_cmd(char *line)
 	char	*path;
 	char	**split;
 	int		i;
+	char	*old;
 
 	split = ft_split_set(line, " \t");
 	i = 0;
@@ -33,9 +34,11 @@ int	cd_cmd(char *line)
 		path = ft_strjoin(getenv("HOME"), split[1] + 1);
 	else
 		path = ft_strdup(split[1]);
+	old = ft_strjoin("OLDPWD=", getcwd(NULL, 0));
+	add_var("OLDPWD", old);
 	if ((free_split(split), chdir(path)) < 0)
-		return (perror(""), free(path), EXIT_FAILURE);
-	return (free(path), 0);
+		return (perror(""), free(path), free(old), EXIT_FAILURE);
+	return (free(path), free(old), 0);
 }
 
 /* option=SHORT: path with ~ ; option=0: full path */
@@ -62,21 +65,18 @@ char	*get_current_path(int option)
 	return (path);
 }
 
-void	pwd_cmd(char *input)
+int	pwd_cmd(char *input)
 {
 	char	*path;
 
 	input = ft_strtrim(input, " \t");
 	if (ft_strlen(input) == 3)
-	{
 		path = get_current_path(FULL);
-		exit_code(SET, 0);
-	}
 	else
 	{
-		ft_printf("pwd: too many arguments\n");
-		return (exit_code(SET, 1), free(input));
+		ft_printf("pwd: %s\n", S2ARG);
+		return (free(input), EXIT_FAILURE);
 	}
 	ft_printf("%s\n", path);
-	return (free(input), free(path));
+	return (free(input), free(path), 0);
 }
