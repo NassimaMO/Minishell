@@ -6,13 +6,13 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 06:51:04 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/31 11:52:14 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/01/31 16:06:14 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*get_input(void)
+char	*get_input()
 {
 	char				*str;
 	long unsigned int	move;
@@ -69,20 +69,39 @@ char	*get_input(void)
 						free(str);
 						str = ft_strdup("");
 						str = gnl_join(str, history[len_history - history_move], ft_strlen(history[len_history - history_move]));
+						printf("\33[2K\r");
+						if (move < ft_strlen(str))
+							move = ft_strlen(str) - move;
+						else
+							move = move - ft_strlen(str);
+						printf("{%d}\n", len_history - history_move);
+						while (move)
+						{
+							ft_printf("\033[1C");
+							move--;
+						}
 						ft_printf("%s", str);
-						move = 0;
 					}
 				}
 				else if (*buff == 'B')
 				{
-					if (history && history_move > 0)
+					if (history && history_move >= 0)
 					{
 						history_move--;
 						free(str);
 						str = ft_strdup("");
 						str = gnl_join(str, history[len_history - history_move], ft_strlen(history[len_history - history_move]));
+						printf("\33[2K\r");
+						if (move < ft_strlen(str))
+							move = ft_strlen(str) - move;
+						else
+							move = move - ft_strlen(str);
+						while (move)
+						{
+							ft_printf("\033[1C");
+							move--;
+						}
 						ft_printf("%s", str);
-						move = 0;
 					}
 				}
 			}
@@ -103,11 +122,18 @@ char	*get_input(void)
 			history = malloc(sizeof(char *) * 2);
 			history[0] = ft_strdup(str);
 			history[1] = NULL;
+			len_history++;
 		}
 		else
-			history = add_split(history, str);
+		{
+			history = add_split(history , str);
+			printf("\n(%s)\n", str);
+		}
 		len_history++;
 	}
+	int i = -1;
+	while (++i < len_history)
+		printf("\n[%d.%s]\n", i + 1, history[i]);
 	return (str);
 }
 

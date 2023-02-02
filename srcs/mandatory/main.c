@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:02:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/31 08:41:53 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/01/31 15:40:39 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ pid_t g_pid;
 
 int	main(int argc, char *argv[])
 {
-	int	env_len;
+	int		env_len;
+	//char	**history;
 
 	env_len = split_len(environ);
 	signals();
@@ -48,6 +49,7 @@ int	main(int argc, char *argv[])
 	}
 	(void)argc;
 	(void)argv;
+	//free_split(history);
 	set_terminal(RESET);
 	free_env(env_len);
 	return (exit_code(GET, 0));
