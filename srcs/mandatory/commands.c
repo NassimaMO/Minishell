@@ -32,11 +32,11 @@ void	redirect_stdin(char *str, int fd[2])
 	{
 		ft_strlcpy(name, name + 1, ft_strlen(name));
 		ft_printf("\n>");
-		tmp = get_input();
+		tmp = get_input(NULL);
 		while (tmp && (ft_strncmp(tmp, name, ft_strlen(name)) || (ft_strlen(name) != ft_strlen(tmp))))
 		{
 			ft_printf("\n>");
-			tmp = get_next_line(0);
+			tmp = get_input(NULL);
 		}
 	}
 	fd[0] = open(name, O_RDONLY);

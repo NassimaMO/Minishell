@@ -21,9 +21,7 @@ void	ft_escape(size_t *cursor, size_t *moves, char **str, char **history)
 		read(0, ft_memset(buff, 0, 1), 1);
 		if ((*buff == 'C' && *cursor < ft_strlen(*str) && ++(*cursor)) || \
 			(*buff == 'D' && *cursor > 0 && (--(*cursor), 1)))
-		{
 			ft_printf("\033[1%c", *buff);
-		}
 		if (history && ((*buff == 'A' && *moves < split_len(history) && \
 		++(*moves)) || (*buff == 'B' && *moves > 0 && (--(*moves), 1))))
 		{
@@ -35,10 +33,6 @@ void	ft_escape(size_t *cursor, size_t *moves, char **str, char **history)
 				ft_printf("%s", history[split_len(history) - *moves]);
 		}
 	}
-	else
-	{
-		// delete
-	}
 }
 
 char	*add_char(char *str, char c, size_t cursor)
@@ -49,6 +43,18 @@ char	*add_char(char *str, char c, size_t cursor)
 	ft_strlcpy(new_str, str, cursor + 1);
 	new_str[cursor] = c;
 	ft_strlcpy(new_str + cursor + 1, str + cursor, ft_strlen(str + cursor) + 1);
+	free(str);
+	return (new_str);
+}
+
+char	*del_char(char *str, size_t cursor)
+{
+	char	*new_str;
+
+	new_str = malloc(ft_strlen(str));
+	ft_strlcpy(new_str, str, cursor);
+	ft_strlcpy(new_str + cursor, str + cursor, ft_strlen(str + cursor) + 1);
+	free(str);
 	return (new_str);
 }
 
@@ -84,6 +90,8 @@ char	*get_input(char ***history)
 			return (free(str), NULL);
 		if (*buff == 27)
 			ft_escape(&cursor, &history_moves, &str, *history);
+		else if (*buff == 127)
+			str = (ft_printf("%s", str + --cursor), place_cursor(str, cursor), del_char(str, cursor));
 		else if (ft_isprint(*buff))
 			str = (ft_printf("%c%s", *buff, str + cursor), place_cursor(str, cursor), add_char(str, *buff, cursor++));
 		bytes = read(0, ft_memset(buff, 0, 1), 1);
@@ -91,131 +99,6 @@ char	*get_input(char ***history)
 	*history = add_split(*history, ft_strdup(str));
 	return (ft_printf("\n"), str);
 }
-
-/* char	*get_input(void)
-{
-	char				*str;
-	long unsigned int	move;
-	static char			**history;
-	static int			len_history;
-	int					history_move;
-	//char			*shell;
-	char				buff[1];
-	int					bytes;
-
-	shell = print_shell();
-	while (ft_strchr((str = readline(shell)), '\n'))
-	{
-		//if (strlen(str))
-		ft_add_history(str);
-		free(str);
-	}
-	free(shell);
-	move = 0;
-	history_move = 0;
-	bytes = read(0, ft_memset(buff, 0, 1), 1);
-	str = ft_strdup("");
-	while (str && bytes >= 0 && *buff != '\n')
-	{
-		if ((bytes == 0 || *buff == 0 || *buff == 4) && !*str)
-			return (free(str), NULL);
-		if (*buff == 27)
-		{
-			bytes = read(0, ft_memset(buff, 0, 1), 1);
-			if (*buff == 91)
-			{
-				bytes = read(0, ft_memset(buff, 0, 1), 1);
-				if ('C' == *buff)
-				{
-					if (move < ft_strlen(str))
-					{
-						ft_printf("\033[1%c", *buff);
-						move++;
-					}
-				}
-				else if (*buff == 'D')
-				{
-					if (move > 0)
-					{
-						ft_printf("\033[1%c", *buff);
-						move--;
-					}
-				}
-				else if (*buff == 'A')
-				{
-					if (history && history_move < len_history)
-					{
-						history_move++;
-						free(str);
-						str = ft_strdup("");
-						str = gnl_join(str, history[len_history - history_move], ft_strlen(history[len_history - history_move]));
-						printf("\33[2K\r");
-						if (move < ft_strlen(str))
-							move = ft_strlen(str) - move;
-						else
-							move = move - ft_strlen(str);
-						printf("{%d}\n", len_history - history_move);
-						while (move)
-						{
-							ft_printf("\033[1C");
-							move--;
-						}
-						ft_printf("%s", str);
-					}
-				}
-				else if (*buff == 'B')
-				{
-					if (history && history_move >= 0)
-					{
-						history_move--;
-						free(str);
-						str = ft_strdup("");
-						str = gnl_join(str, history[len_history - history_move], ft_strlen(history[len_history - history_move]));
-						printf("\33[2K\r");
-						if (move < ft_strlen(str))
-							move = ft_strlen(str) - move;
-						else
-							move = move - ft_strlen(str);
-						while (move)
-						{
-							ft_printf("\033[1C");
-							move--;
-						}
-						ft_printf("%s", str);
-					}
-				}
-			}
-			*buff = 0;
-		}
-		else if (ft_isprint(*buff))
-		{
-			str = gnl_join(str, buff, 1);
-			move++;
-			ft_printf("%c",  *buff);
-		}
-		bytes = read(0, ft_memset(buff, 0, 1), 1);
-	}
-	if (str)
-	{
-		if (!history)
-		{
-			history = malloc(sizeof(char *) * 2);
-			history[0] = ft_strdup(str);
-			history[1] = NULL;
-			len_history++;
-		}
-		else
-		{
-			history = add_split(history , str);
-			printf("\n(%s)\n", str);
-		}
-		len_history++;
-	}
-	int i = -1;
-	while (++i < len_history)
-		printf("\n[%d.%s]\n", i + 1, history[i]);
-	return (str);
-} */
 
 int	str_into_int(char *s, void *ptr, int size, int p)
 {

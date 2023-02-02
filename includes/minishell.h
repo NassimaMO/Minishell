@@ -24,7 +24,8 @@
 # include <linux/kd.h>
 # include <readline/readline.h>
 # include <readline/history.h>
-//# include <term.h>
+# include <term.h>
+//# include <stropts.h>
 
 # define FULL 0
 # define SHORT 1
