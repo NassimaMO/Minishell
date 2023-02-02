@@ -17,6 +17,7 @@ void	redirect_stdin(char *str, int fd[2])
 {
 	char	*name;
 	char	*line;
+	char	*tmp;
 
 	fd[0] = 0;
 	if (!ft_strchr(str, '<'))
@@ -27,6 +28,17 @@ void	redirect_stdin(char *str, int fd[2])
 	line = gnl_join(line, ft_strchr(name, 32), ft_strlen(ft_strchr(name, 32)));
 	if (ft_strchr(name, ' '))
 		*ft_strchr(name, ' ') = 0;
+	if (*name == '<')
+	{
+		ft_strlcpy(name, name + 1, ft_strlen(name));
+		ft_printf("\n>");
+		tmp = get_input();
+		while (tmp && (ft_strncmp(tmp, name, ft_strlen(name)) || (ft_strlen(name) != ft_strlen(tmp))))
+		{
+			ft_printf("\n>");
+			tmp = get_next_line(0);
+		}
+	}
 	fd[0] = open(name, O_RDONLY);
 	ft_strlcpy(str, line, ft_strlen(line) + 1);
 	return (free(name), free(line));

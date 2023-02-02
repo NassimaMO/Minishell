@@ -41,6 +41,31 @@ void	ft_escape(size_t *cursor, size_t *moves, char **str, char **history)
 	}
 }
 
+char	*add_char(char *str, char c, size_t cursor)
+{
+	char	*new_str;
+
+	new_str = malloc(ft_strlen(str) + 2);
+	ft_strlcpy(new_str, str, cursor + 1);
+	new_str[cursor] = c;
+	ft_strlcpy(new_str + cursor + 1, str + cursor, ft_strlen(str + cursor) + 1);
+	return (new_str);
+}
+
+void	place_cursor(char *str, size_t cursor)
+{
+	size_t	i;
+	int		len;
+
+	i = 0;
+	len = ft_strlen(str);
+	while (i < len - cursor)
+	{
+		ft_printf("\033[1D");
+		i++;
+	}
+}
+
 char	*get_input(char ***history)
 {
 	char	*str;
@@ -60,19 +85,11 @@ char	*get_input(char ***history)
 		if (*buff == 27)
 			ft_escape(&cursor, &history_moves, &str, *history);
 		else if (ft_isprint(*buff))
-			str = (cursor++, ft_printf("%c", *buff), gnl_join(str, buff, 1));
+			str = (ft_printf("%c%s", *buff, str + cursor), place_cursor(str, cursor), add_char(str, *buff, cursor++));
 		bytes = read(0, ft_memset(buff, 0, 1), 1);
 	}
 	*history = add_split(*history, ft_strdup(str));
 	return (ft_printf("\n"), str);
-}
-
-char	*add_char(char *str, char c, size_t cursor)
-{
-	(void)str;
-	(void)c;
-	(void)cursor;
-	return (NULL);
 }
 
 /* char	*get_input(void)
