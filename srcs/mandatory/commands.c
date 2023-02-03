@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 15:39:27 by nmouslim          #+#    #+#             */
-/*   Updated: 2023/01/09 18:28:07 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/03 16:05:50 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,7 @@ void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
 	std[1] = dup(STDOUT_FILENO);
 	dup2(fd_out, (dup2(fd_in, 0), 1));
 	if (!ft_strncmp(line, "echo", 4))
-		*exit_code = echo_cmd(line + 4);
+		*exit_code = echo_cmd(line + 4, exit_code);
 	else if (!ft_strncmp(line, "pwd", 3))
 		*exit_code = pwd_cmd(line);
 	else if (!ft_strncmp(line, "cd", 2))

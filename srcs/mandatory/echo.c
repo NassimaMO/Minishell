@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:23 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/02 15:24:22 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/03 16:07:00 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,13 @@ int	newline_opt(char *input, int *tmp)
 	return (is_valid_opt(input, i, quote, tmp));
 }
 
-void	print_input(char *input, int i, int tmp)
+void	print_input(char *input, int i, int tmp, int *exit_code)
 {
 	char	*output;
 
 	while (input[i])
 	{
-		output = quote_gestion(input, &i);
+		output = quote_gestion(input, &i, exit_code);
 		(ft_printf("%s", output), free(output));
 		if (input[i] && input[i] == ' ')
 			write(1, &input[i++], 1);
@@ -68,7 +68,7 @@ void	print_input(char *input, int i, int tmp)
 		write(1, "\n", 1);
 }
 
-int	echo_cmd(char *input)
+int	echo_cmd(char *input, int *exit_code)
 {
 	int		i;
 	int		tmp;
@@ -87,6 +87,6 @@ int	echo_cmd(char *input)
 			break ;
 		tmp += temp;
 	}
-	print_input(input, i, tmp);
+	print_input(input, i, tmp, exit_code);
 	return (free(input), 0);
 }
