@@ -34,6 +34,7 @@ int	main(void)
 {
 	char	**history;
 	int		exit_code;
+	char	*input;
 
 	history = NULL;
 	exit_code = 0;
@@ -43,7 +44,8 @@ int	main(void)
 	while (1)
 	{
 		print_shell();
-		if (handle_cmd(get_input(&history), &exit_code) == EXIT)
+		input = get_input(&history);
+		if (handle_cmd(input, &exit_code, history) == EXIT)
 			break ;
 	}
 	free_env();

@@ -17,6 +17,7 @@ void	redirect_stdin(char *str, int fd[2])
 {
 	char	*name;
 	char	*line;
+	char	*tmp;
 
 	fd[0] = 0;
 	if (!ft_strchr(str, '<'))
@@ -27,6 +28,17 @@ void	redirect_stdin(char *str, int fd[2])
 	line = gnl_join(line, ft_strchr(name, 32), ft_strlen(ft_strchr(name, 32)));
 	if (ft_strchr(name, ' '))
 		*ft_strchr(name, ' ') = 0;
+	if (*name == '<')
+	{
+		ft_strlcpy(name, name + 1, ft_strlen(name));
+		ft_printf("\n>");
+		tmp = get_input(NULL);
+		while (tmp && (ft_strncmp(tmp, name, ft_strlen(name)) || (ft_strlen(name) != ft_strlen(tmp))))
+		{
+			ft_printf("\n>");
+			tmp = get_input(NULL);
+		}
+	}
 	fd[0] = open(name, O_RDONLY);
 	ft_strlcpy(str, line, ft_strlen(line) + 1);
 	return (free(name), free(line));
@@ -107,7 +119,7 @@ char	**split_pipes(char *input)
 	return (ft_bzero(&split, sizeof(char **)), final);
 }
 
-int	handle_cmd(char *input, int *exit_code)
+int	handle_cmd(char *input, int *exit_code, char **history)
 {
 	char	**split;
 	int		i;
@@ -120,14 +132,14 @@ int	handle_cmd(char *input, int *exit_code)
 	while (split && split[i])
 		i++;
 	if (i > 1)
-		*exit_code = (free(input), ft_pipes(i, split, fd));
+		*exit_code = (free(input), ft_pipes(i, split, fd, history));
 	else if (check_exit(input, exit_code) == EXIT)
 		return (free_split(split), free(input), EXIT);
 	if (i == 1 && !is_built_in(input) && (free_split(split), 1))
 	{
 		i = fork();
 		if (i == 0)
-			exec_cmd(input, fd[0], fd[1]);
+			exec_cmd(input, fd[0], fd[1], history);
 		waitpid(i, exit_code, 0);
 		*exit_code = (free(input), WEXITSTATUS(*exit_code));
 	}
@@ -161,4 +173,23 @@ void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
 	close(std[0]);
 	close(std[1]);
 	return (free(line));
+}
+
+int	is_built_in(char *cmd)
+{
+	static char	*cmds[6] = {"echo", "cd", "pwd", "env", "export", "unset"};
+	int			i;
+	char		*s;
+
+	i = 0;
+	cmd = ft_strdup(cmd);
+	s = ft_strtrim(cmd, " \t");
+	free(cmd);
+	while (i < 6)
+	{
+		if (!strncmp(s, cmds[i], ft_strlen(cmds[i])))
+			return (free(s), 1);
+		i++;
+	}
+	return (free(s), 0);
 }

@@ -15,7 +15,8 @@
 void	ft_handler(int signum)
 {
 	if (signum == SIGINT)
-		ft_printf("\n");
+	{
+	}
 	if (signum == SIGQUIT)
 	{
 	}
@@ -27,6 +28,8 @@ void	signals(void)
 
 	ft_bzero(&sa, sizeof(struct sigaction));
 	sa.sa_handler = &ft_handler;
-	sigaction(SIGINT, &sa, NULL);
+	sa.sa_flags = SA_RESTART;
 	sigaction(SIGQUIT, &sa, NULL);
+	sa.sa_flags = 0;
+	sigaction(SIGINT, &sa, NULL);
 }
