@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:23 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/03 16:07:00 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/03 16:51:20 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int	echo_cmd(char *input, int *exit_code)
 	temp = 0;
 	tmp = 0;
 	if (input[0] && input[0] != ' ' && input[0] != '\t')
-		return (ft_printf("echo %s: command not found\n", input), 1);
+		return (ft_printf("echo%s: command not found\n", input), 127);
 	input = ft_strtrim(input, " \t");
 	i = newline_opt(input, &tmp);
 	while (i)

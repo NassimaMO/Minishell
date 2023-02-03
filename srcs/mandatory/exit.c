@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 14:52:03 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/03 14:52:07 by nghulam-         ###   ########.fr       */
+/*   Updated: 2023/02/03 16:48:43 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ int	check_exit(char *input, int *exit_code)
 	if (!input)
 		return (ft_printf("\nexit\n"), EXIT);
 	cmd = ft_strtrim(input, " \t");
-	*exit_code = 0;
 	if (!ft_strncmp(input, "exit", 4))
 	{
 		ft_printf("exit\n");

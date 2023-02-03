@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 06:51:04 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/02 16:03:05 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/03 17:24:29 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,15 @@ static void	place_cursor(char *str, size_t cursor)
 	}
 }
 
-static void	ft_escape(size_t *cursor, size_t *moves, char **str, char **history)
+static void	ft_escape(size_t *cursor, size_t *moves, char **history)
 {
 	char	buff[1];
 
 	if (read(0, ft_memset(buff, 0, 1), 1) == 1 && *buff == '[')
 	{
+		printf("[%ld]\n", *moves);
 		read(0, ft_memset(buff, 0, 1), 1);
-		if ((*buff == 'C' && *cursor < ft_strlen(*str) && ++(*cursor)) || \
+		if ((*buff == 'C' && *cursor < ft_strlen(history[split_len(history) - (*moves + 1)]) && ++(*cursor)) || \
 			(*buff == 'D' && *cursor > 0 && (--(*cursor), 1)))
 			ft_printf("\033[1%c", *buff);
 		if (history && ((*buff == 'A' && *moves < split_len(history) && \
@@ -41,10 +42,7 @@ static void	ft_escape(size_t *cursor, size_t *moves, char **str, char **history)
 		{
 			ft_printf("\33[2K\r");
 			print_shell();
-			if (*moves == 0)
-				ft_printf("%s", *str);
-			else
-				ft_printf("%s", history[split_len(history) - *moves]);
+			ft_printf("%s", history[split_len(history) - (*moves + 1)]);
 		}
 	}
 }
@@ -71,7 +69,7 @@ static void	ft_del(size_t *cursor, char *str)
 	ft_strlcpy(str + (*cursor), str + (*cursor) + 1, len);
 }
 
-char	*get_input(char ***history)
+char	*get_input(char **history)
 {
 	char	*str;
 	char	buff[1];
@@ -80,23 +78,24 @@ char	*get_input(char ***history)
 	size_t	moves;
 
 	bytes = read(0, ft_memset(buff, 0, 1), 1);
-	str = ft_strdup("");
+	history = add_split(history, "");
 	ft_bzero((ft_bzero(&cursor, sizeof(size_t)), &moves), sizeof(size_t));
-	while (str && bytes >= 0 && *buff != '\n')
+	while (history[split_len(history) - (moves + 1)] && bytes >= 0 && *buff != '\n')
 	{
-		if ((bytes == 0 || *buff == 0 || *buff == 4) && !*str)
-			return (free(str), NULL);
+		if ((bytes == 0 || *buff == 0 || *buff == 4) && !*history[split_len(history) - (moves + 1)])
+			return (free_split(history), NULL);
 		if (*buff == 27)
-			ft_escape(&cursor, &moves, &str, *history);
+			ft_escape(&cursor, &moves, history);
 		else if (*buff == 127 && cursor > 0)
-			ft_del(&cursor, str);
+			ft_del(&cursor, history[split_len(history) - (moves + 1)]);
 		else if (ft_isprint(*buff))
-			str = (ft_printf("%c%s", *buff, str + cursor), \
-			place_cursor(str, cursor), add_char(str, *buff, cursor++));
+			history[split_len(history) - (moves + 1)] = (ft_printf("%c%s", *buff, history[split_len(history) - (moves + 1)] + cursor), \
+			place_cursor(history[split_len(history) - (moves + 1)], cursor), add_char(history[split_len(history) - (moves + 1)], *buff, cursor++));
 		bytes = read(0, ft_memset(buff, 0, 1), 1);
 	}
 	if (bytes < 0 && *buff == 0)
-		return (ft_printf("\n"), free(str), ft_strdup(""));
-	*history = add_split(*history, ft_strdup(str));
+		return (ft_printf("\n"), free_split(history), ft_strdup(""));
+	str = history[split_len(history) - (moves + 1)];
+	free_split(history);
 	return (ft_printf("\n"), str);
 }

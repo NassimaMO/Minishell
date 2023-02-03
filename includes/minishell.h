@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:05:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/03 16:15:32 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/03 17:13:47 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int		env_cmd(char *input);
 void	set_terminal(int option);
 
 /* input.c */
-char	*get_input(char ***history);
+char	*get_input(char **history);
 int		check_exit(char *input, int *exit_code);
 
 /* print.c */
