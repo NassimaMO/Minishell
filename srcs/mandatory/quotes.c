@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 15:23:10 by nmouslim          #+#    #+#             */
-/*   Updated: 2023/02/02 15:41:43 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/03 15:50:36 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,15 +53,13 @@ void	go_through_input(char *input, char **to_return, int *i, char quotes)
 	}
 	else if (input[*i] && input[*i] == '~' && (!input[*i + 1] \
 			|| input[*i + 1] == '/' || input[*i + 1] == ':' \
-			|| input[*i + 1] == ';' || input[*i + 1] == ' '))
+			|| input[*i + 1] == ' '))
 	{
 		variable_tmp = get_variable("HOME", &x);
 		if (variable_tmp)
 			*to_return = gnl_join(*to_return, variable_tmp, \
 				ft_strlen(variable_tmp));
 		(*i)++;
-		if (input[*i] && input[*i] == ';')
-			i++;
 	}
 	else if (input[*i])
 		*to_return = gnl_join(*to_return, input + (*i)++, 1);
@@ -92,7 +90,8 @@ char	*quote_gestion(char *input, int *i)
 			if (!variable_tmp && (!input[*i] || input[*i] == ' '))
 				to_return = gnl_join(to_return, "$", 1);
 			else if (variable_tmp)
-				to_return = gnl_join(to_return, variable_tmp, \
+				to_return = gnl_join(to_;
+return, variable_tmp, \
 					ft_strlen(variable_tmp));
 			*i += x;
 			x = 0;
