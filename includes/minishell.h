@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:05:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/02 15:25:46 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/03 16:15:32 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,10 @@ void	redirect_stdout(char *str, int fd[2]);
 char	**ft_split_set(char *str, char *charset);
 
 /* echo.c */
-int		echo_cmd(char *input);
+int		echo_cmd(char *input, int *exit_code);
 
 /* quotes.c */
-char	*quote_gestion(char *input, int *i);
+char	*quote_gestion(char *input, int *i, int *exit_code);
 
 /* path.c */
 int		pwd_cmd(char *input);
