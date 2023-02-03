@@ -45,6 +45,7 @@ static void	ft_escape(size_t *cursor, size_t *moves, char **str, char **history)
 				ft_printf("%s", *str);
 			else
 				ft_printf("%s", history[split_len(history) - *moves]);
+			//str
 		}
 	}
 }

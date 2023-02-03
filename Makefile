@@ -6,7 +6,7 @@ MANDATORY_DIR				=	${SRCS_DIR}/mandatory
 
 BONUS_DIR					=	${SRCS_DIR}/bonus
 
-COMMON_SRCS					=	exit.c ft_split_set.c echo.c quotes.c path.c env.c terminal.c print.c signals.c split.c commands.c pipex.c input.c pipex_utils.c
+COMMON_SRCS					=	redirect.c exit.c ft_split_set.c echo.c quotes.c path.c env.c terminal.c print.c signals.c split.c commands.c pipex.c input.c pipex_utils.c
 
 MANDATORY_SRCS				=	${COMMON_SRCS} main.c
 

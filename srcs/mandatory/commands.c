@@ -12,86 +12,7 @@
 
 #include "minishell.h"
 
-/* changes str to remove redirection and changes fd[0] */
-void	redirect_stdin(char *str, int fd[2])
-{
-	char	*name;
-	char	*line;
-	char	*tmp;
-
-	fd[0] = 0;
-	if (!ft_strchr(str, '<'))
-		return ;
-	line = ft_strdup(str);
-	name = ft_strtrim(ft_strchr(line, '<') + 1, " \t");
-	*ft_strchr(line, '<') = 0;
-	line = gnl_join(line, ft_strchr(name, 32), ft_strlen(ft_strchr(name, 32)));
-	if (ft_strchr(name, ' '))
-		*ft_strchr(name, ' ') = 0;
-	if (*name == '<')
-	{
-		ft_strlcpy(name, name + 1, ft_strlen(name));
-		ft_printf("\n>");
-		tmp = get_input(NULL);
-		while (tmp && (ft_strncmp(tmp, name, ft_strlen(name)) || (ft_strlen(name) != ft_strlen(tmp))))
-		{
-			ft_printf("\n>");
-			tmp = get_input(NULL);
-		}
-	}
-	fd[0] = open(name, O_RDONLY);
-	ft_strlcpy(str, line, ft_strlen(line) + 1);
-	return (free(name), free(line));
-}
-
-/* changes str to remove redirection and changes fd[1] */
-void	redirect_stdout(char *str, int fd[2])
-{
-	char	*name;
-	int		append;
-	char	*line;
-
-	fd[1] = 1;
-	if (!ft_strchr(str, '>'))
-		return ;
-	line = ft_strdup(str);
-	name = ft_strchr(line, '>') + 1;
-	append = 0;
-	if (name[0] == '>')
-	{
-		append = 1;
-		name ++;
-	}
-	name = ft_strtrim(name, " \t");
-	*ft_strchr(line, '>') = 0;
-	line = gnl_join(line, ft_strchr(name, 32), ft_strlen(ft_strchr(name, 32)));
-	if (ft_strchr(name, ' '))
-		*ft_strchr(name, ' ') = 0;
-	if (append)
-		fd[1] = open(name, O_FLAG2, S_FLAG);
-	else
-		fd[1] = open(name, O_FLAG, S_FLAG);
-	return (ft_strlcpy(str, line, ft_strlen(line) + 1), free(name), free(line));
-}
-
-void	ft_close(int nb, ...)
-{
-	va_list	args;
-	int		i;
-	int		fd;
-
-	va_start(args, nb);
-	i = 0;
-	while (i < nb)
-	{
-		fd = va_arg(args, int);
-		if (fd > 2)
-			close(fd);
-		i++;
-	}
-}
-
-char	**split_pipes(char *input)
+static char	**split_pipes(char *input)
 {
 	static char	**split = NULL;
 	char		**final;
@@ -119,33 +40,23 @@ char	**split_pipes(char *input)
 	return (ft_bzero(&split, sizeof(char **)), final);
 }
 
-int	handle_cmd(char *input, int *exit_code, char **history)
+int	is_built_in(char *cmd)
 {
-	char	**split;
-	int		i;
-	int		fd[2];
+	static char	*cmds[6] = {"echo", "cd", "pwd", "env", "export", "unset"};
+	int			i;
+	char		*s;
 
-	if (!input)
-		return (check_exit(input, exit_code));
-	redirect_stdout((redirect_stdin(input, fd), input), fd);
-	split = (ft_bzero(&i, sizeof(int)), split_pipes(input));
-	while (split && split[i])
-		i++;
-	if (i > 1)
-		*exit_code = (free(input), ft_pipes(i, split, fd, history));
-	else if (check_exit(input, exit_code) == EXIT)
-		return (free_split(split), free(input), EXIT);
-	if (i == 1 && !is_built_in(input) && (free_split(split), 1))
+	i = 0;
+	cmd = ft_strdup(cmd);
+	s = ft_strtrim(cmd, " \t");
+	free(cmd);
+	while (i < 6)
 	{
-		i = fork();
-		if (i == 0)
-			exec_cmd(input, fd[0], fd[1], history);
-		waitpid(i, exit_code, 0);
-		*exit_code = (free(input), WEXITSTATUS(*exit_code));
+		if (!strncmp(s, cmds[i], ft_strlen(cmds[i])))
+			return (free(s), 1);
+		i++;
 	}
-	else if (i <= 1 && (split && (free_split(split), 1)))
-		free((built_in(input, fd[0], fd[1], exit_code), input));
-	return (ft_close(2, fd[0], fd[1]), 0);
+	return (free(s), 0);
 }
 
 void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
@@ -175,21 +86,31 @@ void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
 	return (free(line));
 }
 
-int	is_built_in(char *cmd)
+int	handle_cmd(char *input, int *exit_code, char **history)
 {
-	static char	*cmds[6] = {"echo", "cd", "pwd", "env", "export", "unset"};
-	int			i;
-	char		*s;
+	char	**split;
+	int		i;
+	int		fd[2];
 
-	i = 0;
-	cmd = ft_strdup(cmd);
-	s = ft_strtrim(cmd, " \t");
-	free(cmd);
-	while (i < 6)
-	{
-		if (!strncmp(s, cmds[i], ft_strlen(cmds[i])))
-			return (free(s), 1);
+	if (!input)
+		return (check_exit(input, exit_code));
+	redirect_stdout((redirect_stdin(input, fd), input), fd);
+	split = (ft_bzero(&i, sizeof(int)), split_pipes(input));
+	while (split && split[i])
 		i++;
+	if (i > 1)
+		*exit_code = (free(input), ft_pipes(i, split, fd, history));
+	else if (check_exit(input, exit_code) == EXIT)
+		return (free_split(split), free(input), EXIT);
+	if (i == 1 && !is_built_in(input) && (free_split(split), 1))
+	{
+		i = fork();
+		if (i == 0)
+			exec_cmd(input, fd[0], fd[1], history);
+		waitpid(i, exit_code, 0);
+		*exit_code = (free(input), WEXITSTATUS(*exit_code));
 	}
-	return (free(s), 0);
+	else if (i <= 1 && (split && (free_split(split), 1)))
+		free((built_in(input, fd[0], fd[1], exit_code), input));
+	return (ft_close(2, fd[0], fd[1]), 0);
 }

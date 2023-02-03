@@ -34,8 +34,8 @@
 
 # define EXIT 1
 
-# define S2ARG "not enough arguments"
-# define SARG "too many arguments"
+# define SARG "not enough arguments"
+# define S2ARG "too many arguments"
 # define SNUM "numeric argument required"
 
 /* (O_RDWR | O_CREAT | O_TRUNC) */
@@ -46,6 +46,10 @@
 # define S_FLAG 420
 
 extern char	**environ;
+
+/* redirect.c */
+void	redirect_stdin(char *str, int fd[2]);
+void	redirect_stdout(char *str, int fd[2]);
 
 /* ft_split_set.c */
 char	**ft_split_set(char *str, char *charset);
