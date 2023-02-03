@@ -12,26 +12,7 @@
 
 #include "minishell.h"
 
-int	is_built_in(char *cmd)
-{
-	static char	*cmds[6] = {"echo", "cd", "pwd", "env", "export", "unset"};
-	int			i;
-	char		*s;
-
-	i = 0;
-	cmd = ft_strdup(cmd);
-	s = ft_strtrim(cmd, " \t");
-	free(cmd);
-	while (i < 6)
-	{
-		if (!strncmp(s, cmds[i], ft_strlen(cmds[i])))
-			return (free(s), 1);
-		i++;
-	}
-	return (free(s), 0);
-}
-
-void	ft_err(char *s, int fd_in, int fd_out, char **history)
+static void	ft_err(char *s, int fd_in, int fd_out, char **history)
 {
 	if (errno == ENOENT)
 	{
@@ -72,7 +53,7 @@ void	exec_cmd(char *cmd, int fd_i, int fd_o, char **h)
 	return (free_split(args), free(path), free(cmd), ft_err(s, fd_i, fd_o, h));
 }
 
-int	fi(int i, int fd[], int pipes[])
+static int	fi(int i, int fd[], int pipes[])
 {
 	int	fd_in;
 
@@ -99,7 +80,7 @@ int	fi(int i, int fd[], int pipes[])
 	return (fd_in);
 }
 
-int	fo(int i, int nb, int fd[], int pipes[])
+static int	fo(int i, int nb, int fd[], int pipes[])
 {
 	int	fd_out;
 

@@ -125,7 +125,6 @@ int	handle_cmd(char *input, int *exit_code, char **history)
 	int		i;
 	int		fd[2];
 
-	(void)history;
 	if (!input)
 		return (check_exit(input, exit_code));
 	redirect_stdout((redirect_stdin(input, fd), input), fd);
@@ -174,4 +173,23 @@ void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
 	close(std[0]);
 	close(std[1]);
 	return (free(line));
+}
+
+int	is_built_in(char *cmd)
+{
+	static char	*cmds[6] = {"echo", "cd", "pwd", "env", "export", "unset"};
+	int			i;
+	char		*s;
+
+	i = 0;
+	cmd = ft_strdup(cmd);
+	s = ft_strtrim(cmd, " \t");
+	free(cmd);
+	while (i < 6)
+	{
+		if (!strncmp(s, cmds[i], ft_strlen(cmds[i])))
+			return (free(s), 1);
+		i++;
+	}
+	return (free(s), 0);
 }
