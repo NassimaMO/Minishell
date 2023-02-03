@@ -119,12 +119,13 @@ char	**split_pipes(char *input)
 	return (ft_bzero(&split, sizeof(char **)), final);
 }
 
-int	handle_cmd(char *input, int *exit_code)
+int	handle_cmd(char *input, int *exit_code, char **history)
 {
 	char	**split;
 	int		i;
 	int		fd[2];
 
+	(void)history;
 	if (!input)
 		return (check_exit(input, exit_code));
 	redirect_stdout((redirect_stdin(input, fd), input), fd);
@@ -132,14 +133,14 @@ int	handle_cmd(char *input, int *exit_code)
 	while (split && split[i])
 		i++;
 	if (i > 1)
-		*exit_code = (free(input), ft_pipes(i, split, fd));
+		*exit_code = (free(input), ft_pipes(i, split, fd, history));
 	else if (check_exit(input, exit_code) == EXIT)
 		return (free_split(split), free(input), EXIT);
 	if (i == 1 && !is_built_in(input) && (free_split(split), 1))
 	{
 		i = fork();
 		if (i == 0)
-			exec_cmd(input, fd[0], fd[1]);
+			exec_cmd(input, fd[0], fd[1], history);
 		waitpid(i, exit_code, 0);
 		*exit_code = (free(input), WEXITSTATUS(*exit_code));
 	}

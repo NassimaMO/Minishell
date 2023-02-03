@@ -12,6 +12,20 @@
 
 #include "minishell.h"
 
+void	place_cursor(char *str, size_t cursor)
+{
+	size_t	i;
+	int		len;
+
+	i = 0;
+	len = ft_strlen(str);
+	while (i < len - cursor)
+	{
+		ft_printf("\033[1D");
+		i++;
+	}
+}
+
 void	ft_escape(size_t *cursor, size_t *moves, char **str, char **history)
 {
 	char	buff[1];
@@ -47,31 +61,6 @@ char	*add_char(char *str, char c, size_t cursor)
 	return (new_str);
 }
 
-char	*del_char(char *str, size_t cursor)
-{
-	char	*new_str;
-
-	new_str = malloc(ft_strlen(str));
-	ft_strlcpy(new_str, str, cursor);
-	ft_strlcpy(new_str + cursor, str + cursor, ft_strlen(str + cursor) + 1);
-	free(str);
-	return (new_str);
-}
-
-void	place_cursor(char *str, size_t cursor)
-{
-	size_t	i;
-	int		len;
-
-	i = 0;
-	len = ft_strlen(str);
-	while (i < len - cursor)
-	{
-		ft_printf("\033[1D");
-		i++;
-	}
-}
-
 char	*get_input(char ***history)
 {
 	char	*str;
@@ -90,8 +79,12 @@ char	*get_input(char ***history)
 			return (free(str), NULL);
 		if (*buff == 27)
 			ft_escape(&cursor, &history_moves, &str, *history);
-		else if (*buff == 127)
-			str = (ft_printf("%s", str + --cursor), place_cursor(str, cursor), del_char(str, cursor));
+		else if (*buff == 127 && cursor > 0)
+		{
+			ft_printf("\033[1D\033[K%s", str + cursor--);
+			place_cursor(str, cursor + 1);
+			ft_strlcpy(str + cursor, str + cursor + 1, ft_strlen(str) - cursor + 1);
+		}
 		else if (ft_isprint(*buff))
 			str = (ft_printf("%c%s", *buff, str + cursor), place_cursor(str, cursor), add_char(str, *buff, cursor++));
 		bytes = read(0, ft_memset(buff, 0, 1), 1);

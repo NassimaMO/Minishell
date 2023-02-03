@@ -25,7 +25,6 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <term.h>
-//# include <stropts.h>
 
 # define FULL 0
 # define SHORT 1
@@ -92,12 +91,12 @@ void	free_env(void);
 /* commands.c */
 void	ft_close(int nb, ...);
 void	built_in(char *input, int fd_in, int fd_out, int *exit_code);
-int		handle_cmd(char *input, int *env_len);
+int		handle_cmd(char *input, int *exit_code, char **history);
 
 /* pipex.c */
 int		is_built_in(char *cmd);
-void	exec_cmd(char *cmd, int fd_in, int fd_out);
-int		ft_pipes(int nb, char **cmds, int fd[2]);
+void	exec_cmd(char *cmd, int fd_i, int fd_o, char **h);
+int		ft_pipes(int n, char **cmds, int fd[2], char **h);
 
 /* pipex_utils.c */
 char	*get_pathname(char *cmd, char *envp[]);

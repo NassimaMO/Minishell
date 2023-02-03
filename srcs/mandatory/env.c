@@ -111,8 +111,8 @@ int	env_cmd(char *input)
 {
 	input = ft_strtrim(input, " \t");
 	if (ft_strlen(input) == 3)
-		return (print_env(environ), 0);
+		return (free(input), print_env(environ), 0);
 	else
-		return (ft_printf("env: %s\n", S2ARG), EXIT_FAILURE);
+		return (free(input), ft_printf("env: %s\n", S2ARG), EXIT_FAILURE);
 	return (free(input), 0);
 }
