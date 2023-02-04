@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 15:23:10 by nmouslim          #+#    #+#             */
-/*   Updated: 2023/02/04 18:16:19 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/04 18:19:48 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,8 @@ int	quote_gestion(char *input, char **output, int i, int *exit_code)
 		if (input[i] && input[i] == '$' && input[i + 1] == '?')
 		{
 			code = ft_itoa(*exit_code);
-			*output = (i += 2, gnl_join(*output, code, 1));
+			*output = gnl_join(*output, code, ft_strlen(code));
+			i += 2;
 			free(code);
 		}
 		else
