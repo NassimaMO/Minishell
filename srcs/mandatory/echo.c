@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:23 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/04 19:16:48 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/04 19:25:41 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ char	*get_processed_input(char *input, int opt, int exit_code)
 		while (input[i] && input[i] == ' ')
 			i++;
 	}
-	if (!opt || !i)
+	if (!opt)
 		output = gnl_join(output, "\n", 1);
 	return (output);
 }
