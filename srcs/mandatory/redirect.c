@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   redirect.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/04 18:26:44 by nmouslim          #+#    #+#             */
+/*   Updated: 2023/02/04 18:28:12 by nmouslim         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static char	*delimiter(char *str)
@@ -31,7 +43,8 @@ static void	heredoc(char *name, int fd[2])
 	history = NULL;
 	ft_printf(">");
 	tmp = get_input(history);
-	while (tmp && (ft_strncmp(tmp, name, ft_strlen(name)) || (ft_strlen(name) != ft_strlen(tmp))))
+	while (tmp && (ft_strncmp(tmp, name, ft_strlen(name)) || \
+			(ft_strlen(name) != ft_strlen(tmp))))
 	{
 		write(pipefd[1], tmp, ft_strlen(tmp));
 		write(pipefd[1], "\n", 1);

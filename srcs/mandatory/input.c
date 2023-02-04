@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 06:51:04 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/04 18:05:21 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/04 18:39:11 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ static void	ft_escape(size_t *cursor, size_t *moves, char **history)
 	if (read(0, ft_memset(buff, 0, 1), 1) == 1 && *buff == '[')
 	{
 		read(0, ft_memset(buff, 0, 1), 1);
-		if ((*buff == 'C' && *cursor < ft_strlen(history[split_len(history) - (*moves + 1)]) && ++(*cursor)) || \
+		if ((*buff == 'C' && *cursor < ft_strlen(history[split_len(history) - \
+			(*moves + 1)]) && ++(*cursor)) || \
 			(*buff == 'D' && *cursor > 0 && (--(*cursor), 1)))
 			ft_printf("\033[1%c", *buff);
 		if (history && ((*buff == 'A' && *moves < split_len(history) && \
@@ -86,17 +87,22 @@ char	*get_input(char **history)
 	bytes = read(0, ft_memset(buff, 0, 1), 1);
 	history = add_split(history, ft_strdup(""));
 	ft_bzero((ft_bzero(&cursor, sizeof(size_t)), &moves), sizeof(size_t));
-	while (history[split_len(history) - (moves + 1)] && bytes >= 0 && *buff != '\n')
+	while (history[split_len(history) - (moves + 1)] && bytes >= 0 && \
+			*buff != '\n')
 	{
-		if ((bytes == 0 || *buff == 0 || *buff == 4) && !*history[split_len(history) - (moves + 1)])
+		if ((bytes == 0 || *buff == 0 || *buff == 4) && \
+				!*history[split_len(history) - (moves + 1)])
 			return (free_split(history), NULL);
 		if (*buff == 27)
 			ft_escape(&cursor, &moves, history);
 		else if (*buff == 127 && cursor > 0)
 			ft_del(&cursor, history[split_len(history) - (moves + 1)]);
 		else if (ft_isprint(*buff))
-			history[split_len(history) - (moves + 1)] = (ft_printf("%c%s", *buff, history[split_len(history) - (moves + 1)] + cursor), \
-			place_cursor(history[split_len(history) - (moves + 1)], cursor), add_char(history[split_len(history) - (moves + 1)], *buff, cursor++));
+			history[split_len(history) - (moves + 1)] = (ft_printf("%c%s", \
+			*buff, history[split_len(history) - (moves + 1)] + cursor), \
+			place_cursor(history[split_len(history) - (moves + 1)], cursor), \
+			add_char(history[split_len(history) - (moves + 1)], *buff, \
+			cursor++));
 		bytes = read(0, ft_memset(buff, 0, 1), 1);
 	}
 	if (bytes < 0 && *buff == 0)
