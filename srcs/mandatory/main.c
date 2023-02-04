@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:02:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/03 17:18:56 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/04 18:03:08 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,15 @@ char	**ft_split_dup(char **split)
 	char	**to_return;
 	int		i;
 
-	to_return = malloc(sizeof(char *) * split_len(split));
-	i = -1;
-	while (split[++i])
+	if (!split)
+		return (NULL);
+	to_return = malloc(sizeof(char *) * (split_len(split) + 1));
+	i = 0;
+	while (split && split[i])
+	{
 		to_return[i] = ft_strdup(split[i]);
+		i++;
+	}
 	to_return[i] = NULL;
 	return (to_return);
 }
@@ -69,19 +74,23 @@ int	main(void)
 	history = NULL;
 	exit_code = 0;
 	signals();
-	set_terminal(SET);
 	init_env();
 	while (1)
 	{
 		print_shell();
-		input = get_input(history);
-		if (handle_cmd(input, &exit_code, ft_split_dup(history)) == EXIT)
+		input = get_input(ft_split_dup(history));
+		if (handle_cmd(input, &exit_code, history) == EXIT)
 			break ;
 		if (input)
+		{
 			history = add_split(history, input);
+			/*int	i = -1;
+			while (history[++i])
+				printf("[%d.%s]\n", i + 1, history[i]);*/
+		}
+		//free(input);
 	}
 	free_env();
 	free_split(history);
-	set_terminal(RESET);
 	return (exit_code);
 }

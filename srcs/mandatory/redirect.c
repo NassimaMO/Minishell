@@ -37,11 +37,11 @@ void	redirect_stdin(char *str, int fd[2])
 	if (ft_strnstr(line, "<<", ft_strlen(line)))
 	{
 		ft_printf(">");
-		tmp = get_input(&history);
+		tmp = get_input(history);
 		while (tmp && (ft_strncmp(tmp, name, ft_strlen(name)) || (ft_strlen(name) != ft_strlen(tmp))))
 		{
 			ft_printf("\n>");
-			tmp = get_input(&history);
+			tmp = get_input(history);
 		}
 	}
 	*ft_strchr(line, '<') = 0;
