@@ -30,14 +30,14 @@ static void	heredoc(char *name, int fd[2])
 		return ;
 	history = NULL;
 	ft_printf(">");
-	tmp = get_input(&history);
+	tmp = get_input(history);
 	while (tmp && (ft_strncmp(tmp, name, ft_strlen(name)) || (ft_strlen(name) != ft_strlen(tmp))))
 	{
 		write(pipefd[1], tmp, ft_strlen(tmp));
 		write(pipefd[1], "\n", 1);
 		ft_printf(">");
 		free(tmp);
-		tmp = get_input(&history);
+		tmp = get_input(history);
 	}
 	free(tmp);
 	close(pipefd[1]);

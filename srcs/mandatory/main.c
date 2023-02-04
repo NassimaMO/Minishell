@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:02:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/02 13:41:54 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/04 18:08:53 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,26 @@ void	ft_close(int nb, ...)
 
 /* TO DO LIST :
 - proper history
-*/
+- file redirection : <<
+- built_in variable "$?" (last exit code) */
+
+char	**ft_split_dup(char **split)
+{
+	char	**to_return;
+	int		i;
+
+	if (!split)
+		return (NULL);
+	to_return = malloc(sizeof(char *) * (split_len(split) + 1));
+	i = 0;
+	while (split && split[i])
+	{
+		to_return[i] = ft_strdup(split[i]);
+		i++;
+	}
+	to_return[i] = NULL;
+	return (to_return);
+}
 
 int	main(void)
 {
@@ -58,9 +77,11 @@ int	main(void)
 	while (1)
 	{
 		print_shell();
-		input = get_input(&history);
+		input = get_input(ft_split_dup(history));
 		if (handle_cmd(input, &exit_code, history) == EXIT)
 			break ;
+		if (input)
+			history = add_split(history, input);
 	}
 	free_env();
 	free_split(history);
