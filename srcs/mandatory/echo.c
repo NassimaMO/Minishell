@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:23 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/04 19:05:41 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/04 19:16:48 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int	newline_opt(char *input, int *tmp)
 	return (is_valid_opt(input, i, quote, tmp));
 }
 
-char *get_processed_input(char *input, int opt, int exit_code)
+char	*get_processed_input(char *input, int opt, int exit_code)
 {
 	char	*output;
 	int		i;
@@ -77,11 +77,12 @@ int	echo_cmd(char *input, int exit_code)
 	int		tmp;
 	int		temp;
 	char	*to_print;
-	
+
 	temp = 0;
 	tmp = 0;
 	if (input[0] && input[0] != ' ' && input[0] != '\t')
-		return (ft_printf("echo%s: command not found\n", input), 127);
+		return (write(2, "echo", 4), write(2, input, ft_strlen(input)), \
+		write(2, ": command not found\n", 20), 127);
 	input = ft_strtrim(input, " \t");
 	i = newline_opt(input, &tmp);
 	while (i)
