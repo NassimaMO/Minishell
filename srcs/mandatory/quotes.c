@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 15:23:10 by nmouslim          #+#    #+#             */
-/*   Updated: 2023/02/03 16:49:12 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/04 18:16:19 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,34 +65,33 @@ void	go_through_input(char *input, char **to_return, int *i, char quotes)
 		*to_return = gnl_join(*to_return, input + (*i)++, 1);
 }
 
-char	*quote_gestion(char *input, int *i, int *exit_code)
+int	quote_gestion(char *input, char **output, int i, int *exit_code)
 {
 	static char	quotes;
-	char		*to_return;
 	char		*code;
 
-	to_return = ft_strdup("");
-	while (input[*i] && input[*i] != ' ')
+	*output = ft_strdup("");
+	while (input[i] && input[i] != ' ')
 	{
-		while (input[*i] && (input[*i] == '\'' || input[*i] == '\"'))
+		while (input[i] && (input[i] == '\'' || input[i] == '\"'))
 		{
 			if (!quotes)
-				quotes = input[(*i)++];
-			else if (input[*i] == quotes)
-				quotes = ((*i)++, '\0');
+				quotes = input[i++];
+			else if (input[i] == quotes)
+				quotes = (i++, '\0');
 			else
 				break ;
 		}
-		if (input[*i] && input[*i] == '$' && input[*i + 1] == '?')
+		if (input[i] && input[i] == '$' && input[i + 1] == '?')
 		{
 			code = ft_itoa(*exit_code);
-			to_return = (*i += 2, gnl_join(to_return, code, 1));
+			*output = (i += 2, gnl_join(*output, code, 1));
 			free(code);
 		}
 		else
-			go_through_input(input, &to_return, i, quotes);
+			go_through_input(input, output, &i, quotes);
 	}
-	if (quotes && !input[*i])
+	if (quotes && !input[i])
 		quotes = '\0';
-	return (to_return);
+	return (i);
 }

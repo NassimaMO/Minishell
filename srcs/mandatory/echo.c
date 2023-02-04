@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:23 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/03 16:51:20 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/04 18:17:02 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	print_input(char *input, int i, int tmp, int *exit_code)
 
 	while (input[i])
 	{
-		output = quote_gestion(input, &i, exit_code);
+		i = quote_gestion(input, &output, i, exit_code);
 		(ft_printf("%s", output), free(output));
 		if (input[i] && input[i] == ' ')
 			write(1, &input[i++], 1);
