@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:23 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/04 18:17:02 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/04 19:05:41 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,21 +51,24 @@ int	newline_opt(char *input, int *tmp)
 	return (is_valid_opt(input, i, quote, tmp));
 }
 
-void	print_input(char *input, int i, int tmp, int exit_code)
+char *get_processed_input(char *input, int opt, int exit_code)
 {
 	char	*output;
+	int		i;
 
+	i = 0;
+	output = ft_strdup("");
 	while (input[i])
 	{
 		i = quote_gestion(input, &output, i, exit_code);
-		(ft_printf("%s", output), free(output));
 		if (input[i] && input[i] == ' ')
-			write(1, &input[i++], 1);
+			output = gnl_join(output, input + i++, 1);
 		while (input[i] && input[i] == ' ')
 			i++;
 	}
-	if (!tmp || !i)
-		write(1, "\n", 1);
+	if (!opt || !i)
+		output = gnl_join(output, "\n", 1);
+	return (output);
 }
 
 int	echo_cmd(char *input, int exit_code)
@@ -73,6 +76,7 @@ int	echo_cmd(char *input, int exit_code)
 	int		i;
 	int		tmp;
 	int		temp;
+	char	*to_print;
 	
 	temp = 0;
 	tmp = 0;
@@ -87,6 +91,7 @@ int	echo_cmd(char *input, int exit_code)
 			break ;
 		tmp += temp;
 	}
-	print_input(input, i, tmp, exit_code);
-	return (free(input), 0);
+	to_print = get_processed_input(input + i, tmp, exit_code);
+	ft_printf("%s", to_print);
+	return (free(to_print), free(input), 0);
 }
