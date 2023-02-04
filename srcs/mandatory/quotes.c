@@ -65,7 +65,7 @@ void	go_through_input(char *input, char **to_return, int *i, char quotes)
 		*to_return = gnl_join(*to_return, input + (*i)++, 1);
 }
 
-char	*quote_gestion(char *input, int *i, int *exit_code)
+char	*quote_gestion(char *input, int *i, int exit_code)
 {
 	static char	quotes;
 	char		*to_return;
@@ -85,8 +85,8 @@ char	*quote_gestion(char *input, int *i, int *exit_code)
 		}
 		if (input[*i] && input[*i] == '$' && input[*i + 1] == '?')
 		{
-			code = ft_itoa(*exit_code);
-			to_return = (*i += 2, gnl_join(to_return, code, 1));
+			code = ft_itoa(exit_code);
+			to_return = (*i += 2, gnl_join(to_return, code, ft_strlen(code)));
 			free(code);
 		}
 		else

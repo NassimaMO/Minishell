@@ -49,7 +49,7 @@ void	print_export(char **envp)
 	}
 }
 
-char	*get_name(char *cmd)
+char	*get_cmd(char *cmd)
 {
 	int		fd[2];
 	int		stdclone;
@@ -83,8 +83,8 @@ void	print_shell(void)
 	char	*user;
 	char	*path;
 
-	name = get_name("/bin/hostname");
-	user = get_name("/bin/id -u -n");
+	name = get_cmd("/bin/hostname");
+	user = get_cmd("/bin/id -u -n");
 	path = get_current_path(SHORT);
 	ft_printf("%s@%s:%s$ ", user, name, path);
 	return (free(name), free(path), free(user));

@@ -70,7 +70,7 @@ int	check_exit(char *input, int *exit_code)
 				*exit_code = (free(input), free(cmd), 1);
 				return (ft_printf("exit: %s\n", S2ARG), 0);
 			}
-			if (ft_atoi_error(input, &exit_code, sizeof(char)) < 0)
+			if (ft_atoi_error(input, exit_code, sizeof(char)) < 0)
 				*exit_code = (ft_printf("exit: %s: %s\n", input, SNUM), 2);
 			free(input);
 		}

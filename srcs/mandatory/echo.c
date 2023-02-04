@@ -51,7 +51,7 @@ int	newline_opt(char *input, int *tmp)
 	return (is_valid_opt(input, i, quote, tmp));
 }
 
-void	print_input(char *input, int i, int tmp, int *exit_code)
+void	print_input(char *input, int i, int tmp, int exit_code)
 {
 	char	*output;
 
@@ -68,12 +68,12 @@ void	print_input(char *input, int i, int tmp, int *exit_code)
 		write(1, "\n", 1);
 }
 
-int	echo_cmd(char *input, int *exit_code)
+int	echo_cmd(char *input, int exit_code)
 {
 	int		i;
 	int		tmp;
 	int		temp;
-
+	
 	temp = 0;
 	tmp = 0;
 	if (input[0] && input[0] != ' ' && input[0] != '\t')

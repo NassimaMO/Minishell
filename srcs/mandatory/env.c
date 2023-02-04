@@ -49,7 +49,7 @@ void	add_var(char *name, char *line)
 		environ[i] = (free(environ[i]), line);
 	}
 	else if (ft_strchr(line, '='))
-		environ[i] = ft_strdup(line);
+		environ[i] = (free(environ[i]), ft_strdup(line));
 	return (free(tmp));
 }
 

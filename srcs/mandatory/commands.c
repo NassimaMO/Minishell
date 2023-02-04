@@ -42,7 +42,7 @@ static char	**split_pipes(char *input)
 
 int	is_built_in(char *cmd)
 {
-	static char	*cmds[6] = {"echo", "cd", "pwd", "env", "export", "unset"};
+	static char	*cmds[] = {"echo", "cd", "pwd", "env", "export", "unset", "exit"};
 	int			i;
 	char		*s;
 
@@ -50,7 +50,7 @@ int	is_built_in(char *cmd)
 	cmd = ft_strdup(cmd);
 	s = ft_strtrim(cmd, " \t");
 	free(cmd);
-	while (i < 6)
+	while (i < 7)
 	{
 		if (!strncmp(s, cmds[i], ft_strlen(cmds[i])))
 			return (free(s), 1);
@@ -69,7 +69,7 @@ void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
 	std[1] = dup(STDOUT_FILENO);
 	dup2(fd_out, (dup2(fd_in, 0), 1));
 	if (!ft_strncmp(line, "echo", 4))
-		*exit_code = echo_cmd(line + 4);
+		*exit_code = echo_cmd(line + 4, *exit_code);
 	else if (!ft_strncmp(line, "pwd", 3))
 		*exit_code = pwd_cmd(line);
 	else if (!ft_strncmp(line, "cd", 2))

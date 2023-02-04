@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:05:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/03 17:13:47 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/03 16:15:32 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,10 @@ void	redirect_stdout(char *str, int fd[2]);
 char	**ft_split_set(char *str, char *charset);
 
 /* echo.c */
-int		echo_cmd(char *input, int *exit_code);
+int		echo_cmd(char *input, int exit_code);
 
 /* quotes.c */
-char	*quote_gestion(char *input, int *i, int *exit_code);
+char	*quote_gestion(char *input, int *i, int exit_code);
 
 /* path.c */
 int		pwd_cmd(char *input);
@@ -75,10 +75,11 @@ int		env_cmd(char *input);
 void	set_terminal(int option);
 
 /* input.c */
-char	*get_input(char **history);
+char	*get_input(char ***history);
 int		check_exit(char *input, int *exit_code);
 
 /* print.c */
+char	*get_cmd(char *cmd);
 void	print_env(char **envp);
 void	print_export(char **envp);
 void	print_shell(void);

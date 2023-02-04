@@ -12,33 +12,79 @@
 
 #include "minishell.h"
 
+int	update_path(char *path, int print)
+{
+	char	*pwd;
+	char	*var;
+
+	pwd = getcwd(NULL, 0);
+	if (chdir(path) < 0)
+	{
+		write(2, "cd: ", 5);
+		perror(path);
+		return (free(path), free(pwd), EXIT_FAILURE);
+	}
+	var = ft_strjoin("OLDPWD=", pwd);
+	add_var("OLDPWD", var);
+	free(pwd);
+	free(var);
+	pwd = getcwd(NULL, 0);
+	var = ft_strjoin("PWD=", pwd);
+	add_var("PWD", var);
+	free(pwd);
+	free(var);
+	if (print)
+		ft_printf("%s\n", path);
+	return (free(path), 0);
+}
+
+char	*get_home()
+{
+	char	*home;
+	char	*cmd;
+	char	*user;
+	char	**split;
+
+	home = getenv("HOME");
+	if (home)
+		return (ft_strdup(home));
+	cmd = "getent passwd ";
+	user = get_cmd("/bin/id -u -n");
+	cmd = ft_strjoin(cmd, user);
+	free(user);
+	home = get_cmd(cmd);
+	split = ft_split(home, ':');
+	if (split && split_len(split) > 5)
+		home = (free(home), ft_strdup(split[5]));
+	else
+		home = NULL;
+	return (free(cmd), free_split(split), home);
+}
+
 int	cd_cmd(char *line)
 {
 	char	*path;
 	char	**split;
-	int		i;
-	char	*old;
+	int		print;
 
 	split = ft_split_set(line, " \t");
-	i = 0;
-	while (split[i])
-		i++;
-	if (i == 1)
-		path = ft_strdup(getenv("HOME"));
-	else if (i > 2)
-		return (write(2, "minishell: cd: too many arguments\n", 34), 1);
+	print = 0;
+	if (split_len(split) == 1)
+		path = get_home();
+	else if (split_len(split) > 2)
+		return (write(2, "cd: too many arguments\n", 23), free_split(split), 1);
 	else if (!ft_strncmp(split[1], "-", 1) && ft_strlen(split[1]) == 1)
-		path = (ft_printf("%s\n", getenv("OLDPWD")), \
-				ft_strdup(getenv("OLDPWD")));
+	{
+		if (!getenv("OLDPWD"))
+			return (write(2, "cd: OLDPWD not set\n", 19), free_split(split), 1);
+		path = ft_strdup(getenv("OLDPWD"));
+		print = 1;
+	}
 	else if (split[1][0] == '~')
-		path = ft_strjoin(getenv("HOME"), split[1] + 1);
+		path = gnl_join(get_home(), split[1] + 1, ft_strlen(split[1] + 1));
 	else
 		path = ft_strdup(split[1]);
-	old = ft_strjoin("OLDPWD=", getcwd(NULL, 0));
-	add_var("OLDPWD", old);
-	if ((free_split(split), chdir(path)) < 0)
-		return (perror(""), free(path), free(old), EXIT_FAILURE);
-	return (free(path), free(old), 0);
+	return (free_split(split), update_path(path, print));
 }
 
 /* option=SHORT: path with ~ ; option=0: full path */
@@ -74,7 +120,9 @@ int	pwd_cmd(char *input)
 		path = get_current_path(FULL);
 	else
 	{
-		ft_printf("pwd: %s\n", S2ARG);
+		write(2, "pwd: ", 5);
+		write(2, S2ARG, ft_strlen(S2ARG));
+		write(2, "\n", 1);
 		return (free(input), EXIT_FAILURE);
 	}
 	ft_printf("%s\n", path);
