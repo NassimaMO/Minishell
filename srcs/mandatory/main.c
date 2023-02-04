@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:02:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/04 18:03:08 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/04 18:08:53 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ void	ft_close(int nb, ...)
 }
 
 /* TO DO LIST :
-- executable with relative or absolute path : may leak with SIGINT
 - proper history
 - file redirection : <<
 - built_in variable "$?" (last exit code) */
@@ -82,13 +81,7 @@ int	main(void)
 		if (handle_cmd(input, &exit_code, history) == EXIT)
 			break ;
 		if (input)
-		{
 			history = add_split(history, input);
-			/*int	i = -1;
-			while (history[++i])
-				printf("[%d.%s]\n", i + 1, history[i]);*/
-		}
-		//free(input);
 	}
 	free_env();
 	free_split(history);

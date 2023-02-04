@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-char	*delimiter(char *str)
+static char	*delimiter(char *str)
 {
 	int		i;
 	int		j;
@@ -20,37 +20,50 @@ char	*delimiter(char *str)
 	return (ft_substr(str, i, j - i));
 }
 
+static void	heredoc(char *name, int fd[2])
+{
+	char	**history;
+	int		pipefd[2];
+	char	*tmp;
+
+	if (pipe(pipefd) < 0)
+		return ;
+	history = NULL;
+	ft_printf(">");
+	tmp = get_input(history);
+	while (tmp && (ft_strncmp(tmp, name, ft_strlen(name)) || (ft_strlen(name) != ft_strlen(tmp))))
+	{
+		write(pipefd[1], tmp, ft_strlen(tmp));
+		write(pipefd[1], "\n", 1);
+		ft_printf(">");
+		free(tmp);
+		tmp = get_input(history);
+	}
+	free(tmp);
+	close(pipefd[1]);
+	fd[0] = pipefd[0];
+	free_split(history);
+}
+
 /* changes str to remove redirection and changes fd[0] */
 void	redirect_stdin(char *str, int fd[2])
 {
 	char	*name;
 	char	*line;
-	char	*tmp;
-	char	**history;
 
-	history = NULL;
 	fd[0] = 0;
 	if (!ft_strchr(str, '<'))
 		return ;
-	line = ft_strdup(str);
-	name = delimiter(line);
-	if (ft_strnstr(line, "<<", ft_strlen(line)))
-	{
-		ft_printf(">");
-		tmp = get_input(history);
-		while (tmp && (ft_strncmp(tmp, name, ft_strlen(name)) || (ft_strlen(name) != ft_strlen(tmp))))
-		{
-			ft_printf("\n>");
-			tmp = get_input(history);
-		}
-	}
-	*ft_strchr(line, '<') = 0;
-	line = gnl_join(line, ft_strchr(name, 32), ft_strlen(ft_strchr(name, 32)));
-	if (ft_strchr(name, ' '))
-		*ft_strchr(name, ' ') = 0;
-	fd[0] = open(name, O_RDONLY);
-	ft_strlcpy(str, line, ft_strlen(line) + 1);
-	return (free(name), free(line), free_split(history));
+	name = delimiter(str);
+	if (ft_strnstr(str, "<<", ft_strlen(str)))
+		heredoc(name, fd);
+	else
+		fd[0] = open(name, O_RDONLY);
+	line = ft_strnstr(str, name, ft_strlen(str));
+	while (*line && *line != ' ' && *line != '\t')
+		line ++;
+	ft_strlcpy(ft_strchr(str, '<'), line, ft_strlen(line) + 1);
+	return (free(name));
 }
 
 /* changes str to remove redirection and changes fd[1] */
