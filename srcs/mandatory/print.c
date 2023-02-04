@@ -89,3 +89,11 @@ void	print_shell(void)
 	ft_printf("%s@%s:%s$ ", user, name, path);
 	return (free(name), free(path), free(user));
 }
+
+void	print_error(const char *cmd, const char *error)
+{
+	write(2, cmd, ft_strlen(cmd));
+	write(2, ": ", 2);
+	write(2, error, ft_strlen(error));
+	write(2, "\n", 1);
+}

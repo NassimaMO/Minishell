@@ -84,7 +84,8 @@ int	quote_gestion(char *input, char **output, int i, int exit_code)
 		if (input[i] && input[i] == '$' && input[i + 1] == '?')
 		{
 			code = ft_itoa(exit_code);
-			*output = (i += 2, gnl_join(*output, code, ft_strlen(code)));
+			*output = gnl_join(*output, code, ft_strlen(code));
+			i += 2;
 			free(code);
 		}
 		else

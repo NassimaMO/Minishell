@@ -38,7 +38,7 @@ int	update_path(char *path, int print)
 	return (free(path), 0);
 }
 
-char	*get_home()
+char	*get_home(void)
 {
 	char	*home;
 	char	*cmd;
@@ -61,22 +61,24 @@ char	*get_home()
 	return (free(cmd), free_split(split), home);
 }
 
-int	cd_cmd(char *line)
+int	cd_cmd(char *line, int exit_code)
 {
 	char	*path;
 	char	**split;
 	int		print;
 
+	line = get_processed_input(line, 1, exit_code);
 	split = ft_split_set(line, " \t");
 	print = 0;
 	if (split_len(split) == 1)
 		path = get_home();
 	else if (split_len(split) > 2)
-		return (write(2, "cd: too many arguments\n", 23), free_split(split), 1);
+		return (print_error("cd", S2ARG), free_split(split), free(line), 1);
 	else if (!ft_strncmp(split[1], "-", 1) && ft_strlen(split[1]) == 1)
 	{
 		if (!getenv("OLDPWD"))
-			return (write(2, "cd: OLDPWD not set\n", 19), free_split(split), 1);
+			return (print_error("cd", "OLDPWD not set"), \
+			free_split(split), free(line), 1);
 		path = ft_strdup(getenv("OLDPWD"));
 		print = 1;
 	}
@@ -84,7 +86,7 @@ int	cd_cmd(char *line)
 		path = gnl_join(get_home(), split[1] + 1, ft_strlen(split[1] + 1));
 	else
 		path = ft_strdup(split[1]);
-	return (free_split(split), update_path(path, print));
+	return (free_split(split), free(line), update_path(path, print));
 }
 
 /* option=SHORT: path with ~ ; option=0: full path */
@@ -120,9 +122,7 @@ int	pwd_cmd(char *input)
 		path = get_current_path(FULL);
 	else
 	{
-		write(2, "pwd: ", 5);
-		write(2, S2ARG, ft_strlen(S2ARG));
-		write(2, "\n", 1);
+		print_error("pwd", S2ARG);
 		return (free(input), EXIT_FAILURE);
 	}
 	ft_printf("%s\n", path);

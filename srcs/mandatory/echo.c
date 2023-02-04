@@ -51,7 +51,7 @@ int	newline_opt(char *input, int *tmp)
 	return (is_valid_opt(input, i, quote, tmp));
 }
 
-char *get_processed_input(char *input, int opt, int exit_code)
+char	*get_processed_input(char *input, int opt, int exit_code)
 {
 	char	*output;
 	int		i;
@@ -77,7 +77,7 @@ int	echo_cmd(char *input, int exit_code)
 	int		tmp;
 	int		temp;
 	char	*to_print;
-	
+
 	temp = 0;
 	tmp = 0;
 	if (input[0] && input[0] != ' ' && input[0] != '\t')

@@ -53,44 +53,48 @@ void	add_var(char *name, char *line)
 	return (free(tmp));
 }
 
-int	export_cmd(char *line)
+int	export_cmd(char *str, int exit_code)
 {
 	char	*name;
+	char	*line;
 
-	if (ft_strlen(line) == 6)
-		return (print_export(environ), 0);
-	if (!ft_strncmp(line, "export", 6))
-		line = ft_strtrim(ft_strchr(line, ' '), " \t");
+	str = get_processed_input(str, 1, exit_code);
+	if (ft_strlen(str) == 6)
+		return (print_export(environ), free(str), 0);
+	if (!ft_strncmp(str, "export", 6))
+		line = ft_strtrim(ft_strchr(str, ' '), " \t");
 	if (ft_strchr(line, ' '))
-		ft_bzero((export_cmd(ft_strtrim(ft_strchr(line, ' '), " \t")), \
-		ft_strchr(line, ' ')), sizeof(char));
+		ft_bzero((export_cmd(ft_strtrim(ft_strchr(line, ' '), " \t"), \
+		exit_code), ft_strchr(line, ' ')), sizeof(char));
 	else if (ft_strchr(line, '\t'))
-		ft_bzero((export_cmd(ft_strtrim(ft_strchr(line, '\t'), " \t")), \
-		ft_strchr(line, '\t')), sizeof(char));
+		ft_bzero((export_cmd(ft_strtrim(ft_strchr(line, '\t'), " \t"), \
+		exit_code), ft_strchr(line, '\t')), sizeof(char));
 	name = ft_strdup(line);
 	if (ft_strchr(name, '='))
 		*ft_strchr(name, '=') = '\0';
 	else
-		return (free(line), free(name), 0);
+		return (free(line), free(name), free(str), 0);
 	if (ft_strchr(name, '+'))
 		*ft_strchr(name, '+') = '\0';
 	if (!valid_var_name(name) || !*name)
-		return (ft_printf("export: not valid in this context: '%s'\n", name), \
-		free(name), free(line), EXIT_FAILURE);
-	return (add_var(name, line), free(name), free(line), 0);
+		return (print_error("export", "not valid in this context"), \
+		free(name), free(line), free(str), EXIT_FAILURE);
+	return (add_var(name, line), free(name), free(line), free(str), 0);
 }
 
-int	unset_cmd(char *line)
+int	unset_cmd(char *str, int exit_code)
 {
-	int	i;
+	int		i;
+	char	*line;
 
-	if (ft_strlen(line) == 5)
-		return (ft_printf("unset: %s\n", SARG), EXIT_FAILURE);
+	str = get_processed_input(str, 1, exit_code);
+	if (ft_strlen(str) == 5)
+		return (print_error("unset", SARG), free(str), EXIT_FAILURE);
 	i = 0;
-	if (!ft_strncmp(line, "unset", 5))
-		line = ft_strtrim(ft_strchr(line, ' '), " \t");
+	if (!ft_strncmp(str, "unset", 5))
+		line = ft_strtrim(ft_strchr(str, ' '), " \t");
 	if (ft_strchr(line, ' '))
-		ft_bzero((unset_cmd(ft_strtrim(ft_strchr(line, ' '), " \t")), \
+		ft_bzero((unset_cmd(ft_strtrim(ft_strchr(line, ' '), " \t"), exit_code), \
 		ft_strchr(line, ' ')), sizeof(char));
 	while (environ[i])
 	{
@@ -104,7 +108,7 @@ int	unset_cmd(char *line)
 		else
 			i++;
 	}
-	return (free(line), 0);
+	return (free(line), free(str), 0);
 }
 
 int	env_cmd(char *input)
@@ -113,6 +117,6 @@ int	env_cmd(char *input)
 	if (ft_strlen(input) == 3)
 		return (free(input), print_env(environ), 0);
 	else
-		return (free(input), ft_printf("env: %s\n", S2ARG), EXIT_FAILURE);
+		return (free(input), print_error("env", S2ARG), EXIT_FAILURE);
 	return (free(input), 0);
 }

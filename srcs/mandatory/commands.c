@@ -42,7 +42,8 @@ static char	**split_pipes(char *input)
 
 int	is_built_in(char *cmd)
 {
-	static char	*cmds[] = {"echo", "cd", "pwd", "env", "export", "unset", "exit"};
+	static char	*cmds[] = \
+	{"echo", "cd", "pwd", "env", "export", "unset", "exit"};
 	int			i;
 	char		*s;
 
@@ -73,13 +74,13 @@ void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
 	else if (!ft_strncmp(line, "pwd", 3))
 		*exit_code = pwd_cmd(line);
 	else if (!ft_strncmp(line, "cd", 2))
-		*exit_code = cd_cmd(line);
+		*exit_code = cd_cmd(line, *exit_code);
 	else if (!ft_strncmp(line, "env", 3))
 		*exit_code = env_cmd(line);
 	else if (!ft_strncmp(line, "export", 6))
-		*exit_code = export_cmd(line);
+		*exit_code = export_cmd(line, *exit_code);
 	else if (!ft_strncmp(line, "unset", 5))
-		*exit_code = unset_cmd(line);
+		*exit_code = unset_cmd(line, *exit_code);
 	dup2(std[1], (dup2(std[0], 0), 1));
 	close(std[0]);
 	close(std[1]);

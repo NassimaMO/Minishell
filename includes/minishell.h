@@ -55,6 +55,7 @@ void	redirect_stdout(char *str, int fd[2]);
 char	**ft_split_set(char *str, char *charset);
 
 /* echo.c */
+char	*get_processed_input(char *input, int opt, int exit_code);
 int		echo_cmd(char *input, int exit_code);
 
 /* quotes.c */
@@ -62,13 +63,13 @@ int		quote_gestion(char *input, char **output, int i, int exit_code);
 
 /* path.c */
 int		pwd_cmd(char *input);
-int		cd_cmd(char *line);
+int		cd_cmd(char *line, int exit_code);
 char	*get_current_path(int option);
 
 /* env */
 void	add_var(char *name, char *line);
-int		export_cmd(char *line);
-int		unset_cmd(char *line);
+int		export_cmd(char *str, int exit_code);
+int		unset_cmd(char *line, int exit_code);
 int		env_cmd(char *input);
 
 /* terminal.c */
@@ -83,6 +84,7 @@ char	*get_cmd(char *cmd);
 void	print_env(char **envp);
 void	print_export(char **envp);
 void	print_shell(void);
+void	print_error(const char *cmd, const char *error);
 
 /* signals.c */
 void	signals(void);
