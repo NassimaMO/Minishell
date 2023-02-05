@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_split.c                                         :+:      :+:    :+:   */
+/*   ft_split_set.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 13:27:23 by nghulam-          #+#    #+#             */
-/*   Updated: 2022/02/18 13:27:25 by nghulam-         ###   ########.fr       */
+/*   Updated: 2023/02/05 15:20:31 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	is_char_in_str(char c, char *str)
+static int	is_char_in_str(char c, char *str)
 {
 	int	i;
 
@@ -26,7 +26,7 @@ int	is_char_in_str(char c, char *str)
 	return (0);
 }
 
-char	**alloc_split(char *str, char *charset)
+static char	**alloc_split(char *str, char *charset)
 {
 	int		i;
 	int		j;

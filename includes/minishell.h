@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:05:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/04 18:15:46 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/05 15:24:56 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,13 @@ void	set_terminal(int option);
 
 /* input.c */
 char	*get_input(char **history);
+
+/* exit.c */
 int		check_exit(char *input, int *exit_code);
+
+/* manage_input.c */
+void	process_input(char **history, char *buff, size_t *moves, \
+					size_t *cursor);
 
 /* print.c */
 char	*get_cmd(char *cmd);
@@ -90,18 +96,21 @@ void	print_error(const char *cmd, const char *error);
 void	signals(void);
 
 /* split.c */
+char	**ft_split_dup(char **split);
 char	**add_split(char **split, char *str);
 void	free_split(char **split);
 size_t	split_len(char **split);
 void	free_env(void);
 
-/* commands.c */
+/* main.c */
 void	ft_close(int nb, ...);
+
+/* commands.c */
+int		is_built_in(char *cmd);
 void	built_in(char *input, int fd_in, int fd_out, int *exit_code);
 int		handle_cmd(char *input, int *exit_code, char **history);
 
 /* pipex.c */
-int		is_built_in(char *cmd);
 void	exec_cmd(char *cmd, int fd_i, int fd_o, char **h);
 int		ft_pipes(int n, char **cmds, int fd[2], char **h);
 

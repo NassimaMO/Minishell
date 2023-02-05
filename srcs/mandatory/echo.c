@@ -6,13 +6,13 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:23 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/04 19:25:41 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/05 15:14:06 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	is_valid_opt(char *input, int i, int quote, int *tmp)
+static int	is_valid_opt(char *input, int i, int quote, int *tmp)
 {
 	if (input[i] && ((input[i] != 'n' && input[i] != ' ') \
 			|| (quote % 2 != 0 && input[i] == ' ')))
@@ -22,7 +22,7 @@ int	is_valid_opt(char *input, int i, int quote, int *tmp)
 	return (*tmp = i, i);
 }
 
-int	newline_opt(char *input, int *tmp)
+static int	newline_opt(char *input, int *tmp)
 {
 	int	i;
 	int	quote;

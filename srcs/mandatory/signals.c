@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 15:22:15 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/09 15:22:16 by nghulam-         ###   ########.fr       */
+/*   Updated: 2023/02/05 15:28:10 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_handler(int signum)
+static void	ft_handler(int signum)
 {
 	(void)signum;
 }

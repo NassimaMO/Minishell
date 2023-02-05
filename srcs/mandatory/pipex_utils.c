@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   pipex_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:31 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/25 09:36:32 by nghulam-         ###   ########.fr       */
+/*   Updated: 2023/02/05 15:23:26 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ char	**get_cmd_args(const char *cmd)
 	return (split);
 }
 
-char	**get_path(char *envp[])
+static char	**get_path(char *envp[])
 {
 	int		i;
 	char	**split;

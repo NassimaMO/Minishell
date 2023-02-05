@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   path.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:04 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/25 09:36:05 by nghulam-         ###   ########.fr       */
+/*   Updated: 2023/02/05 15:22:30 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	update_path(char *path, int print)
+static int	update_path(char *path, int print)
 {
 	char	*pwd;
 	char	*var;
@@ -38,7 +38,7 @@ int	update_path(char *path, int print)
 	return (free(path), 0);
 }
 
-char	*get_home(void)
+static char	*get_home(void)
 {
 	char	*home;
 	char	*cmd;

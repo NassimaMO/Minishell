@@ -6,13 +6,13 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 14:52:03 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/03 16:48:43 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/05 15:16:29 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	str_into_int(char *s, void *ptr, int size, int p)
+static int	str_into_int(char *s, void *ptr, int size, int p)
 {
 	int	i;
 	int	n;
@@ -36,7 +36,7 @@ int	str_into_int(char *s, void *ptr, int size, int p)
 	return (0);
 }
 
-int	ft_atoi_error(const char *s, void *n, int size)
+static int	ft_atoi_error(const char *s, void *n, int size)
 {
 	int	i;
 	int	p;

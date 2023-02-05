@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:35:52 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/25 09:35:54 by nghulam-         ###   ########.fr       */
+/*   Updated: 2023/02/05 15:15:09 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	valid_var_name(char *name)
+static int	valid_var_name(char *name)
 {
 	int	i;
 
