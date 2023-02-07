@@ -12,15 +12,12 @@
 
 #include "minishell.h"
 
-static char	**split_pipes(char *input)
+static int	parse_pipes(char *input)
 {
-	static char	**split = NULL;
-	char		**final;
-	int			i;
-	char		c;
+	int		i;
+	char	c;
 
 	i = 0;
-	final = NULL;
 	while (input[i] && input[i] != '|')
 	{
 		if (input[i] == '"' || input[i] == '\'')
@@ -32,6 +29,17 @@ static char	**split_pipes(char *input)
 		if (input[i])
 			i++;
 	}
+	return (i);
+}
+
+static char	**split_pipes(char *input)
+{
+	static char	**split = NULL;
+	char		**final;
+	int			i;
+
+	final = NULL;
+	i = parse_pipes(input);
 	if (input[i] == '|' && i)
 	{
 		split = add_split(split, ft_substr(input, 0, i));
@@ -41,7 +49,8 @@ static char	**split_pipes(char *input)
 		final = add_split(split, ft_strdup(input));
 	else
 		final = (free_split(split), NULL);
-	return (ft_bzero(&split, sizeof(char **)), final);
+	split = NULL;
+	return (final);
 }
 
 int	is_built_in(char *cmd)
