@@ -90,13 +90,21 @@ static int	fo(int i, int nb, int fd[], int pipes[])
 	return (fd_out);
 }
 
+char	*ft_dupfree(char **cmds, int i)
+{
+	char	*tmp;
+
+	tmp = ft_strdup(cmds[i]);
+	free_split(cmds);
+	return (tmp);
+}
+
 int	ft_pipes(int n, char **cmds, int fd[2], char **h)
 {
 	int		p[4];
 	pid_t	pid;
 	int		status;
 	int		i;
-	char	*cmd;
 
 	i = 0;
 	while (i < n)
@@ -111,8 +119,7 @@ int	ft_pipes(int n, char **cmds, int fd[2], char **h)
 		{
 			if (!cmds[i])
 				exit((write(2, "syntax error\n", 13), free_split(cmds), 2));
-			cmd = ft_strdup(cmds[i]);
-			exec_cmd((free_split(cmds), cmd), fi(i, fd, p), fo(i, n, fd, p), h);
+			exec_cmd(ft_dupfree(cmds, i), fi(i, fd, p), fo(i, n, fd, p), h);
 		}
 		if (!i++)
 			continue ;
