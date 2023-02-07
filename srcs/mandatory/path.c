@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static int	update_path(char *path, int print)
+static int	update_path(char *path, char *arg)
 {
 	char	*pwd;
 	char	*var;
@@ -33,7 +33,7 @@ static int	update_path(char *path, int print)
 	add_var("PWD", var);
 	free(pwd);
 	free(var);
-	if (print)
+	if (!ft_strncmp(arg, "-", 1) && ft_strlen(arg) == 1)
 		ft_printf("%s\n", path);
 	return (free(path), 0);
 }
@@ -61,32 +61,32 @@ static char	*get_home(void)
 	return (free(cmd), free_split(split), home);
 }
 
-int	cd_cmd(char *line, int exit_code)
+int	cd_cmd(char *str, int exit_code)
 {
 	char	*path;
-	char	**split;
-	int		print;
+	char	**s;
+	char	*arg;
 
-	line = get_processed_input(line, 1, exit_code);
-	split = ft_split_set(line, " \t");
-	print = 0;
-	if (split_len(split) == 1)
+	s = get_cmd_args(str);
+	str = ft_strtrim(str + 2, " \t");
+	arg = get_processed_input(str, 1, exit_code);
+	if (split_len(s) == 1)
 		path = get_home();
-	else if (split_len(split) > 2)
-		return (print_error("cd", S2ARG), free_split(split), free(line), 1);
-	else if (!ft_strncmp(split[1], "-", 1) && ft_strlen(split[1]) == 1)
+	else if (split_len(s) > 2)
+		return (print_err("cd", S2ARG), free_split(s), free(arg), free(str), 1);
+	else if (!ft_strncmp(arg, "-", 1) && ft_strlen(arg) == 1)
 	{
 		if (!getenv("OLDPWD"))
-			return (print_error("cd", "OLDPWD not set"), \
-			free_split(split), free(line), 1);
+			return (print_err("cd", "OLDPWD not set"), \
+			free_split(s), free(str), 1);
 		path = ft_strdup(getenv("OLDPWD"));
-		print = 1;
 	}
-	else if (split[1][0] == '~')
-		path = gnl_join(get_home(), split[1] + 1, ft_strlen(split[1] + 1));
+	else if (*arg == '~')
+		path = gnl_join(get_home(), arg + 1, ft_strlen(arg + 1));
 	else
-		path = ft_strdup(split[1]);
-	return (free_split(split), free(line), update_path(path, print));
+		path = ft_strdup(arg);
+	exit_code = update_path(path, arg);
+	return (free_split(s), free(str), free(arg), exit_code);
 }
 
 /* option=SHORT: path with ~ ; option=0: full path */
@@ -122,7 +122,7 @@ int	pwd_cmd(char *input)
 		path = get_current_path(FULL);
 	else
 	{
-		print_error("pwd", S2ARG);
+		print_err("pwd", S2ARG);
 		return (free(input), EXIT_FAILURE);
 	}
 	ft_printf("%s\n", path);

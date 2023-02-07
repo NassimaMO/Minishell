@@ -58,7 +58,7 @@ char	*get_cmd(char *cmd);
 void	print_env(char **envp);
 void	print_export(char **envp);
 void	print_shell(void);
-void	print_error(const char *cmd, const char *error);
+void	print_err(const char *cmd, const char *error);
 
 /* terminal.c */
 void	set_terminal(int option);

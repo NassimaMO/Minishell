@@ -29,7 +29,7 @@ char	*get_input(char **history)
 	{
 		if ((bytes == 0 || *buff == 0 || *buff == 4) && \
 				!*history[split_len(history) - (moves + 1)])
-			return (free_split(history), NULL);
+			return (free_split(history), set_terminal(RESET), NULL);
 		process_input(history, buff, &moves, &cursor);
 		bytes = read(0, ft_memset(buff, 0, 1), 1);
 	}
@@ -37,6 +37,5 @@ char	*get_input(char **history)
 		return (ft_printf("\n"), free_split(history), ft_strdup(""));
 	str = ft_strdup(history[split_len(history) - (moves + 1)]);
 	free_split(history);
-	set_terminal(RESET);
-	return (ft_printf("\n"), str);
+	return (ft_printf("\n"), set_terminal(RESET), str);
 }

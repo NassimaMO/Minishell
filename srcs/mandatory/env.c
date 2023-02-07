@@ -19,7 +19,7 @@ static int	valid_var_name(char *name)
 	i = 0;
 	while (name[i])
 	{
-		if (!ft_isalnum(name[i]) && name[i] != '_')
+		if ((!ft_isalnum(name[i]) && name[i] != '_') || name[i] == ' ')
 			return (0);
 		i++;
 	}
@@ -55,31 +55,31 @@ void	add_var(char *name, char *line)
 
 int	export_cmd(char *str, int exit_code)
 {
-	char	*name;
 	char	*line;
+	char	**args;
+	int		i;
 
-	str = get_processed_input(str, 1, exit_code);
-	if (ft_strlen(str) == 6)
-		return (print_export(environ), free(str), 0);
-	if (!ft_strncmp(str, "export", 6))
-		line = ft_strtrim(ft_strchr(str, ' '), " \t");
-	if (ft_strchr(line, ' '))
-		ft_bzero((export_cmd(ft_strtrim(ft_strchr(line, ' '), " \t"), \
-		exit_code), ft_strchr(line, ' ')), sizeof(char));
-	else if (ft_strchr(line, '\t'))
-		ft_bzero((export_cmd(ft_strtrim(ft_strchr(line, '\t'), " \t"), \
-		exit_code), ft_strchr(line, '\t')), sizeof(char));
-	name = ft_strdup(line);
-	if (ft_strchr(name, '='))
-		*ft_strchr(name, '=') = '\0';
-	else
-		return (free(line), free(name), free(str), 0);
-	if (ft_strchr(name, '+'))
-		*ft_strchr(name, '+') = '\0';
-	if (!valid_var_name(name) || !*name)
-		return (print_error("export", "not valid in this context"), \
-		free(name), free(line), free(str), EXIT_FAILURE);
-	return (add_var(name, line), free(name), free(line), free(str), 0);
+	args = get_cmd_args(str);
+	if (split_len(args) == 1)
+		return (print_export(environ), 0);
+	i = (ft_bzero(&exit_code, sizeof(int)), 1);
+	while (args[i])
+	{
+		line = get_processed_input(args[i], 1, exit_code);
+		ft_strlcpy(args[i], line, ft_strlen(line) + 1);
+		if (!ft_strchr(args[i], '=') && ++i)
+			continue ;
+		*ft_strchr(args[i], '=') = '\0';
+		if (args[i][ft_strlen(args[i]) - 1] == '+')
+			args[i][ft_strlen(args[i]) - 1] = '\0';
+		if (!valid_var_name(args[i]) || !*args[i])
+			exit_code = (write(2, "export: not a valid identifier: ", \
+	32), write(2, "'", 1), ft_putstr_fd(args[i], 2), write(2, "'\n", 2), 1);
+		else
+			add_var(args[i], line);
+		i = (free(line), i + 1);
+	}
+	return (free_split(args), exit_code);
 }
 
 int	unset_cmd(char *str, int exit_code)
@@ -89,7 +89,7 @@ int	unset_cmd(char *str, int exit_code)
 
 	str = get_processed_input(str, 1, exit_code);
 	if (ft_strlen(str) == 5)
-		return (print_error("unset", SARG), free(str), EXIT_FAILURE);
+		return (print_err("unset", SARG), free(str), EXIT_FAILURE);
 	i = 0;
 	if (!ft_strncmp(str, "unset", 5))
 		line = ft_strtrim(ft_strchr(str, ' '), " \t");
@@ -117,6 +117,6 @@ int	env_cmd(char *input)
 	if (ft_strlen(input) == 3)
 		return (free(input), print_env(environ), 0);
 	else
-		return (free(input), print_error("env", S2ARG), EXIT_FAILURE);
+		return (free(input), print_err("env", S2ARG), EXIT_FAILURE);
 	return (free(input), 0);
 }
