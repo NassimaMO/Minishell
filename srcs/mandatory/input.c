@@ -34,7 +34,8 @@ char	*get_input(char **history)
 		bytes = read(0, ft_memset(buff, 0, 1), 1);
 	}
 	if (bytes < 0 && *buff == 0)
-		return (ft_printf("\n"), free_split(history), ft_strdup(""));
+		return (ft_printf("\n"), free_split(history), set_terminal(RESET), \
+		ft_strdup(""));
 	str = ft_strdup(history[split_len(history) - (moves + 1)]);
 	free_split(history);
 	return (ft_printf("\n"), set_terminal(RESET), str);

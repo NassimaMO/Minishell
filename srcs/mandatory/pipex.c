@@ -12,45 +12,32 @@
 
 #include "minishell.h"
 
-static void	ft_err(char *s, int fd_in, int fd_out, char **history)
-{
-	if (errno == ENOENT)
-	{
-		write(STDERR_FILENO, s, ft_strlen(s));
-		write(STDERR_FILENO, ": command not found\n", 20);
-		ft_close(2, fd_in, fd_out);
-		exit((free(s), free_env(), free_split(history), 127));
-	}
-	ft_close(2, fd_in, fd_out);
-	exit((free(s), free_env(), free_split(history), perror(""), EXIT_FAILURE));
-}
-
 void	exec_cmd(char *cmd, int fd_i, int fd_o, char **h)
 {
 	char	**args;
 	char	*path;
-	char	*s;
 	int		code;
 
-	args = get_cmd_args(cmd);
+	args = process_args(get_cmd_args(cmd), 0);
 	if (!args)
-		exit((free(cmd), free_env(), free_split(h), 0));
-	s = ft_strtrim(cmd, " \t");
-	if (ft_strchr(s, ' '))
-		*ft_strchr(s, ' ') = 0;
-	if (ft_strchr(s, '\t'))
-		*ft_strchr(s, '\t') = 0;
+		exit((ft_close(2, fd_i, fd_o), free_env(), free_split(h), \
+		free(cmd), free_split(args), 0));
 	dup2(fd_i, STDIN_FILENO);
 	dup2(fd_o, STDOUT_FILENO);
-	if (ft_strchr(s, '/'))
-		path = relative_path(s);
-	else
-		path = get_pathname(s, environ);
 	if (is_built_in(cmd) && (built_in(cmd, fd_i, fd_o, &code), 1))
-		exit((ft_close(2, fd_i, fd_o), free_split(args), free(path), free(s), \
-		free(cmd), free_env(), free_split(h), code));
+		exit((ft_close(2, fd_i, fd_o), free_split(args), free_env(), \
+									free_split(h), free(cmd), code));
+	if (ft_strchr(args[0], '/'))
+		path = relative_path(args[0]);
+	else
+		path = get_pathname(args[0], environ);
 	execve(path, args, environ);
-	return (free_split(args), free(path), free(cmd), ft_err(s, fd_i, fd_o, h));
+	ft_close(2, fd_i, fd_o);
+	free_split(h);
+	if (errno == ENOENT)
+		exit((print_err(args[0], SCMD), free_split(args), free_env(), \
+		free(path), free(cmd), 127));
+	exit((perror(""), free_split(args), free_env(), free(cmd), free(path), 1));
 }
 
 static int	fi(int i, int fd[], int pipes[])
@@ -114,14 +101,16 @@ int	ft_pipes(int n, char **cmds, int fd[2], char **h)
 	i = 0;
 	while (i < n)
 	{
-		if (i != (n -1) && ((!(i % 2) && pipe(p) < 0) || \
-		((i % 2) && pipe(p +2) < 0)))
+		if (i != (n - 1) && ((!(i % 2) && pipe(p) < 0) || \
+		((i % 2) && pipe(p + 2) < 0)))
 			return (perror("pipe failed: "), EXIT_FAILURE);
 		pid = fork();
 		if (pid == -1)
 			return (perror("fork failed: "), EXIT_FAILURE);
 		if (pid == 0)
 		{
+			if (!cmds[i])
+				exit((write(2, "syntax error\n", 13), free_split(cmds), 2));
 			cmd = ft_strdup(cmds[i]);
 			exec_cmd((free_split(cmds), cmd), fi(i, fd, p), fo(i, n, fd, p), h);
 		}

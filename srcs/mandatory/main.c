@@ -12,18 +12,6 @@
 
 #include "minishell.h"
 
-static void	init_env(void)
-{
-	int	i;
-
-	i = 0;
-	while (environ[i])
-	{
-		environ[i] = ft_strdup(environ[i]);
-		i++;
-	}
-}
-
 void	ft_close(int nb, ...)
 {
 	va_list	args;
@@ -60,10 +48,10 @@ int	main(void)
 	{
 		print_shell();
 		input = get_input(ft_split_dup(history));
-		if (handle_cmd(input, &exit_code, history) == EXIT)
-			break ;
 		if (input)
 			history = add_split(history, input);
+		if (handle_cmd(input, &exit_code, history) == EXIT)
+			break ;
 	}
 	free_env();
 	free_split(history);

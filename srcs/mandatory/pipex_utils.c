@@ -22,19 +22,18 @@ static char	**get_arg(char **split, const char *cmd, int *i)
 	j = *i;
 	while (cmd[*i] && cmd[*i] != ' ' && cmd[*i] != '\t')
 	{
-		while (cmd[*i] && cmd[*i] != ' ' && cmd[*i] != '\t' \
-		&& cmd[*i] != '\'' && cmd[*i] != '"')
-			(*i)++;
 		if (cmd[*i] == '\'' || cmd[*i] == '\"')
 		{
 			c = cmd[(*i)++];
 			while (cmd[*i] && cmd[*i] != c)
 				(*i)++;
-			(*i)++;
 		}
+		(*i)++;
 	}
 	str[*i - j] = 0;
-	return (add_split(split, str));
+	if (*str)
+		return (add_split(split, str));
+	return (free(str), split);
 }
 
 char	**get_cmd_args(const char *cmd)

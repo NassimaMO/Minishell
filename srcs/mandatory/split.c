@@ -75,15 +75,3 @@ size_t	split_len(char **split)
 		i++;
 	return (i);
 }
-
-void	free_env(void)
-{
-	int	i;
-
-	i = 0;
-	while (environ[i])
-	{
-		free(environ[i]);
-		i++;
-	}
-}

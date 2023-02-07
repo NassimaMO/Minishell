@@ -20,6 +20,7 @@ static char	**split_pipes(char *input)
 	char		c;
 
 	i = 0;
+	final = NULL;
 	while (input[i] && input[i] != '|')
 	{
 		if (input[i] == '"' || input[i] == '\'')
@@ -31,12 +32,15 @@ static char	**split_pipes(char *input)
 		if (input[i])
 			i++;
 	}
-	if (input[i] == '|')
+	if (input[i] == '|' && i)
 	{
 		split = add_split(split, ft_substr(input, 0, i));
 		return (split_pipes(input + i + 1));
 	}
-	final = add_split(split, ft_strdup(input));
+	else if (i)
+		final = add_split(split, ft_strdup(input));
+	else
+		final = (free_split(split), NULL);
 	return (ft_bzero(&split, sizeof(char **)), final);
 }
 
@@ -90,15 +94,15 @@ void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
 int	handle_cmd(char *input, int *exit_code, char **history)
 {
 	char	**split;
-	int		i;
 	int		fd[2];
+	int		i;
 
 	if (!input)
 		return (check_exit(input, exit_code));
-	redirect_stdout((redirect_stdin(input, fd), input), fd);
-	split = (ft_bzero(&i, sizeof(int)), split_pipes(input));
-	while (split && split[i])
-		i++;
+	split = split_pipes((redir_out((redir_in(input, fd), input), fd), input));
+	if (!split)
+		return (write(2, STXN, 13 * (ft_strchr(input, '|') != NULL)), 2);
+	i = split_len(split);
 	if (i > 1)
 		*exit_code = ft_pipes(i, split, fd, history);
 	else if (check_exit(input, exit_code) == EXIT)
@@ -107,7 +111,7 @@ int	handle_cmd(char *input, int *exit_code, char **history)
 	{
 		i = fork();
 		if (i == 0)
-			exec_cmd(input, fd[0], fd[1], history);
+			exec_cmd(ft_strdup(input), fd[0], fd[1], history);
 		waitpid(i, exit_code, 0);
 		*exit_code = WEXITSTATUS(*exit_code);
 	}

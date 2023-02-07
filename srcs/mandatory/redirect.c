@@ -59,7 +59,7 @@ static void	heredoc(char *name, int fd[2])
 }
 
 /* changes str to remove redirection and changes fd[0] */
-void	redirect_stdin(char *str, int fd[2])
+void	redir_in(char *str, int fd[2])
 {
 	char	*name;
 	char	*line;
@@ -80,7 +80,7 @@ void	redirect_stdin(char *str, int fd[2])
 }
 
 /* changes str to remove redirection and changes fd[1] */
-void	redirect_stdout(char *str, int fd[2])
+void	redir_out(char *str, int fd[2])
 {
 	char	*name;
 	int		append;

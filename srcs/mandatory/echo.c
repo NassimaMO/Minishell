@@ -71,6 +71,24 @@ char	*get_processed_input(char *input, int opt, int exit_code)
 	return (output);
 }
 
+char	**process_args(char **args, int exit_code)
+{
+	int		i;
+	char	*tmp;
+
+	i = 0;
+	if (!args)
+		return (NULL);
+	while (args[i])
+	{
+		tmp = get_processed_input(args[i], 1, exit_code);
+		free(args[i]);
+		args[i] = tmp;
+		i++;
+	}
+	return (args);
+}
+
 int	echo_cmd(char *input, int exit_code)
 {
 	int		i;

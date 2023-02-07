@@ -37,6 +37,9 @@
 # define SARG "not enough arguments"
 # define S2ARG "too many arguments"
 # define SNUM "numeric argument required"
+# define SCMD "command not found"
+
+# define STXN "syntax error\n"
 
 /* (O_RDWR | O_CREAT | O_TRUNC) */
 # define O_FLAG 578
@@ -98,11 +101,12 @@ char	**get_cmd_args(const char *cmd);
 char	*relative_path(char *path);
 
 /* redirect.c */
-void	redirect_stdin(char *str, int fd[2]);
-void	redirect_stdout(char *str, int fd[2]);
+void	redir_in(char *str, int fd[2]);
+void	redir_out(char *str, int fd[2]);
 
 /* echo.c */
 char	*get_processed_input(char *input, int opt, int exit_code);
+char	**process_args(char **args, int exit_code);
 int		echo_cmd(char *input, int exit_code);
 
 /* path.c */
@@ -111,10 +115,16 @@ int		cd_cmd(char *line, int exit_code);
 char	*get_current_path(int option);
 
 /* env */
-void	add_var(char *name, char *line);
 int		export_cmd(char *str, int exit_code);
 int		unset_cmd(char *line, int exit_code);
 int		env_cmd(char *input);
+
+/* env_utils.c */
+void	add_var(char *name, char *line);
+void	init_env(void);
+void	free_env(void);
+int		valid_var_name(char *name);
+void	del_var(char *name);
 
 /* exit.c */
 int		check_exit(char *input, int *exit_code);
