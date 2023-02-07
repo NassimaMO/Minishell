@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:23 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/05 15:14:06 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/07 16:47:43 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,9 @@ static int	newline_opt(char *input, int *tmp)
 				i++;
 			}
 		}
+		return (is_valid_opt(input, i, quote, tmp));
 	}
-	return (is_valid_opt(input, i, quote, tmp));
+	return (0);
 }
 
 char	*get_processed_input(char *input, int opt, int exit_code)
