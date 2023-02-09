@@ -73,15 +73,11 @@ int	is_built_in(char *cmd)
 	return (free(s), 0);
 }
 
-void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
+void	built_in(char *input, int *exit_code)
 {
 	char	*line;
-	int		std[2];
 
 	line = ft_strtrim(input, " \t");
-	std[0] = dup(STDIN_FILENO);
-	std[1] = dup(STDOUT_FILENO);
-	dup2(fd_out, (dup2(fd_in, 0), 1));
 	if (!ft_strncmp(line, "echo", 4))
 		*exit_code = echo_cmd(line + 4, *exit_code);
 	else if (!ft_strncmp(line, "pwd", 3))
@@ -94,37 +90,33 @@ void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
 		*exit_code = export_cmd(line, *exit_code);
 	else if (!ft_strncmp(line, "unset", 5))
 		*exit_code = unset_cmd(line, *exit_code);
-	dup2(std[1], (dup2(std[0], 0), 1));
-	close(std[0]);
-	close(std[1]);
 	return (free(line));
 }
 
 int	handle_cmd(char *input, int *exit_code, char **history)
 {
-	char	**split;
-	int		fd[2];
-	int		i;
+	char		**cmds;
+	static int	fd[2] = {0, 1};
+	int			i;
 
 	if (!input)
 		return (check_exit(input, exit_code));
-	split = split_pipes((redir_out((redir_in(input, fd), input), fd), input));
-	if (!split)
+	cmds = split_pipes(input);
+	if (!cmds)
 		return (write(2, STXN, 13 * (ft_strchr(input, '|') != NULL)), 2);
-	i = split_len(split);
+	i = split_len(cmds);
 	if (i > 1)
-		*exit_code = ft_pipes(i, split, fd, history);
+		*exit_code = ft_pipes(i, cmds, fd, history);
 	else if (check_exit(input, exit_code) == EXIT)
-		return (free_split(split), EXIT);
-	if (i == 1 && !is_built_in(input) && (free_split(split), 1))
+		return (free_split(cmds), EXIT);
+	if (i == 1)
 	{
+		free_split(cmds);
 		i = fork();
 		if (i == 0)
 			exec_cmd(ft_strdup(input), fd[0], fd[1], history);
 		waitpid(i, exit_code, 0);
 		*exit_code = WEXITSTATUS(*exit_code);
 	}
-	else if (i <= 1 && (split && (free_split(split), 1)))
-		built_in(input, fd[0], fd[1], exit_code);
 	return (ft_close(2, fd[0], fd[1]), 0);
 }

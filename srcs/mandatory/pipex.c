@@ -18,13 +18,15 @@ void	exec_cmd(char *cmd, int fd_i, int fd_o, char **h)
 	char	*path;
 	int		code;
 
+	redir_in(cmd, fd_i);
+	redir_out(cmd, fd_o);
 	args = process_args(get_cmd_args(cmd), 0);
 	if (!args)
 		exit((ft_close(2, fd_i, fd_o), free_env(), free_split(h), \
 		free(cmd), free_split(args), 0));
 	dup2(fd_i, STDIN_FILENO);
 	dup2(fd_o, STDOUT_FILENO);
-	if (is_built_in(cmd) && (built_in(cmd, fd_i, fd_o, &code), 1))
+	if (is_built_in(cmd) && (built_in(cmd, &code), 1))
 		exit((ft_close(2, fd_i, fd_o), free_split(args), free_env(), \
 									free_split(h), free(cmd), code));
 	if (ft_strchr(args[0], '/'))
@@ -32,8 +34,7 @@ void	exec_cmd(char *cmd, int fd_i, int fd_o, char **h)
 	else
 		path = get_pathname(args[0], environ);
 	execve(path, args, environ);
-	ft_close(2, fd_i, fd_o);
-	free_split(h);
+	free_split((ft_close(2, fd_i, fd_o), h));
 	if (errno == ENOENT)
 		exit((print_err(args[0], SCMD), free_split(args), free_env(), \
 		free(path), free(cmd), 127));
@@ -88,15 +89,6 @@ static int	fo(int i, int nb, int fd[], int pipes[])
 		fd_out = pipes[1];
 	}
 	return (fd_out);
-}
-
-char	*ft_dupfree(char **cmds, int i)
-{
-	char	*tmp;
-
-	tmp = ft_strdup(cmds[i]);
-	free_split(cmds);
-	return (tmp);
 }
 
 int	ft_pipes(int n, char **cmds, int fd[2], char **h)

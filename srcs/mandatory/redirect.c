@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 
+/* get substring redirection file name / input delimiter from str */
 static char	*delimiter(char *str)
 {
 	int		i;
@@ -32,7 +33,8 @@ static char	*delimiter(char *str)
 	return (ft_substr(str, i, j - i));
 }
 
-static void	heredoc(char *name, int fd[2])
+/* read stdin until delimiter and write it in a pipe */
+static void	heredoc(char *delimiter, int fd_in)
 {
 	char	**history;
 	int		pipefd[2];
@@ -43,8 +45,8 @@ static void	heredoc(char *name, int fd[2])
 	history = NULL;
 	ft_printf(">");
 	tmp = get_input(history);
-	while (tmp && (ft_strncmp(tmp, name, ft_strlen(name)) || \
-			(ft_strlen(name) != ft_strlen(tmp))))
+	while (tmp && (ft_strncmp(tmp, delimiter, ft_strlen(delimiter)) || \
+			(ft_strlen(delimiter) != ft_strlen(tmp))))
 	{
 		write(pipefd[1], tmp, ft_strlen(tmp));
 		write(pipefd[1], "\n", 1);
@@ -54,24 +56,23 @@ static void	heredoc(char *name, int fd[2])
 	}
 	free(tmp);
 	close(pipefd[1]);
-	fd[0] = pipefd[0];
+	dup2(pipefd[0], fd_in);
 	free_split(history);
 }
 
-/* changes str to remove redirection and changes fd[0] */
-void	redir_in(char *str, int fd[2])
+/* changes str to remove redirection and changes fd_in */
+void	redir_in(char *str, int fd_in)
 {
 	char	*name;
 	char	*line;
 
-	fd[0] = 0;
 	if (!ft_strchr(str, '<'))
 		return ;
 	name = delimiter(str);
 	if (ft_strnstr(str, "<<", ft_strlen(str)))
-		heredoc(name, fd);
+		heredoc(name, fd_in);
 	else
-		fd[0] = open(name, O_RDONLY);
+		dup2(open(name, O_RDONLY), fd_in);
 	line = ft_strnstr(str, name, ft_strlen(str));
 	while (*line && *line != ' ' && *line != '\t')
 		line ++;
@@ -79,32 +80,30 @@ void	redir_in(char *str, int fd[2])
 	return (free(name));
 }
 
-/* changes str to remove redirection and changes fd[1] */
-void	redir_out(char *str, int fd[2])
+/* changes str to remove redirection and changes fd_out */
+void	redir_out(char *str, int fd_out)
 {
 	char	*name;
 	int		append;
 	char	*line;
+	int		new_fd;
 
-	fd[1] = 1;
 	if (!ft_strchr(str, '>'))
 		return ;
 	line = ft_strdup(str);
 	name = ft_strchr(line, '>') + 1;
 	append = 0;
-	if (name[0] == '>')
-	{
+	if (*name == '>' && ++name)
 		append = 1;
-		name ++;
-	}
 	name = ft_strtrim(name, " \t");
 	*ft_strchr(line, '>') = 0;
 	line = gnl_join(line, ft_strchr(name, 32), ft_strlen(ft_strchr(name, 32)));
 	if (ft_strchr(name, ' '))
 		*ft_strchr(name, ' ') = 0;
 	if (append)
-		fd[1] = open(name, O_FLAG2, S_FLAG);
+		new_fd = open(name, O_FLAG2, S_FLAG);
 	else
-		fd[1] = open(name, O_FLAG, S_FLAG);
+		new_fd = open(name, O_FLAG, S_FLAG);
+	close((dup2(new_fd, fd_out), new_fd));
 	return (ft_strlcpy(str, line, ft_strlen(line) + 1), free(name), free(line));
 }

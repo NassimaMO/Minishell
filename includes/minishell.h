@@ -78,14 +78,14 @@ char	**ft_split_dup(char **split);
 char	**add_split(char **split, char *str);
 void	free_split(char **split);
 size_t	split_len(char **split);
-void	free_env(void);
+char	*ft_dupfree(char **split, int i);
 
 /* ft_split_set.c */
 char	**ft_split_set(char *str, char *charset);
 
 /* commands.c */
 int		is_built_in(char *cmd);
-void	built_in(char *input, int fd_in, int fd_out, int *exit_code);
+void	built_in(char *input, int *exit_code);
 int		handle_cmd(char *input, int *exit_code, char **history);
 
 /* quotes.c */
@@ -101,8 +101,8 @@ char	**get_cmd_args(const char *cmd);
 char	*relative_path(char *path);
 
 /* redirect.c */
-void	redir_in(char *str, int fd[2]);
-void	redir_out(char *str, int fd[2]);
+void	redir_in(char *str, int fd_in);
+void	redir_out(char *str, int fd_out);
 
 /* echo.c */
 char	*get_processed_input(char *input, int opt, int exit_code);

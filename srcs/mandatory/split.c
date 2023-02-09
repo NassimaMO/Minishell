@@ -51,6 +51,15 @@ char	**add_split(char **split, char *str)
 	return (new_split);
 }
 
+char	*ft_dupfree(char **split, int i)
+{
+	char	*tmp;
+
+	tmp = ft_strdup(split[i]);
+	free_split(split);
+	return (tmp);
+}
+
 void	free_split(char **split)
 {
 	int	i;
