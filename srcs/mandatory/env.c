@@ -26,7 +26,7 @@ int	export_cmd(char *str, int exit_code)
 	{
 		line = ft_strdup(args[i]);
 		ft_strlcpy(args[i], line, ft_strlen(line) + 1);
-		if (!ft_strchr(args[i], '=') && ++i)
+		if (!ft_strchr(args[i], '=') && (free(line), ++i))
 			continue ;
 		*ft_strchr(args[i], '=') = '\0';
 		if (*(args[i]) && args[i][ft_strlen(args[i]) - 1] == '+')

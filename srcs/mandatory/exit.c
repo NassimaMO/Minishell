@@ -54,27 +54,21 @@ static int	ft_atoi_error(const char *s, void *n, int size)
 
 int	check_exit(char *input, int *exit_code)
 {
-	char	*cmd;
+	char	**args;
 
 	if (!input)
 		return (ft_printf("\nexit\n"), EXIT);
-	cmd = ft_strtrim(input, " \t");
-	if (!ft_strncmp(input, "exit", 4))
+	args = process_args(get_cmd_args(input), *exit_code);
+	if (!ft_strncmp(args[0], "exit", 4) && ft_strlen(args[0]) == 4)
 	{
 		ft_printf("exit\n");
-		if (ft_strchr(cmd, ' '))
-		{
-			input = ft_strtrim(ft_strchr(cmd, ' '), " \t");
-			if (ft_strchr(input, ' '))
-			{
-				*exit_code = (free(input), free(cmd), 1);
-				return (ft_printf("exit: %s\n", S2ARG), 0);
-			}
-			if (ft_atoi_error(input, exit_code, sizeof(char)) < 0)
-				*exit_code = (ft_printf("exit: %s: %s\n", input, SNUM), 2);
-			free(input);
-		}
-		return (free(cmd), EXIT);
+		if (split_len(args) > 2)
+			*exit_code = 1;
+		if (split_len(args) > 2)
+			return (print_err("exit", S2ARG), free_split(args), 0);
+		if (split_len(args) > 1 && (ft_atoi_error(args[1], exit_code, sizeof(char)) < 0))
+			*exit_code = (ft_printf("exit: %s: %s\n", input, SNUM), 2);
+		return (free_split(args), EXIT);
 	}
-	return (free(cmd), 0);
+	return (free_split(args), 0);
 }

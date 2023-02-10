@@ -12,29 +12,29 @@
 
 #include "minishell.h"
 
-void	exec_cmd(char *cmd, int fd_i, int fd_o, char **h)
+void	exec_cmd(char *cmd, int fi, int fo, char **h)
 {
 	char	**args;
 	char	*path;
 	int		code;
 
-	redir_in(cmd, fd_i);
-	redir_out(cmd, fd_o);
+	if (redirect(cmd, fi, fo))
+		exit((ft_close(2, fi, fo), free_env(), free_split(h), free(cmd), 0));
 	args = process_args(get_cmd_args(cmd), 0);
 	if (!args)
-		exit((ft_close(2, fd_i, fd_o), free_env(), free_split(h), \
+		exit((ft_close(2, fi, fo), free_env(), free_split(h), \
 		free(cmd), free_split(args), 0));
-	dup2(fd_i, STDIN_FILENO);
-	dup2(fd_o, STDOUT_FILENO);
-	if (is_built_in(cmd) && (built_in(cmd, &code), 1))
-		exit((ft_close(2, fd_i, fd_o), free_split(args), free_env(), \
+	dup2(fi, STDIN_FILENO);
+	dup2(fo, STDOUT_FILENO);
+	if (is_built_in(cmd) && (built_in(cmd, fi, fo, &code), 1))
+		exit((ft_close(2, fi, fo), free_split(args), free_env(), \
 									free_split(h), free(cmd), code));
 	if (ft_strchr(args[0], '/'))
 		path = relative_path(args[0]);
 	else
 		path = get_pathname(args[0], environ);
 	execve(path, args, environ);
-	free_split((ft_close(2, fd_i, fd_o), h));
+	free_split((ft_close(2, fi, fo), h));
 	if (errno == ENOENT)
 		exit((print_err(args[0], SCMD), free_split(args), free_env(), \
 		free(path), free(cmd), 127));

@@ -28,7 +28,8 @@ static char	**get_arg(char **split, const char *cmd, int *i)
 			while (cmd[*i] && cmd[*i] != c)
 				(*i)++;
 		}
-		(*i)++;
+		if (cmd[*i])
+			(*i)++;
 	}
 	str[*i - j] = 0;
 	if (*str)

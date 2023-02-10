@@ -73,10 +73,11 @@ int	is_built_in(char *cmd)
 	return (free(s), 0);
 }
 
-void	built_in(char *input, int *exit_code)
+void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
 {
 	char	*line;
 
+	redirect(input, fd_in, fd_out);
 	line = ft_strtrim(input, " \t");
 	if (!ft_strncmp(line, "echo", 4))
 		*exit_code = echo_cmd(line + 4, *exit_code);
@@ -109,14 +110,15 @@ int	handle_cmd(char *input, int *exit_code, char **history)
 		*exit_code = ft_pipes(i, cmds, fd, history);
 	else if (check_exit(input, exit_code) == EXIT)
 		return (free_split(cmds), EXIT);
-	if (i == 1)
+	if (i == 1 && !is_built_in(cmds[0]) && (free_split(cmds), 1))
 	{
-		free_split(cmds);
 		i = fork();
 		if (i == 0)
 			exec_cmd(ft_strdup(input), fd[0], fd[1], history);
 		waitpid(i, exit_code, 0);
 		*exit_code = WEXITSTATUS(*exit_code);
 	}
+	else if (i == 1 && is_built_in(cmds[0]))
+		free_split((built_in(cmds[0], fd[0], fd[1], exit_code), cmds));
 	return (ft_close(2, fd[0], fd[1]), 0);
 }

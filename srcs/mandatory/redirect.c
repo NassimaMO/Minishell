@@ -13,17 +13,17 @@
 #include "minishell.h"
 
 /* get substring redirection file name / input delimiter from str */
-static char	*delimiter(char *str)
+static char	*delimiter(char *str, char c)
 {
 	int		i;
 	int		j;
 
 	i = 0;
-	while (str[i] && str[i] != '<')
+	while (str[i] && str[i] != c)
 		i++;
 	if (str[i])
 		i++;
-	if (str[i] && str[i] == '<')
+	if (str[i] && str[i] == c)
 		i++;
 	while (str[i] == ' ' || str[i] == '\t')
 		i++;
@@ -61,14 +61,16 @@ static void	heredoc(char *delimiter, int fd_in)
 }
 
 /* changes str to remove redirection and changes fd_in */
-void	redir_in(char *str, int fd_in)
+int	redir_in(char *str, int fd_in)
 {
 	char	*name;
 	char	*line;
 
 	if (!ft_strchr(str, '<'))
-		return ;
-	name = delimiter(str);
+		return (0);
+	name = delimiter(str, '<');
+	if (!*name)
+		return (write(2, STXN, 13), free(name), 2);
 	if (ft_strnstr(str, "<<", ft_strlen(str)))
 		heredoc(name, fd_in);
 	else
@@ -77,33 +79,40 @@ void	redir_in(char *str, int fd_in)
 	while (*line && *line != ' ' && *line != '\t')
 		line ++;
 	ft_strlcpy(ft_strchr(str, '<'), line, ft_strlen(line) + 1);
-	return (free(name));
+	return (free(name), 0);
 }
 
 /* changes str to remove redirection and changes fd_out */
-void	redir_out(char *str, int fd_out)
+int	redir_out(char *str, int fd_out)
 {
 	char	*name;
-	int		append;
 	char	*line;
 	int		new_fd;
 
 	if (!ft_strchr(str, '>'))
-		return ;
+		return (0);
+	name = delimiter(str, '>');
+	if (!*name)
+		return (write(2, STXN, 13), free(name), 2);
 	line = ft_strdup(str);
-	name = ft_strchr(line, '>') + 1;
-	append = 0;
-	if (*name == '>' && ++name)
-		append = 1;
-	name = ft_strtrim(name, " \t");
 	*ft_strchr(line, '>') = 0;
 	line = gnl_join(line, ft_strchr(name, 32), ft_strlen(ft_strchr(name, 32)));
-	if (ft_strchr(name, ' '))
-		*ft_strchr(name, ' ') = 0;
-	if (append)
+	if (ft_strnstr(str, ">>", ft_strlen(str)))
 		new_fd = open(name, O_FLAG2, S_FLAG);
 	else
 		new_fd = open(name, O_FLAG, S_FLAG);
 	close((dup2(new_fd, fd_out), new_fd));
-	return (ft_strlcpy(str, line, ft_strlen(line) + 1), free(name), free(line));
+	return (ft_strlcpy(str, line, ft_strlen(line) + 1), free(name), free(line), 0);
+}
+
+int	redirect(char *str, int fd_in, int fd_out)
+{
+	int	in;
+	int	out;
+
+	in = redir_in(str, fd_in);
+	out = redir_out(str, fd_out);
+	if (in)
+		return (in);
+	return (out);
 }
