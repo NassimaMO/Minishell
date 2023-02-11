@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 15:23:10 by nmouslim          #+#    #+#             */
-/*   Updated: 2023/02/07 14:59:42 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/11 15:00:39 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ static void	variable_gestion(char *input, char **to_return, \
 
 	x = 0;
 	*variable_tmp = ((*i)++, get_variable(input + *i, &x));
-	if (!*variable_tmp && (!input[*i] || input[*i] == ' ' || \
-		!ft_isalpha(input[*i])))
+	if (!*variable_tmp && (!input[*i] || input[*i] == ' ' \
+		/*|| !ft_isalpha(input[*i]))*/))
 		*to_return = gnl_join(*to_return, "$", 1);
 	else if (*variable_tmp)
 		*to_return = gnl_join(*to_return, *variable_tmp, \
