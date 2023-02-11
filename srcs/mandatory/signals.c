@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 15:22:15 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/05 15:28:10 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/11 14:25:47 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,14 @@
 
 static void	ft_handler(int signum)
 {
-	(void)signum;
+	struct termios	tty;
+	
+	if (signum == SIGINT)
+	{
+		tcgetattr(STDIN_FILENO, &tty);
+		if (!(tty.c_lflag & ECHO))
+			ft_printf("^C");
+	}
 }
 
 void	signals(void)
