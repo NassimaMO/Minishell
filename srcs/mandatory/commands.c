@@ -53,7 +53,7 @@ static char	**split_pipes(char *input)
 	return (final);
 }
 
-int	is_built_in(char *cmd)
+int	is_bin(char *cmd)
 {
 	static char	*cmds[] = \
 	{"echo", "cd", "pwd", "env", "export", "unset", "exit"};
@@ -78,8 +78,7 @@ void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
 	char	*line;
 	int		std[2];
 
-	std[0] = dup(STDIN_FILENO);
-	std[1] = dup(STDOUT_FILENO);
+	set_std(std, SET);
 	redirect(input, &fd_in, &fd_out);
 	dup2(fd_in, STDIN_FILENO);
 	dup2(fd_out, STDOUT_FILENO);
@@ -97,36 +96,34 @@ void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
 		*exit_code = export_cmd(line, *exit_code);
 	else if (!ft_strncmp(line, "unset", 5))
 		*exit_code = unset_cmd(line, *exit_code);
-	dup2(std[0], STDIN_FILENO);
-	dup2(std[1], STDOUT_FILENO);
-	return (ft_close(2, std[0], std[1]), free(line));
+	return (set_std(std, RESET), free(line));
 }
 
-int	handle_cmd(char *input, int *exit_code, char **history)
+int	handle_cmd(char *input, int *exit_code, char **h)
 {
-	char		**cmds;
-	static int	fd[2] = {0, 1};
+	char		**cmd;
+	static int	fd[4] = {0, 1, 2, 3};
 	int			i;
 
 	if (!input)
 		return (check_exit(input, exit_code));
-	cmds = split_pipes(input);
-	if (!cmds)
+	cmd = split_pipes(input);
+	if (!cmd)
 		return (write(2, STXN, 13 * (ft_strchr(input, '|') != NULL)), 2);
-	i = split_len(cmds);
+	i = split_len(cmd);
 	if (i > 1)
-		*exit_code = ft_pipes(i, cmds, fd, history);
+		*exit_code = ft_pipes(i, cmd, fd, h);
 	else if (check_exit(input, exit_code) == EXIT)
-		return (free_split(cmds), EXIT);
-	if (i == 1 && !is_built_in(cmds[0]) && (free_split(cmds), 1))
+		return (free_split(cmd), EXIT);
+	if (i == 1 && !is_bin(cmd[0]) && (free_split(cmd), set_std(fd + 2, SET), 1))
 	{
 		i = fork();
 		if (i == 0)
-			exec_cmd(ft_strdup(input), fd[0], fd[1], history);
+			exec_cmd(ft_dupfree(h, split_len(h) - 1), fd[0], fd[1], fd + 2);
 		waitpid(i, exit_code, 0);
-		*exit_code = WEXITSTATUS(*exit_code);
+		*exit_code = (set_std(fd + 2, RESET), WEXITSTATUS(*exit_code));
 	}
-	else if (i == 1 && is_built_in(cmds[0]))
-		free_split((built_in(cmds[0], fd[0], fd[1], exit_code), cmds));
+	else if (i == 1 && is_bin(cmd[0]))
+		free_split((built_in(cmd[0], fd[0], fd[1], exit_code), cmd));
 	return (ft_close(2, fd[0], fd[1]), 0);
 }

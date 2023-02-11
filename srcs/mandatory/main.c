@@ -48,7 +48,7 @@ int	main(void)
 	{
 		print_shell();
 		input = get_input(ft_split_dup(history));
-		if (input)
+		if (input && *input && *input != '\n')
 			history = add_split(history, input);
 		if (handle_cmd(input, &exit_code, history) == EXIT)
 			break ;
