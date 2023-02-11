@@ -101,7 +101,7 @@ char	**get_cmd_args(const char *cmd);
 char	*relative_path(char *path);
 
 /* redirect.c */
-int		redirect(char *str, int fd_in, int fd_out);
+int		redirect(char *str, int *fd_in, int *fd_out);
 
 /* echo.c */
 char	*get_processed_input(char *input, int opt, int exit_code);

@@ -18,14 +18,11 @@ void	exec_cmd(char *cmd, int fi, int fo, char **h)
 	char	*path;
 	int		code;
 
-	if (redirect(cmd, fi, fo))
-		exit((ft_close(2, fi, fo), free_env(), free_split(h), free(cmd), 0));
+	redirect(cmd, &fi, &fo);
 	args = process_args(get_cmd_args(cmd), 0);
 	if (!args)
 		exit((ft_close(2, fi, fo), free_env(), free_split(h), \
 		free(cmd), free_split(args), 0));
-	dup2(fi, STDIN_FILENO);
-	dup2(fo, STDOUT_FILENO);
 	if (is_built_in(cmd) && (built_in(cmd, fi, fo, &code), 1))
 		exit((ft_close(2, fi, fo), free_split(args), free_env(), \
 									free_split(h), free(cmd), code));
@@ -33,6 +30,8 @@ void	exec_cmd(char *cmd, int fi, int fo, char **h)
 		path = relative_path(args[0]);
 	else
 		path = get_pathname(args[0], environ);
+	dup2(fi, STDIN_FILENO);
+	dup2(fo, STDOUT_FILENO);
 	execve(path, args, environ);
 	free_split((ft_close(2, fi, fo), h));
 	if (errno == ENOENT)

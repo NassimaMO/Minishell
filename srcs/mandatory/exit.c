@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static int	str_into_int(char *s, void *ptr, int size, int p)
+static int	str_into_int(char *s, void *ptr, size_t size, int p)
 {
 	int	i;
 	int	n;
@@ -36,7 +36,7 @@ static int	str_into_int(char *s, void *ptr, int size, int p)
 	return (0);
 }
 
-static int	ft_atoi_error(const char *s, void *n, int size)
+static int	ft_atoi_err(const char *s, void *n, size_t size)
 {
 	int	i;
 	int	p;
@@ -50,6 +50,33 @@ static int	ft_atoi_error(const char *s, void *n, int size)
 	if (!ft_isdigit(s[i]))
 		return (-1);
 	return (str_into_int((char *)s + i, n, size, p));
+}
+
+static int	check_overflow(char *s, long long max)
+{
+	size_t		i;
+	long long	tmp;
+
+	i = 1;
+	tmp = max;
+	while (((max >= 0 && tmp >= 10) || (max < 0 && tmp <= -10)) && i++)
+		tmp /= 10;
+	if ((max > 0 && *s == '-') || (max < 0 && *s != '-') || ft_strlen(s) < i)
+		return (0);
+	if (ft_strlen(s) - (*s == '-') > i)
+		return (1);
+	i = ft_strlen(s) - 1;
+	while (1)
+	{
+		if ((max >= 0 && s[i] - '0' > max % 10) || \
+			(max < 0 && s[i] - '0' > -(max % 10)))
+			return (1);
+		max /= 10;
+		if (i == 0 || s[i - 1] == '-')
+			break ;
+		i--;
+	}
+	return (0);
 }
 
 int	check_exit(char *input, int *exit_code)
@@ -66,7 +93,10 @@ int	check_exit(char *input, int *exit_code)
 			*exit_code = 1;
 		if (split_len(args) > 2)
 			return (print_err("exit", S2ARG), free_split(args), 0);
-		if (split_len(args) > 1 && (ft_atoi_error(args[1], exit_code, sizeof(char)) < 0))
+		if (split_len(args) > 1 && \
+			(check_overflow(args[1], LLONG_MAX) || \
+			check_overflow(args[1], LLONG_MIN) || \
+			ft_atoi_err(args[1], exit_code, 1) < 0))
 			*exit_code = (ft_printf("exit: %s: %s\n", input, SNUM), 2);
 		return (free_split(args), EXIT);
 	}

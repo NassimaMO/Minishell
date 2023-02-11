@@ -76,8 +76,14 @@ int	is_built_in(char *cmd)
 void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
 {
 	char	*line;
+	int		std[2];
 
-	redirect(input, fd_in, fd_out);
+	std[0] = dup(STDIN_FILENO);
+	std[1] = dup(STDOUT_FILENO);
+	redirect(input, &fd_in, &fd_out);
+	dup2(fd_in, STDIN_FILENO);
+	dup2(fd_out, STDOUT_FILENO);
+	ft_close(2, fd_in, fd_out);
 	line = ft_strtrim(input, " \t");
 	if (!ft_strncmp(line, "echo", 4))
 		*exit_code = echo_cmd(line + 4, *exit_code);
@@ -91,7 +97,9 @@ void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
 		*exit_code = export_cmd(line, *exit_code);
 	else if (!ft_strncmp(line, "unset", 5))
 		*exit_code = unset_cmd(line, *exit_code);
-	return (free(line));
+	dup2(std[0], STDIN_FILENO);
+	dup2(std[1], STDOUT_FILENO);
+	return (ft_close(2, std[0], std[1]), free(line));
 }
 
 int	handle_cmd(char *input, int *exit_code, char **history)

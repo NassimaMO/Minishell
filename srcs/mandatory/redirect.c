@@ -34,7 +34,7 @@ static char	*delimiter(char *str, char c)
 }
 
 /* read stdin until delimiter and write it in a pipe */
-static void	heredoc(char *delimiter, int fd_in)
+static void	heredoc(char *delimiter, int *fd_in)
 {
 	char	**history;
 	int		pipefd[2];
@@ -55,13 +55,13 @@ static void	heredoc(char *delimiter, int fd_in)
 		tmp = get_input(history);
 	}
 	free(tmp);
-	close(pipefd[1]);
-	dup2(pipefd[0], fd_in);
+	ft_close(1, pipefd[1]);
+	*fd_in = (ft_close(1, *fd_in), pipefd[0]);
 	free_split(history);
 }
 
 /* changes str to remove redirection and changes fd_in */
-int	redir_in(char *str, int fd_in)
+int	redir_in(char *str, int *fd_in)
 {
 	char	*name;
 	char	*line;
@@ -74,7 +74,7 @@ int	redir_in(char *str, int fd_in)
 	if (ft_strnstr(str, "<<", ft_strlen(str)))
 		heredoc(name, fd_in);
 	else
-		dup2(open(name, O_RDONLY), fd_in);
+		*fd_in = (ft_close(1, fd_in), open(name, O_RDONLY));
 	line = ft_strnstr(str, name, ft_strlen(str));
 	while (*line && *line != ' ' && *line != '\t')
 		line ++;
@@ -83,11 +83,10 @@ int	redir_in(char *str, int fd_in)
 }
 
 /* changes str to remove redirection and changes fd_out */
-int	redir_out(char *str, int fd_out)
+int	redir_out(char *str, int *fd_out)
 {
 	char	*name;
 	char	*line;
-	int		new_fd;
 
 	if (!ft_strchr(str, '>'))
 		return (0);
@@ -98,14 +97,14 @@ int	redir_out(char *str, int fd_out)
 	*ft_strchr(line, '>') = 0;
 	line = gnl_join(line, ft_strchr(name, 32), ft_strlen(ft_strchr(name, 32)));
 	if (ft_strnstr(str, ">>", ft_strlen(str)))
-		new_fd = open(name, O_FLAG2, S_FLAG);
+		*fd_out = (ft_close(1, *fd_out), open(name, O_FLAG2, S_FLAG));
 	else
-		new_fd = open(name, O_FLAG, S_FLAG);
-	close((dup2(new_fd, fd_out), new_fd));
-	return (ft_strlcpy(str, line, ft_strlen(line) + 1), free(name), free(line), 0);
+		*fd_out = (ft_close(1, *fd_out), open(name, O_FLAG, S_FLAG));
+	free(name);
+	return (ft_strlcpy(str, line, ft_strlen(line) + 1), free(line), 0);
 }
 
-int	redirect(char *str, int fd_in, int fd_out)
+int	redirect(char *str, int *fd_in, int *fd_out)
 {
 	int	in;
 	int	out;
