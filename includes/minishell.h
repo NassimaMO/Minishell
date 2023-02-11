@@ -65,6 +65,7 @@ void	print_err(const char *cmd, const char *error);
 
 /* terminal.c */
 void	set_terminal(int option);
+void	set_std(int std[2], int opt);
 
 /* input.c */
 char	*get_input(char **history);
@@ -84,7 +85,7 @@ char	*ft_dupfree(char **split, int i);
 char	**ft_split_set(char *str, char *charset);
 
 /* commands.c */
-int		is_built_in(char *cmd);
+int		is_bin(char *cmd);
 void	built_in(char *input, int fd_in, int fd_out, int *exit_code);
 int		handle_cmd(char *input, int *exit_code, char **history);
 
@@ -92,7 +93,7 @@ int		handle_cmd(char *input, int *exit_code, char **history);
 int		quote_gestion(char *input, char **output, int i, int exit_code);
 
 /* pipex.c */
-void	exec_cmd(char *cmd, int fd_i, int fd_o, char **h);
+void	exec_cmd(char *cmd, int fi, int fo, int std[2]);
 int		ft_pipes(int n, char **cmds, int fd[2], char **h);
 
 /* pipex_utils.c */

@@ -18,6 +18,22 @@ tty.c_lflag &= ~ICANON;
 tty.c_lflag &= ~ECHOCTL;
 */
 
+void	set_std(int std[2], int opt)
+{
+	if (!std)
+		return ;
+	if (opt == SET)
+	{
+		std[0] = dup(STDIN_FILENO);
+		std[1] = dup(STDOUT_FILENO);
+		return ;
+	}
+	dup2(std[0], STDIN_FILENO);
+	dup2(std[1], STDOUT_FILENO);
+	close(std[0]);
+	close(std[1]);
+}
+
 void	set_terminal(int option)
 {
 	struct termios			tty;
