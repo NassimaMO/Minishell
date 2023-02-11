@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:23 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/07 16:47:43 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/11 12:42:55 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,8 @@ static int	newline_opt(char *input, int *tmp)
 
 	i = 0;
 	quote = 0;
-	if (!ft_strncmp(input + i, "-n", 2) || !ft_strncmp(input + i, "\"-n\"", 3))
+	if (!ft_strncmp(input, "-n", 2) || !ft_strncmp(input, "\"-n", 3))
 	{
-		*tmp = i;
 		while (input[i] && input[i] != 'n')
 		{
 			if (input[i] == '\'' || input[i] == '\"')
@@ -106,6 +105,7 @@ int	echo_cmd(char *input, int exit_code)
 	i = newline_opt(input, &tmp);
 	while (i)
 	{
+		temp = 0;
 		i += newline_opt(input + i, &temp);
 		if (tmp == i)
 			break ;
