@@ -55,7 +55,6 @@ char	*get_cmd(char *cmd)
 	int		stdclone;
 	char	*name;
 	pid_t	pid;
-	int		std[2];
 
 	ft_bzero(fd, sizeof(int) * 2);
 	if (pipe(fd) < 0)
@@ -66,11 +65,11 @@ char	*get_cmd(char *cmd)
 	if (pid < 0)
 		return (perror(""), ft_close(2, fd[0], fd[1]), NULL);
 	name = ft_strdup(cmd);
-	if (pid == 0 && (set_std(std, SET), 1))
-		exec_cmd(name, 0, (close(stdclone), close(fd[0]), fd[1]), std);
+	if (pid == 0)
+		exec_cmd(name, 0, (close(stdclone), close(fd[0]), fd[1]), 0);
 	wait(NULL);
 	name = (free(name), get_next_line(fd[0]));
-	close((dup2(stdclone, STDERR_FILENO), stdclone));
+	ft_close(1, (dup2(stdclone, STDERR_FILENO), stdclone));
 	if (ft_strchr(name, '.'))
 		*ft_strchr(name, '.') = '\0';
 	else if (ft_strchr(name, '\n'))

@@ -76,9 +76,7 @@ int	is_bin(char *cmd)
 void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
 {
 	char	*line;
-	int		std[2];
 
-	set_std(std, SET);
 	redirect(input, &fd_in, &fd_out);
 	dup2(fd_in, STDIN_FILENO);
 	dup2(fd_out, STDOUT_FILENO);
@@ -96,34 +94,34 @@ void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
 		*exit_code = export_cmd(line, *exit_code);
 	else if (!ft_strncmp(line, "unset", 5))
 		*exit_code = unset_cmd(line, *exit_code);
-	return (set_std(std, RESET), free(line));
+	return (free(line));
 }
 
-int	handle_cmd(char *input, int *exit_code, char **h)
+int	handle_cmd(char *input, int *x, char **h)
 {
 	char		**cmd;
 	static int	fd[4] = {0, 1, 2, 3};
 	int			i;
 
 	if (!input)
-		return (check_exit(input, exit_code));
+		return (check_exit(input, x));
 	cmd = split_pipes(input);
 	if (!cmd)
 		return (write(2, STXN, 13 * (ft_strchr(input, '|') != NULL)), 2);
 	i = split_len(cmd);
 	if (i > 1)
-		*exit_code = ft_pipes(i, cmd, fd, h);
-	else if (check_exit(input, exit_code) == EXIT)
+		*x = ft_pipes(i, cmd, fd, h);
+	else if (check_exit(input, x) == EXIT)
 		return (free_split(cmd), EXIT);
-	if (i == 1 && !is_bin(cmd[0]) && (free_split(cmd), set_std(fd + 2, SET), 1))
+	if (i == 1 && !is_bin(cmd[0]) && (free_split(cmd), 1))
 	{
 		i = fork();
 		if (i == 0)
-			exec_cmd(ft_dupfree(h, split_len(h) - 1), fd[0], fd[1], fd + 2);
-		waitpid(i, exit_code, 0);
-		*exit_code = (set_std(fd + 2, RESET), WEXITSTATUS(*exit_code));
+			exec_cmd(input, fd[0], fd[1], h);
+		waitpid(i, x, 0);
+		*x = WEXITSTATUS(*x);
 	}
-	else if (i == 1 && is_bin(cmd[0]))
-		free_split((built_in(cmd[0], fd[0], fd[1], exit_code), cmd));
+	else if (i == 1 && is_bin(cmd[0]) && (set_std(fd + 2, SET), 1))
+		set_std(fd +2, (free_split((built_in(cmd[0], *fd, fd[1], x), cmd)), 0));
 	return (ft_close(2, fd[0], fd[1]), 0);
 }

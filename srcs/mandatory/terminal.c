@@ -30,8 +30,7 @@ void	set_std(int std[2], int opt)
 	}
 	dup2(std[0], STDIN_FILENO);
 	dup2(std[1], STDOUT_FILENO);
-	close(std[0]);
-	close(std[1]);
+	ft_close(2, std[0], std[1]);
 }
 
 void	set_terminal(int option)

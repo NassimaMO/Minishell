@@ -93,7 +93,7 @@ int		handle_cmd(char *input, int *exit_code, char **history);
 int		quote_gestion(char *input, char **output, int i, int exit_code);
 
 /* pipex.c */
-void	exec_cmd(char *cmd, int fi, int fo, int std[2]);
+void	exec_cmd(char *cmd, int fi, int fo, char **history);
 int		ft_pipes(int n, char **cmds, int fd[2], char **h);
 
 /* pipex_utils.c */

@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void	exec_cmd(char *cmd, int fi, int fo, int std[2])
+void	exec_cmd(char *cmd, int fi, int fo, char **history)
 {
 	char	**args;
 	char	*path;
@@ -22,10 +22,10 @@ void	exec_cmd(char *cmd, int fi, int fo, int std[2])
 	args = process_args(get_cmd_args(cmd), 0);
 	if (!args)
 		exit((ft_close(2, fi, fo), free_env(), free(cmd), free_split(args), \
-		set_std(std, RESET), 0));
+		free_split(history), 0));
 	if (is_bin(cmd) && (built_in(cmd, fi, fo, &code), 1))
 		exit((ft_close(2, fi, fo), free_split(args), free_env(), free(cmd), \
-		set_std(std, RESET), code));
+		free_split(history), code));
 	if (ft_strchr(args[0], '/'))
 		path = relative_path(args[0]);
 	else
@@ -33,12 +33,11 @@ void	exec_cmd(char *cmd, int fi, int fo, int std[2])
 	dup2(fi, STDIN_FILENO);
 	dup2(fo, STDOUT_FILENO);
 	execve(path, args, environ);
-	ft_close(2, fi, fo);
+	free_split((ft_close(2, fi, fo), history));
 	if (errno == ENOENT)
 		exit((print_err(args[0], SCMD), free_split(args), free_env(), \
-		free(path), free(cmd), set_std(std, RESET), 127));
-	exit((perror(""), free_split(args), free_env(), free(cmd), free(path), \
-	set_std(std, RESET), 1));
+		free(path), free(cmd), 127));
+	exit((perror(""), free_split(args), free_env(), free(cmd), free(path), 1));
 }
 
 static int	fi(int i, int fd[], int pipes[])
@@ -93,7 +92,7 @@ static int	fo(int i, int nb, int fd[], int pipes[])
 
 int	ft_pipes(int n, char **cmds, int fd[2], char **h)
 {
-	int		p[6];
+	int		p[4];
 	pid_t	pid;
 	int		status;
 	int		i;
@@ -107,13 +106,13 @@ int	ft_pipes(int n, char **cmds, int fd[2], char **h)
 		pid = fork();
 		if (pid == -1)
 			return (perror("fork failed: "), EXIT_FAILURE);
-		if ((set_std(p + 4, SET), 1) && pid == 0 && (free_split(h), 1))
+		if (pid == 0)
 		{
 			if (!cmds[i])
 				exit((write(2, "syntax error\n", 13), free_split(cmds), 2));
-			exec_cmd(ft_dupfree(cmds, i), fi(i, fd, p), fo(i, n, fd, p), p + 4);
+			exec_cmd(ft_dupfree(cmds, i), fi(i, fd, p), fo(i, n, fd, p), h);
 		}
-		if ((set_std(p + 4, RESET), 1) && !i++)
+		if (!i++)
 			continue ;
 		waitpid(pid, &status, (close(fi(i - 1, fd, p)), 0));
 	}
