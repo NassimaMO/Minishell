@@ -12,6 +12,22 @@
 
 #include "minishell.h"
 
+void	ft_init(int nb, ...)
+{
+	int		i;
+	va_list	args;
+	int		*n;
+
+	i = 0;
+	va_start(args, nb);
+	while (i < nb)
+	{
+		n = va_arg(args, int *);
+		*n = 0;
+		i++;
+	}
+}
+
 void	init_fd(int *fd, size_t size)
 {
 	size_t	i;

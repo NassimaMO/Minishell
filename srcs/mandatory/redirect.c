@@ -66,10 +66,8 @@ int	redir_in(char *str, int *fd_in)
 	char	*name;
 	char	*line;
 
-	if (!ft_strchr(str, '<'))
-		return (0);
 	name = delimiter(str, '<');
-	if (!*name)
+	if (!*name || *name == '<' || *name == '>')
 		return (write(2, STXN, 13), free(name), ft_bzero(str, 1), 2);
 	if (ft_strnstr(str, "<<", ft_strlen(str)))
 		heredoc(name, fd_in);
@@ -89,10 +87,8 @@ int	redir_out(char *str, int *fd_out)
 	char	*line;
 	int		len;
 
-	if (!ft_strchr(str, '>'))
-		return (0);
 	name = delimiter(str, '>');
-	if (!*name)
+	if (!*name || *name == '<' || *name == '>')
 		return (write(2, STXN, 13), free(name), ft_bzero(str, 1), 2);
 	line = ft_strdup(str);
 	*ft_strchr(line, '>') = 0;
@@ -110,12 +106,29 @@ int	redir_out(char *str, int *fd_out)
 
 int	redirect(char *str, int *fd_in, int *fd_out)
 {
-	int	in;
-	int	out;
+	int		in;
+	int		out;
+	int		i;
+	char	c;
 
-	in = redir_in(str, fd_in);
-	out = redir_out(str, fd_out);
-	if (in)
-		return (in);
-	return (out);
+	ft_init(3, &i, &in, &out);
+	while (str[i])
+	{
+		if (str[i] == '"' || str[i] == '\'')
+		{
+			c = str[i++];
+			while (str[i] && str[i] != c)
+				i++;
+			if (str[i])
+				i++;
+		}
+		if (str[i] == '<')
+			in = redir_in(str + i, fd_in);
+		if (str[i] == '>')
+			out = redir_out(str + i, fd_out);
+		i += (str[i] != 0) + (str[i] == '>' || str[i] == '<') + ((str[i] == '>' \
+		|| str[i] == '<') && (str[i + 1] == '>' || str[i + 1] == '<'));
+	}
+	str[0] *= (!in && !out);
+	return (in + out * (in == 0));
 }
