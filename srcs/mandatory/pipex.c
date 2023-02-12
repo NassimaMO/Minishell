@@ -99,11 +99,11 @@ int	ft_pipes(int n, char **cmds, int fd[2], char **h)
 	i = 0;
 	while (i < n)
 	{
-		if ((redirect(cmds[i], fi(i, fd, p), fo(i, n, fd, p)), 1) && (i != \
-		(n - 1) && ((!(i % 2) && pipe(p) < 0) || ((i % 2) && pipe(p + 2) < 0))))
+		if (i != (n - 1) && ((!(i % 2) && pipe(p) < 0) || \
+		((i % 2) && pipe(p + 2) < 0)))
 			return (perror("pipe failed: "), EXIT_FAILURE);
 		pid = fork();
-		if (pid == -1)
+		if ((redirect(cmds[i], fi(i, fd, p), fo(i, n, fd, p)), 1) && pid == -1)
 			return (perror("fork failed: "), EXIT_FAILURE);
 		if (pid == 0)
 		{
