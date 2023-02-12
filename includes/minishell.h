@@ -26,6 +26,10 @@
 # include <readline/history.h>
 # include <term.h>
 
+# define ALL 0
+# define IN 1
+# define OUT 2
+
 # define FULL 0
 # define SHORT 1
 
@@ -63,7 +67,8 @@ void	print_export(char **envp);
 void	print_shell(void);
 void	print_err(const char *cmd, const char *error);
 
-/* terminal.c */
+/* init.c */
+void	init_fd(int *fd, size_t size);
 void	set_terminal(int option);
 void	set_std(int std[2], int opt);
 

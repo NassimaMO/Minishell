@@ -18,14 +18,13 @@ void	exec_cmd(char *cmd, int fi, int fo, char **history)
 	char	*path;
 	int		code;
 
-	redirect(cmd, &fi, &fo);
+	if (is_bin(cmd) && (built_in(cmd, fi, fo, &code), 1))
+		exit((ft_close(2, fi, fo), free_env(), free(cmd), free_split(history), \
+		code));
 	args = process_args(get_cmd_args(cmd), 0);
 	if (!args)
 		exit((ft_close(2, fi, fo), free_env(), free(cmd), free_split(args), \
 		free_split(history), 0));
-	if (is_bin(cmd) && (built_in(cmd, fi, fo, &code), 1))
-		exit((ft_close(2, fi, fo), free_split(args), free_env(), free(cmd), \
-		free_split(history), code));
 	if (ft_strchr(args[0], '/'))
 		path = relative_path(args[0]);
 	else
@@ -40,9 +39,9 @@ void	exec_cmd(char *cmd, int fi, int fo, char **history)
 	exit((perror(""), free_split(args), free_env(), free(cmd), free(path), 1));
 }
 
-static int	fi(int i, int fd[], int pipes[])
+static int	*fi(int i, int fd[], int pipes[])
 {
-	int	fd_in;
+	int	*fd_in;
 
 	if (i == 0)
 	{
@@ -52,69 +51,69 @@ static int	fi(int i, int fd[], int pipes[])
 			if (fd[0] < 0)
 				exit(EXIT_FAILURE);
 		}
-		fd_in = fd[0];
+		fd_in = fd;
 	}
 	else if (i % 2)
-	{
-		close(pipes[1]);
-		fd_in = pipes[0];
-	}
+		fd_in = pipes;
 	else
-	{
-		close((pipes + 2)[1]);
-		fd_in = (pipes + 2)[0];
-	}
+		fd_in = (pipes + 2);
 	return (fd_in);
 }
 
-static int	fo(int i, int nb, int fd[], int pipes[])
+static int	*fo(int i, int nb, int fd[], int pipes[])
 {
-	int	fd_out;
+	int	*fd_out;
 
 	if (i == nb - 1)
 	{
-		fd_out = fd[1];
+		fd_out = fd + 1;
 		if (fd[1] < 0)
 			exit(EXIT_FAILURE);
 	}
 	else if (i % 2)
-	{
-		close((pipes + 2)[0]);
-		fd_out = (pipes + 2)[1];
-	}
+		fd_out = pipes + 3;
 	else
-	{
-		close(pipes[0]);
-		fd_out = pipes[1];
-	}
+		fd_out = pipes + 1;
 	return (fd_out);
+}
+
+void	cp(int i, int nb, int pipes[], int opt)
+{
+	if ((opt == IN || opt == ALL) && i != 0 && i % 2)
+		close(pipes[1]);
+	if ((opt == IN || opt == ALL) && i != 0 && !(i % 2))
+		close((pipes + 2)[1]);
+	if ((opt == OUT || opt == ALL) && i != nb - 1 && i % 2)
+		close((pipes + 2)[0]);
+	if ((opt == OUT || opt == ALL) && i != nb - 1 && !(i % 2))
+		close(pipes[0]);
 }
 
 int	ft_pipes(int n, char **cmds, int fd[2], char **h)
 {
 	int		p[4];
 	pid_t	pid;
-	int		status;
+	int		s;
 	int		i;
 
 	i = 0;
 	while (i < n)
 	{
-		if (i != (n - 1) && ((!(i % 2) && pipe(p) < 0) || \
-		((i % 2) && pipe(p + 2) < 0)))
+		if ((redirect(cmds[i], fi(i, fd, p), fo(i, n, fd, p)), 1) && (i != \
+		(n - 1) && ((!(i % 2) && pipe(p) < 0) || ((i % 2) && pipe(p + 2) < 0))))
 			return (perror("pipe failed: "), EXIT_FAILURE);
 		pid = fork();
 		if (pid == -1)
 			return (perror("fork failed: "), EXIT_FAILURE);
 		if (pid == 0)
 		{
-			if (!cmds[i])
+			if ((cp(i, n, p, ALL), 1) && !cmds[i])
 				exit((write(2, "syntax error\n", 13), free_split(cmds), 2));
-			exec_cmd(ft_dupfree(cmds, i), fi(i, fd, p), fo(i, n, fd, p), h);
+			exec_cmd(ft_dupfree(cmds, i), *fi(i, fd, p), *fo(i, n, fd, p), h);
 		}
 		if (!i++)
 			continue ;
-		waitpid(pid, &status, (close(fi(i - 1, fd, p)), 0));
+		waitpid(pid, &s, (close((cp(i -1, n, p, IN), *(fi(i -1, fd, p)))), 0));
 	}
-	return (free_split(cmds), WEXITSTATUS(status));
+	return (free_split(cmds), WEXITSTATUS(s));
 }

@@ -55,7 +55,7 @@ static void	heredoc(char *delimiter, int *fd_in)
 		tmp = get_input(history);
 	}
 	free(tmp);
-	ft_close(1, pipefd[1]);
+	close(pipefd[1]);
 	*fd_in = (ft_close(1, *fd_in), pipefd[0]);
 	free_split(history);
 }
@@ -74,7 +74,7 @@ int	redir_in(char *str, int *fd_in)
 	if (ft_strnstr(str, "<<", ft_strlen(str)))
 		heredoc(name, fd_in);
 	else
-		*fd_in = (ft_close(1, fd_in), open(name, O_RDONLY));
+		*fd_in = (ft_close(1, *fd_in), open(name, O_RDONLY));
 	line = ft_strnstr(str, name, ft_strlen(str));
 	while (*line && *line != ' ' && *line != '\t')
 		line ++;

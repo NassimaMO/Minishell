@@ -41,8 +41,7 @@ static void	variable_gestion(char *input, char **to_return, \
 
 	x = 0;
 	*variable_tmp = ((*i)++, get_variable(input + *i, &x));
-	if (!*variable_tmp && (!input[*i] || input[*i] == ' ' \
-		/*|| !ft_isalpha(input[*i]))*/))
+	if (!*variable_tmp && (!input[*i] || input[*i] == ' '))
 		*to_return = gnl_join(*to_return, "$", 1);
 	else if (*variable_tmp)
 		*to_return = gnl_join(*to_return, *variable_tmp, \

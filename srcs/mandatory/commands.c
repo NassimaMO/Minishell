@@ -97,27 +97,27 @@ void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
 	return (free(line));
 }
 
-int	handle_cmd(char *input, int *x, char **h)
+int	handle_cmd(char *s, int *x, char **h)
 {
 	char		**cmd;
-	static int	fd[4] = {0, 1, 2, 3};
+	int			fd[4];
 	int			i;
 
-	if (!input)
-		return (check_exit(input, x));
-	cmd = split_pipes(input);
+	if ((init_fd(fd, 4), 1) && !s)
+		return (check_exit(s, x));
+	cmd = split_pipes(s);
 	if (!cmd)
-		return (write(2, STXN, 13 * (ft_strchr(input, '|') != NULL)), 2);
+		return (write(2, STXN, 13 * (ft_strchr(s, '|') != NULL)), 2);
 	i = split_len(cmd);
 	if (i > 1)
 		*x = ft_pipes(i, cmd, fd, h);
-	else if (check_exit(input, x) == EXIT)
+	else if (check_exit(s, x) == EXIT)
 		return (free_split(cmd), EXIT);
-	if (i == 1 && !is_bin(cmd[0]) && (free_split(cmd), 1))
+	if (i == 1 && !is_bin(*cmd) && (free_split(cmd), redirect(s, fd, fd +1), 1))
 	{
 		i = fork();
 		if (i == 0)
-			exec_cmd(input, fd[0], fd[1], h);
+			exec_cmd(ft_strdup(s), fd[0], fd[1], h);
 		waitpid(i, x, 0);
 		*x = WEXITSTATUS(*x);
 	}

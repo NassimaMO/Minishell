@@ -29,11 +29,6 @@ void	ft_close(int nb, ...)
 	}
 }
 
-/* TO DO LIST :
-- proper history
-- file redirection : <<
-- built_in variable "$?" (last exit code) */
-
 int	main(void)
 {
 	char	**history;
@@ -50,8 +45,10 @@ int	main(void)
 		input = get_input(ft_split_dup(history));
 		if (input && *input && *input != '\n')
 			history = add_split(history, input);
-		if (handle_cmd(input, &exit_code, history) == EXIT)
+		if (!input || handle_cmd(input, &exit_code, history) == EXIT)
 			break ;
+		if (input && !(*input && *input != '\n'))
+			free(input);
 	}
 	free_env();
 	free_split(history);

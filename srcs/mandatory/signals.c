@@ -15,7 +15,7 @@
 static void	ft_handler(int signum)
 {
 	struct termios	tty;
-	
+
 	if (signum == SIGINT)
 	{
 		tcgetattr(STDIN_FILENO, &tty);

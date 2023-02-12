@@ -12,11 +12,17 @@
 
 #include "minishell.h"
 
-/* 
-tty.c_lflag &= ~ECHO;
-tty.c_lflag &= ~ICANON;
-tty.c_lflag &= ~ECHOCTL;
-*/
+void	init_fd(int *fd, size_t size)
+{
+	int	i;
+
+	i = 0;
+	while (i < size)
+	{
+		fd[i] = i;
+		i++;
+	}
+}
 
 void	set_std(int std[2], int opt)
 {
