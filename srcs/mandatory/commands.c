@@ -113,15 +113,15 @@ int	handle_cmd(char *s, int *x, char **h)
 		*x = ft_pipes(i, cmd, fd, h);
 	else if (check_exit(s, x) == EXIT)
 		return (free_split(cmd), EXIT);
+	s = ft_strdup(s);
 	if (i == 1 && !is_bin(*cmd) && (free_split(cmd), redirect(s, fd, fd +1), 1))
 	{
-		i = fork();
-		if (i == 0)
-			exec_cmd(ft_strdup(s), fd[0], fd[1], h);
-		waitpid(i, x, 0);
+		if (fork() == 0)
+			exec_cmd(s, fd[0], fd[1], h);
+		wait(x);
 		*x = WEXITSTATUS(*x);
 	}
 	else if (i == 1 && is_bin(cmd[0]) && (set_std(fd + 2, SET), 1))
 		set_std(fd +2, (free_split((built_in(cmd[0], *fd, fd[1], x), cmd)), 0));
-	return (ft_close(2, fd[0], fd[1]), 0);
+	return (ft_close(2, fd[0], fd[1]), free(s), 0);
 }
