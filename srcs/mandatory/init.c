@@ -14,7 +14,7 @@
 
 void	init_fd(int *fd, size_t size)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	while (i < size)
