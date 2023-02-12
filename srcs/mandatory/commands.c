@@ -58,19 +58,27 @@ int	is_bin(char *cmd)
 	static char	*cmds[] = \
 	{"echo", "cd", "pwd", "env", "export", "unset", "exit"};
 	int			i;
+	char		**args;
 	char		*s;
 
 	i = 0;
-	cmd = ft_strdup(cmd);
-	s = ft_strtrim(cmd, " \t");
-	free(cmd);
-	while (i < 7)
+	args = process_args(get_cmd_args(cmd), 0);
+	if ((!*cmd && (free_split(args), 1)) || !args)
+		return (0);
+	s = args[0];
+	if (s && (!ft_strncmp(args[0], "<", 1) || !ft_strncmp(args[0], ">", 1)))
+	{
+		s = args[1];
+		if (s)
+			s = args[2];
+	}
+	while (s && i < 7)
 	{
 		if (!strncmp(s, cmds[i], ft_strlen(cmds[i])))
-			return (free(s), 1);
+			return (free_split(args), 1);
 		i++;
 	}
-	return (free(s), 0);
+	return (free_split(args), 0);
 }
 
 void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
@@ -114,14 +122,14 @@ int	handle_cmd(char *s, int *x, char **h)
 	else if (check_exit(s, x) == EXIT)
 		return (free_split(cmd), EXIT);
 	s = ft_strdup(s);
-	if (i == 1 && !is_bin(*cmd) && (free_split(cmd), redirect(s, fd, fd +1), 1))
+	if (i == 1 && !is_bin(s) && (free_split(cmd), redirect(s, fd, fd +1), 1))
 	{
 		if (fork() == 0)
 			exec_cmd(s, fd[0], fd[1], h);
 		wait(x);
 		*x = WEXITSTATUS(*x);
 	}
-	else if (i == 1 && is_bin(cmd[0]) && (set_std(fd + 2, SET), 1))
-		set_std(fd +2, (free_split((built_in(cmd[0], *fd, fd[1], x), cmd)), 0));
+	else if (i == 1 && is_bin(s) && (set_std(fd + 2, SET), 1))
+		set_std(fd +2, (free_split((built_in(s, *fd, fd[1], x), cmd)), 0));
 	return (ft_close(2, fd[0], fd[1]), free(s), 0);
 }

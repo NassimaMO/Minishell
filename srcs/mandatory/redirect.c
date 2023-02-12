@@ -70,7 +70,7 @@ int	redir_in(char *str, int *fd_in)
 		return (0);
 	name = delimiter(str, '<');
 	if (!*name)
-		return (write(2, STXN, 13), free(name), 2);
+		return (write(2, STXN, 13), free(name), ft_bzero(str, 1), 2);
 	if (ft_strnstr(str, "<<", ft_strlen(str)))
 		heredoc(name, fd_in);
 	else
@@ -87,15 +87,19 @@ int	redir_out(char *str, int *fd_out)
 {
 	char	*name;
 	char	*line;
+	int		len;
 
 	if (!ft_strchr(str, '>'))
 		return (0);
 	name = delimiter(str, '>');
 	if (!*name)
-		return (write(2, STXN, 13), free(name), 2);
+		return (write(2, STXN, 13), free(name), ft_bzero(str, 1), 2);
 	line = ft_strdup(str);
 	*ft_strchr(line, '>') = 0;
-	line = gnl_join(line, ft_strchr(name, 32), ft_strlen(ft_strchr(name, 32)));
+	len = ft_strlen(ft_strchr(ft_strnstr(ft_strchr(str, '>'), name, \
+	ft_strlen(ft_strchr(str, '>'))), 32));
+	line = gnl_join(line, ft_strchr(ft_strnstr(ft_strchr(str, '>'), name, \
+	ft_strlen(ft_strchr(str, '>'))), 32), len);
 	if (ft_strnstr(str, ">>", ft_strlen(str)))
 		*fd_out = (ft_close(1, *fd_out), open(name, O_FLAG2, S_FLAG));
 	else
