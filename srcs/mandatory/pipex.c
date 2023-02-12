@@ -102,8 +102,8 @@ int	ft_pipes(int n, char **cmds, int fd[2], char **h)
 		if (i != (n - 1) && ((!(i % 2) && pipe(p) < 0) || \
 		((i % 2) && pipe(p + 2) < 0)))
 			return (perror("pipe failed: "), EXIT_FAILURE);
-		pid = fork();
-		if ((redirect(cmds[i], fi(i, fd, p), fo(i, n, fd, p)), 1) && pid == -1)
+		pid = (redirect(cmds[i], fi(i, fd, p), fo(i, n, fd, p)), fork());
+		if (pid == -1)
 			return (perror("fork failed: "), EXIT_FAILURE);
 		if (pid == 0)
 		{
