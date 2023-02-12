@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 11:04:22 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/07 11:04:24 by nghulam-         ###   ########.fr       */
+/*   Updated: 2023/02/12 14:22:33 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,8 @@ int	valid_var_name(char *name)
 	i = 0;
 	while (name[i])
 	{
-		if ((!ft_isalnum(name[i]) && name[i] != '_') || name[i] == ' ')
+		if ((!ft_isalnum(name[i]) && name[i] != '_') || name[i] == ' ' \
+			|| (ft_isdigit(name[i]) && i == 0))
 			return (0);
 		i++;
 	}

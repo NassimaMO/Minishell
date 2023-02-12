@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 15:23:10 by nmouslim          #+#    #+#             */
-/*   Updated: 2023/02/12 13:30:10 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/12 14:03:56 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,22 @@ static char	*get_variable(char *input, int *x)
 	char	*variable;
 	char	*to_return;
 
-	while (input[*x] && (ft_isalpha(input[*x]) || input[*x] == '_'))
+	if (ft_isdigit(input[*x]) && *x == 0)
+		return ((*x)++, NULL);
+	while (input[*x] && (ft_isalpha(input[*x]) || input[*x] == '_' \
+			|| ft_isdigit(input[*x])))
 		(*x)++;
 	variable = malloc(sizeof(char) * (*x + 1));
 	*x = 0;
-	while (input[*x] && (ft_isalpha(input[*x]) || input[*x] == '_'))
+	while (input[*x] && (ft_isalpha(input[*x]) || input[*x] == '_' \
+			|| ft_isdigit(input[*x])))
 	{
 		variable[*x] = input[*x];
 		(*x)++;
 	}
 	variable[*x] = '\0';
 	to_return = getenv(variable);
-	free(variable);
-	if (!to_return)
+	if ((free(variable), 1) && !to_return)
 		return (NULL);
 	return (to_return);
 }
@@ -43,7 +46,7 @@ static void	variable_gestion(char *input, char **to_return, \
 	if (input[++(*i)] == '\"' || input[*i] == '\'')
 		return ;
 	*variable_tmp = get_variable(input + *i, &x);
-	if (!*variable_tmp && (!input[*i] || input[*i] == ' '))
+	if (!*variable_tmp && (!input[*i] || input[*i] == ' ' || x == 0))
 		*to_return = gnl_join(*to_return, "$", 1);
 	else if (*variable_tmp)
 		*to_return = gnl_join(*to_return, *variable_tmp, \
