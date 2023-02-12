@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 15:23:10 by nmouslim          #+#    #+#             */
-/*   Updated: 2023/02/11 15:00:39 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/12 13:30:10 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,10 @@ static void	variable_gestion(char *input, char **to_return, \
 	int	x;
 
 	x = 0;
-	*variable_tmp = ((*i)++, get_variable(input + *i, &x));
-	if (!*variable_tmp && (!input[*i] || input[*i] == ' ' \
-		/*|| !ft_isalpha(input[*i]))*/))
+	if (input[++(*i)] == '\"' || input[*i] == '\'')
+		return ;
+	*variable_tmp = get_variable(input + *i, &x);
+	if (!*variable_tmp && (!input[*i] || input[*i] == ' '))
 		*to_return = gnl_join(*to_return, "$", 1);
 	else if (*variable_tmp)
 		*to_return = gnl_join(*to_return, *variable_tmp, \
@@ -57,8 +58,7 @@ static void	go_through_input(char *input, char **to_return, int *i, char quotes)
 
 	x = 0;
 	if (input[*i] && input[*i] == '$' && \
-		((quotes == '\"' && input[*i + 1] != '\"' && \
-			input[*i + 1] != '\'') || !quotes))
+		((quotes == '\"' && input[*i + 1] != '\"') || !quotes))
 		variable_gestion(input, to_return, &variable_tmp, i);
 	else if (input[*i] && input[*i] == '~' && (!input[*i + 1] \
 			|| input[*i + 1] == '/' || input[*i + 1] == ':' \
@@ -88,11 +88,13 @@ static void	ft_quotes(char *quotes, char *input, int *i)
 	}
 }
 
-int	quote_gestion(char *input, char **output, int i, int exit_code)
+void	quote_gestion(char *input, char **output, int exit_code)
 {
 	static char	quotes;
 	char		*code;
+	int			i;
 
+	i = 0;
 	while (input[i] && input[i] != ' ')
 	{
 		ft_quotes(&quotes, input, &i);
@@ -106,7 +108,12 @@ int	quote_gestion(char *input, char **output, int i, int exit_code)
 		else
 			go_through_input(input, output, &i, quotes);
 	}
+	if (input[i] && input[i] == ' ' && ((!*output[0] && quotes) || *output[0]))
+		*output = gnl_join(*output, input + i++, 1);
+	while (input[i] && input[i] == ' ' && !quotes)
+		i++;
 	if (quotes && !input[i])
 		quotes = '\0';
-	return (i);
+	if (input[i])
+		quote_gestion(input + i, output, exit_code);
 }

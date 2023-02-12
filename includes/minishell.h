@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:05:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/05 15:37:51 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/12 13:29:50 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ void	built_in(char *input, int fd_in, int fd_out, int *exit_code);
 int		handle_cmd(char *input, int *exit_code, char **history);
 
 /* quotes.c */
-int		quote_gestion(char *input, char **output, int i, int exit_code);
+void	quote_gestion(char *input, char **output, int exit_code);
 
 /* pipex.c */
 void	exec_cmd(char *cmd, int fi, int fo, char **history);
