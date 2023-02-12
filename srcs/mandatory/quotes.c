@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 15:23:10 by nmouslim          #+#    #+#             */
-/*   Updated: 2023/02/12 14:03:56 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/12 15:11:45 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,8 +105,7 @@ void	quote_gestion(char *input, char **output, int exit_code)
 		{
 			code = ft_itoa(exit_code);
 			*output = gnl_join(*output, code, ft_strlen(code));
-			i += 2;
-			free(code);
+			free((i += 2, code));
 		}
 		else
 			go_through_input(input, output, &i, quotes);

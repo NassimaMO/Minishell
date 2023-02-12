@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:35:42 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/12 14:30:24 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/12 15:09:51 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ void	exec_cmd(char *cmd, int fi, int fo, char **history)
 	free_split((ft_close(2, fi, fo), history));
 	if (errno == ENOENT)
 		exit((print_err(args[0], SCMD), free_split(args), free_env(), \
-		free(path), 127));
-	exit((perror(""), free_split(args), free_env(), free(path), 1));
+		free(path), free(cmd), 127));
+	exit((perror(""), free_split(args), free_env(), free(cmd), free(path), 1));
 }
 
 static int	fi(int i, int fd[], int pipes[])
