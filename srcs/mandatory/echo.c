@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:23 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/11 12:42:55 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/12 13:32:05 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,18 +54,9 @@ static int	newline_opt(char *input, int *tmp)
 char	*get_processed_input(char *input, int opt, int exit_code)
 {
 	char	*output;
-	int		i;
 
-	i = 0;
 	output = ft_strdup("");
-	while (input[i])
-	{
-		i = quote_gestion(input, &output, i, exit_code);
-		if (input[i] && input[i] == ' ')
-			output = gnl_join(output, input + i++, 1);
-		while (input[i] && input[i] == ' ')
-			i++;
-	}
+	quote_gestion(input, &output, exit_code);
 	if (!opt)
 		output = gnl_join(output, "\n", 1);
 	return (output);
