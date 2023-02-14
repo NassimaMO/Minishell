@@ -6,83 +6,27 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 15:23:10 by nmouslim          #+#    #+#             */
-/*   Updated: 2023/02/12 15:11:45 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/14 15:17:24 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	*get_variable(char *input, int *x)
+int	is_quote_closed(char quote, char *input, int i)
 {
-	char	*variable;
-	char	*to_return;
-
-	if (ft_isdigit(input[*x]) && *x == 0)
-		return ((*x)++, NULL);
-	while (input[*x] && (ft_isalpha(input[*x]) || input[*x] == '_' \
-			|| ft_isdigit(input[*x])))
-		(*x)++;
-	variable = malloc(sizeof(char) * (*x + 1));
-	*x = 0;
-	while (input[*x] && (ft_isalpha(input[*x]) || input[*x] == '_' \
-			|| ft_isdigit(input[*x])))
-	{
-		variable[*x] = input[*x];
-		(*x)++;
-	}
-	variable[*x] = '\0';
-	to_return = getenv(variable);
-	if ((free(variable), 1) && !to_return)
-		return (NULL);
-	return (to_return);
-}
-
-static void	variable_gestion(char *input, char **to_return, \
-								char **variable_tmp, int *i)
-{
-	int	x;
-
-	x = 0;
-	if (input[++(*i)] == '\"' || input[*i] == '\'')
-		return ;
-	*variable_tmp = get_variable(input + *i, &x);
-	if (!*variable_tmp && (!input[*i] || input[*i] == ' ' || x == 0))
-		*to_return = gnl_join(*to_return, "$", 1);
-	else if (*variable_tmp)
-		*to_return = gnl_join(*to_return, *variable_tmp, \
-			ft_strlen(*variable_tmp));
-	*i += x;
-}
-
-static void	go_through_input(char *input, char **to_return, int *i, char quotes)
-{
-	int			x;
-	char		*variable_tmp;
-
-	x = 0;
-	if (input[*i] && input[*i] == '$' && \
-		((quotes == '\"' && input[*i + 1] != '\"') || !quotes))
-		variable_gestion(input, to_return, &variable_tmp, i);
-	else if (input[*i] && input[*i] == '~' && (!input[*i + 1] \
-			|| input[*i + 1] == '/' || input[*i + 1] == ':' \
-			|| input[*i + 1] == ' ') && (*i == 0 || \
-			input[*i - 1] == ' '))
-	{
-		variable_tmp = get_variable("HOME", &x);
-		if (variable_tmp)
-			*to_return = gnl_join(*to_return, variable_tmp, \
-				ft_strlen(variable_tmp));
-		(*i)++;
-	}
-	else if (input[*i])
-		*to_return = gnl_join(*to_return, input + (*i)++, 1);
+	i++;
+	while (input[i] && input[i] != quote)
+		i++;
+	if (!input[i])
+		return (0);
+	return (1);
 }
 
 static void	ft_quotes(char *quotes, char *input, int *i)
 {
 	while (input[*i] && (input[*i] == '\'' || input[*i] == '\"'))
 	{
-		if (!(*quotes))
+		if (!(*quotes) && is_quote_closed(input[*i], input, *i))
 			*quotes = input[(*i)++];
 		else if (input[*i] == *quotes)
 			*quotes = ((*i)++, '\0');

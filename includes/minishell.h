@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:05:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/12 13:29:50 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/14 15:17:49 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ void	set_std(int std[3], int opt);
 
 /* input.c */
 char	*get_input(char **history);
+void	go_through_input(char *input, char **to_return, int *i, char quotes);
 
 /* manage_input.c */
 void	process_input(char **history, char *buff, size_t *moves, \
