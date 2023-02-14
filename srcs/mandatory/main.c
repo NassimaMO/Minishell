@@ -24,7 +24,7 @@ int	main(void)
 	init_env();
 	while (1)
 	{
-		print_shell();
+		print_shell(0);
 		input = get_input(ft_split_dup(history));
 		if (input && *input && *input != '\n')
 			history = add_split(history, input);

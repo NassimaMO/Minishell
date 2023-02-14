@@ -77,25 +77,31 @@ char	*get_cmd(char *cmd)
 	return (ft_close(2, fd[0], fd[1]), name);
 }
 
-void	print_shell(void)
+size_t	print_shell(int opt)
 {
-	char	*name;
-	char	*user;
-	char	*path;
-	int		fd;
+	char			*name;
+	char			*user;
+	char			*path;
+	int				fd;
+	static size_t	len;
 
+	if (opt == LEN)
+		return (len);
 	fd = open("/dev/tty", O_WRONLY);
 	name = get_cmd("/bin/hostname");
 	user = get_cmd("/bin/id -u -n");
 	path = get_current_path(SHORT);
+	if (len != ft_strlen(user) + ft_strlen(name) + ft_strlen(path) + 4)
+		len = ft_strlen(user) + ft_strlen(name) + ft_strlen(path) + 4;
 	write(fd, user, ft_strlen(user));
 	write(fd, "@", 1);
 	write(fd, name, ft_strlen(name));
 	write(fd, ":", 1);
 	write(fd, path, ft_strlen(path));
 	write(fd, "$ ", 2);
+	ft_printf("\033[s");
 	close(fd);
-	return (free(name), free(path), free(user));
+	return (free(name), free(path), free(user), len);
 }
 
 void	print_err(const char *cmd, const char *error)

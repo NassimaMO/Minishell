@@ -20,6 +20,7 @@
 # include <sys/wait.h>
 # include <termios.h>
 # include <sys/stat.h>
+# include <sys/ioctl.h>
 
 # define LEN 1
 
@@ -61,7 +62,7 @@ void	signals(void);
 char	*get_cmd(char *cmd);
 void	print_env(char **envp);
 void	print_export(char **envp);
-void	print_shell(void);
+size_t	print_shell(int opt);
 void	print_err(const char *cmd, const char *error);
 
 /* init.c */

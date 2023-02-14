@@ -44,7 +44,7 @@ static void	ft_escape(size_t *cursor, size_t *moves, char **history)
 			{
 				ft_printf("\033[u");
 				ft_printf("\033[J\r");
-				print_shell();
+				print_shell(0);
 				ft_printf("%s", history[split_len(history) - (*moves + 1)]);
 				*cursor = ft_strlen(history[split_len(history) - (*moves + 1)]);
 			}
@@ -68,9 +68,27 @@ static char	*add_char(char *str, char c, size_t cursor)
 
 static void	ft_del(size_t *cursor, char *str)
 {
-	int	len;
+	int				len;
+	size_t			len_prt;
+	struct winsize	w;
 
-	ft_printf("\033[1D\033[K%s", str + (*cursor));
+	ioctl(0, TIOCGWINSZ, &w);
+	len_prt = print_shell(LEN);
+	if (ft_strlen(str) + len_prt >= w.ws_col && \
+	((*cursor + len_prt) % w.ws_col == 0 || ft_strlen(str) > *cursor))
+	{
+		if ((*cursor + len_prt) % w.ws_col == 0)
+			ft_printf("\033[A\033[%dG\033[s", w.ws_col);
+		else
+			ft_printf("\033[D\033[s");
+		ft_printf("\033[J%s", str + (*cursor));
+		ft_printf("\033[u");
+		(*cursor)--;
+		len = ft_strlen(str) - (*cursor);
+		ft_strlcpy(str + (*cursor), str + (*cursor) + 1, len);
+		return ;
+	}
+	ft_printf("\033[D\033[K%s", str + (*cursor));
 	place_cursor(str, (*cursor)--);
 	len = ft_strlen(str) - (*cursor) + 1;
 	ft_strlcpy(str + (*cursor), str + (*cursor) + 1, len);
