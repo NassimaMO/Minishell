@@ -42,7 +42,8 @@ static void	ft_escape(size_t *cursor, size_t *moves, char **history)
 		{
 			if (split_len(history) >= (*moves + 1))
 			{
-				ft_printf("\33[2K\r");
+				ft_printf("\033[u");
+				ft_printf("\033[J\r");
 				print_shell();
 				ft_printf("%s", history[split_len(history) - (*moves + 1)]);
 				*cursor = ft_strlen(history[split_len(history) - (*moves + 1)]);

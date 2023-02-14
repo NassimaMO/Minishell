@@ -20,7 +20,7 @@ char	*get_input(char **history)
 	size_t	cursor;
 	size_t	moves;
 
-	set_terminal(SET);
+	ft_printf((set_terminal(SET), "\033[s"));
 	bytes = read(0, ft_memset(buff, 0, 1), 1);
 	history = add_split(history, ft_strdup(""));
 	ft_bzero((ft_bzero(&cursor, sizeof(size_t)), &moves), sizeof(size_t));
