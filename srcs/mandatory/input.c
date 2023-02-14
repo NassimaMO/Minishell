@@ -78,9 +78,22 @@ void	go_through_input(char *input, char **to_return, int *i, char quotes)
 		*to_return = gnl_join(*to_return, input + (*i)++, 1);
 }
 
-void	curs(size_t cursor, char *str)
+void	get_cursor_pos(int *x, int *y)
 {
-	ft_move(cursor, RIGHT, ft_strlen(str) - cursor);
+	char	*str;
+	char	c;
+
+	*x = print_shell(LEN);
+	*y = 0;
+	write(1, "\033[6n", 4);
+	str = NULL;
+	while (read(0, &c, 1) > 0 && c != 'R')
+		str = gnl_join(str, &c, 1);
+	if (ft_strchr(str, '['))
+		*y = ft_atoi(ft_strchr(str, '[') + 1);
+	if (ft_strchr(str, ';'))
+		*x = ft_atoi(ft_strchr(str, ';') + 1);
+	free(str);
 }
 
 char	*get_input(char **history)
@@ -91,7 +104,7 @@ char	*get_input(char **history)
 	size_t	cursor;
 	size_t	moves;
 
-	ft_printf((set_terminal(SET), "\033[s"));
+	set_terminal(SET);
 	bytes = read(0, ft_memset(buff, 0, 1), 1);
 	history = add_split(history, ft_strdup(""));
 	ft_bzero((ft_bzero(&cursor, sizeof(size_t)), &moves), sizeof(size_t));
@@ -108,6 +121,6 @@ char	*get_input(char **history)
 		return (ft_printf("\n"), free_split(history), \
 		set_terminal(RESET), ft_strdup(""));
 	str = ft_strdup(history[split_len(history) - (moves + 1)]);
-	free_split(history);
-	return (curs(cursor, str), ft_printf("\n"), set_terminal(RESET), str);
+	free_split((ft_move(RIGHT, ft_strlen(str) - cursor), history));
+	return (ft_printf("\n"), set_terminal(RESET), str);
 }

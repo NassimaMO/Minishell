@@ -75,11 +75,12 @@ void	set_terminal(int option);
 void	set_std(int std[3], int opt);
 
 /* input.c */
+void	get_cursor_pos(int *x, int *y);
 char	*get_input(char **history);
 void	go_through_input(char *input, char **to_return, int *i, char quotes);
 
 /* manage_input.c */
-void	ft_move(size_t cursor, char direction, int n);
+void	ft_move(char direction, int n);
 void	process_input(char **history, char *buff, size_t *moves, \
 					size_t *cursor);
 

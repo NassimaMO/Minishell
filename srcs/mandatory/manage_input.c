@@ -12,26 +12,28 @@
 
 #include "minishell.h"
 
-void	ft_move(size_t cursor, char direction, int n)
+void	ft_move(char direction, int n)
 {
 	struct winsize	w;
 	int				i;
+	int				x;
+	int				y;
 
 	i = 0;
-	ioctl(0, TIOCGWINSZ, &w);
+	get_cursor_pos((ioctl(0, TIOCGWINSZ, &w), &x), &y);
 	while (i < n)
 	{
-		if (direction == LEFT && !((cursor + print_shell(LEN) + 1) % w.ws_col))
+		if (direction == LEFT && (x % w.ws_col) == 1)
+		{
 			ft_printf("\033[A\033[%dG", w.ws_col);
-		else if (direction == RIGHT && \
-		(int)(cursor + print_shell(LEN) - 1) % w.ws_col == w.ws_col - 1)
-			ft_printf("\033[B\r");
-		else
-			ft_printf("\033[%c", direction);
-		if (direction == RIGHT)
-			cursor++;
-		else
-			cursor--;
+			x = w.ws_col;
+		}
+		else if (direction == RIGHT && x % w.ws_col == 0)
+			x = (ft_printf("\033[B\r"), 1);
+		else if (direction == LEFT)
+			ft_printf((x--, "\033[D"));
+		else if (direction == RIGHT)
+			ft_printf((x++, "\033[C"));
 		i++;
 	}
 }
@@ -46,7 +48,7 @@ static void	ft_escape(size_t *cursor, size_t *moves, char **history)
 		if ((*buff == 'C' && *cursor < ft_strlen(history[split_len(history) - \
 			(*moves + 1)]) && ++(*cursor)) || \
 			(*buff == 'D' && *cursor > 0 && (--(*cursor), 1)))
-			ft_move(*cursor, *buff, 1);
+			ft_move(*buff, 1);
 		if (history && ((*buff == 'A' && *moves < split_len(history) && \
 		++(*moves)) || (*buff == 'B' && *moves > 0 && (--(*moves), 1))))
 		{
@@ -66,10 +68,23 @@ static void	ft_escape(size_t *cursor, size_t *moves, char **history)
 
 static char	*add_char(char *str, char c, size_t cursor)
 {
-	char	*new_str;
+	char			*new_str;
+	int				x;
+	int				y;
+	struct winsize	w;
 
-	ft_printf("%c%s", c, str + cursor);
-	ft_move(ft_strlen(str), LEFT, ft_strlen(str) - cursor);
+	ioctl(0, TIOCGWINSZ, &w);
+	get_cursor_pos(&x, &y);
+	ft_printf("%c", c);
+	if (x == w.ws_col)
+	{
+		x = 0;
+		y++;
+	}
+	else
+		x++;
+	ft_printf("%s", str + cursor);
+	ft_printf("\033[%d;%dH", y, x);
 	new_str = malloc(ft_strlen(str) + 2);
 	ft_strlcpy(new_str, str, cursor + 1);
 	new_str[cursor] = c;
@@ -82,7 +97,7 @@ static void	ft_del(size_t *cursor, char *str)
 {
 	int	len;
 
-	ft_move(*cursor - 1, LEFT, 1);
+	ft_move(LEFT, 1);
 	ft_printf("\033[s\033[J%s", str + (*cursor));
 	ft_printf("\033[u");
 	(*cursor)--;

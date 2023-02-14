@@ -86,7 +86,7 @@ int	check_exit(char *input, int *exit_code)
 	if (!input)
 		return (ft_printf("\nexit\n"), EXIT);
 	args = process_args(get_cmd_args(input), *exit_code);
-	if (!ft_strncmp(args[0], "exit", 4) && ft_strlen(args[0]) == 4)
+	if (args && *args && !ft_strncmp(*args, "exit", 4) && ft_strlen(*args) == 4)
 	{
 		ft_printf("exit\n");
 		if (split_len(args) > 2)
