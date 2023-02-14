@@ -41,7 +41,9 @@ void	ft_move(char direction, int n)
 static void	ft_escape(size_t *cursor, size_t *moves, char **history)
 {
 	char	buff[1];
+	size_t			prec_move;
 
+	prec_move = *moves;
 	if (read(0, ft_memset(buff, 0, 1), 1) == 1 && *buff == '[')
 	{
 		read(0, ft_memset(buff, 0, 1), 1);
@@ -51,18 +53,8 @@ static void	ft_escape(size_t *cursor, size_t *moves, char **history)
 			ft_move(*buff, 1);
 		if (history && ((*buff == 'A' && *moves < split_len(history) && \
 		++(*moves)) || (*buff == 'B' && *moves > 0 && (--(*moves), 1))))
-		{
-			if (split_len(history) >= (*moves + 1))
-			{
-				ft_printf("\033[u");
-				ft_printf("\033[J\r");
-				print_shell(0);
-				ft_printf("%s", history[split_len(history) - (*moves + 1)]);
-				*cursor = ft_strlen(history[split_len(history) - (*moves + 1)]);
-			}
-			else
-				(*moves)--;
-		}
+			go_through_hist(cursor, moves, history, \
+			ft_strlen(history[split_len(history) - (prec_move + 1)]));
 	}
 }
 
@@ -79,7 +71,10 @@ static char	*add_char(char *str, char c, size_t cursor)
 	if (x == w.ws_col)
 	{
 		x = 0;
-		y++;
+		if (y == w.ws_row)
+			ft_printf("\n");
+		else
+			y++;
 	}
 	else
 		x++;
@@ -89,8 +84,7 @@ static char	*add_char(char *str, char c, size_t cursor)
 	ft_strlcpy(new_str, str, cursor + 1);
 	new_str[cursor] = c;
 	ft_strlcpy(new_str + cursor + 1, str + cursor, ft_strlen(str + cursor) + 1);
-	free(str);
-	return (new_str);
+	return (free(str), new_str);
 }
 
 static void	ft_del(size_t *cursor, char *str)

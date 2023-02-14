@@ -84,6 +84,9 @@ void	ft_move(char direction, int n);
 void	process_input(char **history, char *buff, size_t *moves, \
 					size_t *cursor);
 
+/* history.c */
+void	go_through_hist(size_t *cursor, size_t *moves, char **history, int len);
+
 /* split.c */
 char	**ft_split_dup(char **split);
 char	**add_split(char **split, char *str);
