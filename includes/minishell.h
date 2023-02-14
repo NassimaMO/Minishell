@@ -15,16 +15,13 @@
 # define MINISHELL_H
 
 # include "libft.h"
-# include "signal.h"
 
 # include <errno.h>
 # include <sys/wait.h>
 # include <termios.h>
-# include <sys/ioctl.h>
-# include <linux/kd.h>
-# include <readline/readline.h>
-# include <readline/history.h>
-# include <term.h>
+# include <sys/stat.h>
+
+# define LEN 1
 
 # define ALL 0
 # define IN 1
@@ -42,7 +39,8 @@
 # define S2ARG "too many arguments"
 # define SNUM "numeric argument required"
 # define SCMD "command not found"
-
+# define SCDH "HOME not set"
+# define SCDO "OLDPWD not set"
 # define STXN "syntax error\n"
 
 /* (O_RDWR | O_CREAT | O_TRUNC) */
@@ -52,10 +50,9 @@
 /* (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) */
 # define S_FLAG 420
 
-extern char	**environ;
+# define MSK 1023
 
-/* main.c */
-void	ft_close(int nb, ...);
+extern char	**environ;
 
 /* signals.c */
 void	signals(void);
@@ -68,9 +65,10 @@ void	print_shell(void);
 void	print_err(const char *cmd, const char *error);
 
 /* init.c */
+void	ft_init(int nb, ...);
 void	init_fd(int *fd, size_t size);
 void	set_terminal(int option);
-void	set_std(int std[2], int opt);
+void	set_std(int std[3], int opt);
 
 /* input.c */
 char	*get_input(char **history);
@@ -106,7 +104,13 @@ char	*get_pathname(char *cmd, char *envp[]);
 char	**get_cmd_args(const char *cmd);
 char	*relative_path(char *path);
 
+/* redirect_utils.c */
+int		redir_out(char *str, int *fd_out);
+int		redir_in(char *str, int *fd_in);
+
 /* redirect.c */
+void	ft_close(int nb, ...);
+void	ft_dup(int fd_in, int fd_out);
 int		redirect(char *str, int *fd_in, int *fd_out);
 
 /* echo.c */
@@ -132,6 +136,7 @@ int		valid_var_name(char *name);
 void	del_var(char *name);
 
 /* exit.c */
+int		ft_atoi_err(const char *s, void *n, size_t size);
 int		check_exit(char *input, int *exit_code);
 
 #endif

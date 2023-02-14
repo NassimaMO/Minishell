@@ -12,23 +12,6 @@
 
 #include "minishell.h"
 
-void	ft_close(int nb, ...)
-{
-	va_list	args;
-	int		i;
-	int		fd;
-
-	va_start(args, nb);
-	i = 0;
-	while (i < nb)
-	{
-		fd = va_arg(args, int);
-		if (fd > 2)
-			close(fd);
-		i++;
-	}
-}
-
 int	main(void)
 {
 	char	**history;

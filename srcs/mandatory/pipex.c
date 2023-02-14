@@ -22,15 +22,14 @@ void	exec_cmd(char *cmd, int fi, int fo, char **history)
 		exit((ft_close(2, fi, fo), free_env(), free(cmd), free_split(history), \
 		code));
 	args = process_args(get_cmd_args(cmd), 0);
-	if (!args)
+	if (!args || !*args || ! **args)
 		exit((ft_close(2, fi, fo), free_env(), free(cmd), free_split(args), \
 		free_split(history), 0));
 	if (ft_strchr(args[0], '/'))
 		path = relative_path(args[0]);
 	else
 		path = get_pathname(args[0], environ);
-	dup2(fi, STDIN_FILENO);
-	dup2(fo, STDOUT_FILENO);
+	ft_dup(fi, fo);
 	execve(path, args, environ);
 	free_split((ft_close(2, fi, fo), history));
 	if (errno == ENOENT)
@@ -101,17 +100,17 @@ int	ft_pipes(int n, char **cmds, int fd[2], char **h)
 	{
 		if (i != (n - 1) && ((!(i % 2) && pipe(p) < 0) || \
 		((i % 2) && pipe(p + 2) < 0)))
-			return (perror("pipe failed: "), EXIT_FAILURE);
+			return (perror("pipe failed: "), free_split(cmds), 1);
 		pid = (redirect(cmds[i], fi(i, fd, p), fo(i, n, fd, p)), fork());
 		if (pid == -1)
-			return (perror("fork failed: "), EXIT_FAILURE);
+			return (perror("fork failed: "), free_split(cmds), 1);
 		if (pid == 0)
 		{
 			if ((cp(i, n, p, ALL), 1) && !cmds[i])
 				exit((write(2, "syntax error\n", 13), free_split(cmds), 2));
 			exec_cmd(ft_dupfree(cmds, i), *fi(i, fd, p), *fo(i, n, fd, p), h);
 		}
-		if (!i++)
+		if (!i++ && (ft_close(1, fd[0]), 1))
 			continue ;
 		waitpid(pid, &s, (close((cp(i -1, n, p, IN), *(fi(i -1, fd, p)))), 0));
 	}

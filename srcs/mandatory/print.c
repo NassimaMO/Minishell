@@ -82,11 +82,19 @@ void	print_shell(void)
 	char	*name;
 	char	*user;
 	char	*path;
+	int		fd;
 
+	fd = open("/dev/tty", O_WRONLY);
 	name = get_cmd("/bin/hostname");
 	user = get_cmd("/bin/id -u -n");
 	path = get_current_path(SHORT);
-	ft_printf("%s@%s:%s$ ", user, name, path);
+	write(fd, user, ft_strlen(user));
+	write(fd, "@", 1);
+	write(fd, name, ft_strlen(name));
+	write(fd, ":", 1);
+	write(fd, path, ft_strlen(path));
+	write(fd, "$ ", 2);
+	close(fd);
 	return (free(name), free(path), free(user));
 }
 

@@ -86,8 +86,7 @@ void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
 	char	*line;
 
 	redirect(input, &fd_in, &fd_out);
-	dup2(fd_in, STDIN_FILENO);
-	dup2(fd_out, STDOUT_FILENO);
+	ft_dup(fd_in, fd_out);
 	ft_close(2, fd_in, fd_out);
 	line = ft_strtrim(input, " \t");
 	if (!ft_strncmp(line, "echo", 4))
@@ -108,7 +107,7 @@ void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
 int	handle_cmd(char *s, int *x, char **h)
 {
 	char		**cmd;
-	int			fd[4];
+	int			fd[5];
 	int			i;
 
 	if ((init_fd(fd, 4), 1) && !s)
@@ -124,10 +123,10 @@ int	handle_cmd(char *s, int *x, char **h)
 	s = ft_strdup(s);
 	if (i == 1 && !is_bin(s) && (free_split(cmd), redirect(s, fd, fd +1), 1))
 	{
-		if (fork() == 0)
+		i = fork();
+		if (i == 0)
 			exec_cmd(s, fd[0], fd[1], h);
-		wait(x);
-		*x = WEXITSTATUS(*x);
+		*x = WEXITSTATUS((waitpid(i, x, 0), *x));
 	}
 	else if (i == 1 && is_bin(s) && (set_std(fd + 2, SET), 1))
 		set_std(fd +2, (free_split((built_in(s, *fd, fd[1], x), cmd)), 0));

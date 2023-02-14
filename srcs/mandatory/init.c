@@ -40,7 +40,7 @@ void	init_fd(int *fd, size_t size)
 	}
 }
 
-void	set_std(int std[2], int opt)
+void	set_std(int std[3], int opt)
 {
 	if (!std)
 		return ;
@@ -48,11 +48,13 @@ void	set_std(int std[2], int opt)
 	{
 		std[0] = dup(STDIN_FILENO);
 		std[1] = dup(STDOUT_FILENO);
+		std[2] = dup(STDERR_FILENO);
 		return ;
 	}
 	dup2(std[0], STDIN_FILENO);
 	dup2(std[1], STDOUT_FILENO);
-	ft_close(2, std[0], std[1]);
+	dup2(std[2], STDERR_FILENO);
+	ft_close(3, std[0], std[1], std[2]);
 }
 
 void	set_terminal(int option)

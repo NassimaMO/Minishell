@@ -71,12 +71,7 @@ static char	**get_path(char *envp[])
 		}
 		i++;
 	}
-	split = malloc(sizeof(char *) * 2);
-	if (!split)
-		return (NULL);
-	split[0] = ft_strdup("/bin/");
-	split[1] = NULL;
-	return (split);
+	return (NULL);
 }
 
 char	*get_pathname(char *cmd, char *envp[])

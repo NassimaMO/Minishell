@@ -36,7 +36,7 @@ static int	str_into_int(char *s, void *ptr, size_t size, int p)
 	return (0);
 }
 
-static int	ft_atoi_err(const char *s, void *n, size_t size)
+int	ft_atoi_err(const char *s, void *n, size_t size)
 {
 	int	i;
 	int	p;

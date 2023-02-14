@@ -14,13 +14,24 @@
 
 void	init_env(void)
 {
-	int	i;
+	int		i;
+	int		n;
+	char	*str;
+	char	*line;
 
 	i = 0;
 	while (environ[i])
 	{
 		environ[i] = ft_strdup(environ[i]);
 		i++;
+	}
+	if (getenv("SHLVL") && !ft_atoi_err(getenv("SHLVL"), &n, sizeof(int)))
+	{
+		str = ft_itoa(n + 1);
+		line = ft_strjoin("SHLVL=", str);
+		add_var("SHLVL", line);
+		free(str);
+		free(line);
 	}
 }
 
