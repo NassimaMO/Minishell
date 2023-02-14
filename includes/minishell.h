@@ -22,6 +22,9 @@
 # include <sys/stat.h>
 # include <sys/ioctl.h>
 
+# define LEFT 'D'
+# define RIGHT 'C'
+
 # define LEN 1
 
 # define ALL 0
@@ -76,6 +79,7 @@ char	*get_input(char **history);
 void	go_through_input(char *input, char **to_return, int *i, char quotes);
 
 /* manage_input.c */
+void	ft_move(size_t cursor, char direction, int n);
 void	process_input(char **history, char *buff, size_t *moves, \
 					size_t *cursor);
 

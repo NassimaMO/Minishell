@@ -56,8 +56,8 @@ static void	variable_gestion(char *input, char **to_return, \
 
 void	go_through_input(char *input, char **to_return, int *i, char quotes)
 {
-	int			x;
-	char		*variable_tmp;
+	int		x;
+	char	*variable_tmp;
 
 	x = 0;
 	if (input[*i] && input[*i] == '$' && \
@@ -78,6 +78,11 @@ void	go_through_input(char *input, char **to_return, int *i, char quotes)
 		*to_return = gnl_join(*to_return, input + (*i)++, 1);
 }
 
+void	curs(size_t cursor, char *str)
+{
+	ft_move(cursor, RIGHT, ft_strlen(str) - cursor);
+}
+
 char	*get_input(char **history)
 {
 	char	*str;
@@ -95,14 +100,14 @@ char	*get_input(char **history)
 	{
 		if ((bytes == 0 || *buff == 0 || *buff == 4) && \
 				!*history[split_len(history) - (moves + 1)])
-			return (free_split(history), set_terminal(RESET), NULL);
+			return (free_split(history), set_terminal(0), NULL);
 		process_input(history, buff, &moves, &cursor);
 		bytes = read(0, ft_memset(buff, 0, 1), 1);
 	}
 	if (bytes < 0 && *buff == 0)
-		return (ft_printf("\n"), free_split(history), set_terminal(RESET), \
-		ft_strdup(""));
+		return (ft_printf("\n"), free_split(history), \
+		set_terminal(RESET), ft_strdup(""));
 	str = ft_strdup(history[split_len(history) - (moves + 1)]);
 	free_split(history);
-	return (ft_printf("\n"), set_terminal(RESET), str);
+	return (curs(cursor, str), ft_printf("\n"), set_terminal(RESET), str);
 }

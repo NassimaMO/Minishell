@@ -12,16 +12,26 @@
 
 #include "minishell.h"
 
-static void	place_cursor(char *str, size_t cursor)
+void	ft_move(size_t cursor, char direction, int n)
 {
-	size_t	i;
-	int		len;
+	struct winsize	w;
+	int				i;
 
 	i = 0;
-	len = ft_strlen(str);
-	while (i < len - cursor)
+	ioctl(0, TIOCGWINSZ, &w);
+	while (i < n)
 	{
-		ft_printf("\033[1D");
+		if (direction == LEFT && !((cursor + print_shell(LEN) + 1) % w.ws_col))
+			ft_printf("\033[A\033[%dG", w.ws_col);
+		else if (direction == RIGHT && \
+		(int)(cursor + print_shell(LEN) - 1) % w.ws_col == w.ws_col - 1)
+			ft_printf("\033[B\r");
+		else
+			ft_printf("\033[%c", direction);
+		if (direction == RIGHT)
+			cursor++;
+		else
+			cursor--;
 		i++;
 	}
 }
@@ -36,7 +46,7 @@ static void	ft_escape(size_t *cursor, size_t *moves, char **history)
 		if ((*buff == 'C' && *cursor < ft_strlen(history[split_len(history) - \
 			(*moves + 1)]) && ++(*cursor)) || \
 			(*buff == 'D' && *cursor > 0 && (--(*cursor), 1)))
-			ft_printf("\033[1%c", *buff);
+			ft_move(*cursor, *buff, 1);
 		if (history && ((*buff == 'A' && *moves < split_len(history) && \
 		++(*moves)) || (*buff == 'B' && *moves > 0 && (--(*moves), 1))))
 		{
@@ -58,6 +68,8 @@ static char	*add_char(char *str, char c, size_t cursor)
 {
 	char	*new_str;
 
+	ft_printf("%c%s", c, str + cursor);
+	ft_move(ft_strlen(str), LEFT, ft_strlen(str) - cursor);
 	new_str = malloc(ft_strlen(str) + 2);
 	ft_strlcpy(new_str, str, cursor + 1);
 	new_str[cursor] = c;
@@ -68,29 +80,13 @@ static char	*add_char(char *str, char c, size_t cursor)
 
 static void	ft_del(size_t *cursor, char *str)
 {
-	int				len;
-	size_t			len_prt;
-	struct winsize	w;
+	int	len;
 
-	ioctl(0, TIOCGWINSZ, &w);
-	len_prt = print_shell(LEN);
-	if (ft_strlen(str) + len_prt >= w.ws_col && \
-	((*cursor + len_prt) % w.ws_col == 0 || ft_strlen(str) > *cursor))
-	{
-		if ((*cursor + len_prt) % w.ws_col == 0)
-			ft_printf("\033[A\033[%dG\033[s", w.ws_col);
-		else
-			ft_printf("\033[D\033[s");
-		ft_printf("\033[J%s", str + (*cursor));
-		ft_printf("\033[u");
-		(*cursor)--;
-		len = ft_strlen(str) - (*cursor);
-		ft_strlcpy(str + (*cursor), str + (*cursor) + 1, len);
-		return ;
-	}
-	ft_printf("\033[D\033[K%s", str + (*cursor));
-	place_cursor(str, (*cursor)--);
-	len = ft_strlen(str) - (*cursor) + 1;
+	ft_move(*cursor - 1, LEFT, 1);
+	ft_printf("\033[s\033[J%s", str + (*cursor));
+	ft_printf("\033[u");
+	(*cursor)--;
+	len = ft_strlen(str) - (*cursor);
 	ft_strlcpy(str + (*cursor), str + (*cursor) + 1, len);
 }
 
@@ -101,9 +97,6 @@ void	process_input(char **history, char *buff, size_t *moves, size_t *cursor)
 	else if (*buff == 127 && *cursor > 0)
 		ft_del(cursor, history[split_len(history) - (*moves + 1)]);
 	else if (ft_isprint(*buff))
-		history[split_len(history) - (*moves + 1)] = (ft_printf("%c%s", \
-		*buff, history[split_len(history) - (*moves + 1)] + *cursor), \
-		place_cursor(history[split_len(history) - (*moves + 1)], *cursor), \
-		add_char(history[split_len(history) - (*moves + 1)], *buff, \
-		(*cursor)++));
+		history[split_len(history) - (*moves + 1)] = \
+		add_char(history[split_len(history) - (*moves +1)], *buff, (*cursor)++);
 }
