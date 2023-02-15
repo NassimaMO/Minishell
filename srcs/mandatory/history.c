@@ -42,9 +42,8 @@ void	change_curs(t_cursor *curs, char direction, int n)
 static void	print_prompt_hist(t_cursor *curs, size_t *moves, char **history, \
 size_t s_len)
 {
-	ft_printf("\r\033[J\r");
-	print_shell(0);
-	curs->x = print_shell(LEN) + 1;
+	ft_move(curs, LEFT, curs->cursor);
+	ft_printf("\033[J");
 	ft_printf("%s", history[s_len - (*moves + 1)]);
 	curs->cursor = ft_strlen(history[s_len - (*moves + 1)]);
 	change_curs(curs, RIGHT, curs->cursor);
@@ -54,16 +53,14 @@ static void	go_through_hist(t_cursor *curs, size_t *moves, char **history, \
 int len)
 {
 	struct winsize	w;
-	int				sh_len;
 	size_t			s_len;
 
-	sh_len = print_shell(LEN);
 	s_len = split_len(history);
 	ioctl(0, TIOCGWINSZ, &w);
 	if (s_len >= (*moves + 1))
 	{
-		while (len + sh_len / w.ws_col > 0 && len > 0 && len + sh_len > \
-		w.ws_col)
+		while (curs->x + (len - curs->cursor) / w.ws_col > 0 && len > 0 && \
+				curs->x + (len - curs->cursor) > w.ws_col)
 		{
 			ft_printf("\033[1K\033[A");
 			curs->y--;
