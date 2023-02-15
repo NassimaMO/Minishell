@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 06:51:04 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/15 14:51:30 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/15 17:50:15 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,19 +38,24 @@ static char	*get_variable(char *input, int *x)
 }
 
 static void	variable_gestion(char *input, char **to_return, \
-								char **variable_tmp, int *i)
+								char quotes, int *i)
 {
-	int	x;
+	int		x;
+	char	*variable_tmp;
 
 	x = 0;
 	if (input[++(*i)] == '\"' || input[*i] == '\'')
 		return ;
-	*variable_tmp = get_variable(input + *i, &x);
-	if (!*variable_tmp && (!input[*i] || input[*i] == ' ' || x == 0))
+	variable_tmp = get_variable(input + *i, &x);
+	if (variable_tmp && !quotes)
+		variable_tmp = str_trim_but_no(variable_tmp, ' ');
+	if (!variable_tmp && (!input[*i] || input[*i] == ' ' || x == 0))
 		*to_return = gnl_join(*to_return, "$", 1);
-	else if (*variable_tmp)
-		*to_return = gnl_join(*to_return, *variable_tmp, \
-			ft_strlen(*variable_tmp));
+	else if (variable_tmp)
+		*to_return = gnl_join(*to_return, variable_tmp, \
+			ft_strlen(variable_tmp));
+	if (variable_tmp && !quotes)
+		free(variable_tmp);
 	*i += x;
 }
 
@@ -62,7 +67,7 @@ void	go_through_input(char *input, char **to_return, int *i, char quotes)
 	x = 0;
 	if (input[*i] && input[*i] == '$' && \
 		((quotes == '\"' && input[*i + 1] != '\"') || !quotes))
-		variable_gestion(input, to_return, &variable_tmp, i);
+		variable_gestion(input, to_return, quotes, i);
 	else if (input[*i] && input[*i] == '~' && (!input[*i + 1] \
 			|| input[*i + 1] == '/' || input[*i + 1] == ':' \
 			|| input[*i + 1] == ' ') && (*i == 0 || \

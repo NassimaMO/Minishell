@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:05:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/15 17:12:30 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/15 17:51:01 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ char	*ft_dupfree(char **split, int i);
 
 /* ft_split_set.c */
 char	**ft_split_set(char *str, char *charset);
+char	*str_trim_but_no(char *str, char c);
 
 /* commands.c */
 int		is_bin(char *cmd);
