@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 14:46:09 by nmouslim          #+#    #+#             */
-/*   Updated: 2023/02/05 14:46:21 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/15 09:44:00 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	ft_move(char direction, int n)
 static void	ft_escape(size_t *cursor, size_t *moves, char **history)
 {
 	char	buff[1];
-	size_t			prec_move;
+	size_t	prec_move;
 
 	prec_move = *moves;
 	if (read(0, ft_memset(buff, 0, 1), 1) == 1 && *buff == '[')
