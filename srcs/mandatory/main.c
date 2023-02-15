@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:02:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/05 15:21:25 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/15 14:53:44 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,10 @@
 
 int	main(void)
 {
-	char	**history;
-	int		exit_code;
-	char	*input;
+	char		**history;
+	int			exit_code;
+	char		*input;
+	t_cursor	curs;
 
 	history = NULL;
 	exit_code = 0;
@@ -25,7 +26,7 @@ int	main(void)
 	while (1)
 	{
 		print_shell(0);
-		input = get_input(ft_split_dup(history));
+		input = get_input(ft_split_dup(history), &curs);
 		if (input && *input && *input != '\n')
 			history = add_split(history, input);
 		if (handle_cmd(input, &exit_code, history) == EXIT)

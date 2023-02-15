@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirect_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 15:19:13 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/13 15:19:14 by nghulam-         ###   ########.fr       */
+/*   Updated: 2023/02/15 14:53:37 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,15 +89,16 @@ int	redir_out(char *str, int *fd_out)
 /* read stdin until delimiter and write it in a pipe */
 static void	heredoc(char *delimiter, int *fd_in)
 {
-	char	**history;
-	int		pipefd[2];
-	char	*tmp;
+	char		**history;
+	int			pipefd[2];
+	t_cursor	curs;
+	char		*tmp;
 
 	if (pipe(pipefd) < 0)
 		return ;
 	history = NULL;
 	ft_printf(">");
-	tmp = get_input(history);
+	tmp = get_input(history, &curs);
 	while (tmp && (ft_strncmp(tmp, delimiter, ft_strlen(delimiter)) || \
 			(ft_strlen(delimiter) != ft_strlen(tmp))))
 	{
@@ -105,7 +106,7 @@ static void	heredoc(char *delimiter, int *fd_in)
 		write(pipefd[1], "\n", 1);
 		ft_printf(">");
 		free(tmp);
-		tmp = get_input(history);
+		tmp = get_input(history, &curs);
 	}
 	free(tmp);
 	close(pipefd[1]);
