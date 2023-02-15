@@ -30,8 +30,7 @@ void	go_through_hist(size_t *cursor, size_t *moves, char **history, int len)
 	if (split_len(history) >= (*moves + 1) && y == w.ws_row && \
 		len + print_shell(LEN) > w.ws_col)
 	{
-		while (len + print_shell(LEN) / w.ws_col > 0 && len > 0 && \
-				len + print_shell(LEN) > w.ws_row)
+		while (len + print_shell(LEN) / w.ws_col > 0 && len > 0)
 		{
 			ft_printf("\033[1K\033[A");
 			len -= w.ws_col;
