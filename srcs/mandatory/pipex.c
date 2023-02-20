@@ -16,12 +16,11 @@ void	exec_cmd(char *cmd, int fi, int fo, char **history)
 {
 	char	**args;
 	char	*path;
-	int		code;
 
-	if (is_bin(cmd) && (built_in(cmd, fi, fo, &code), 1))
+	if (is_bin(cmd) && (built_in(cmd, fi, fo), 1))
 		exit((ft_close(2, fi, fo), free_env(), free(cmd), free_split(history), \
-		code));
-	args = process_args(get_cmd_args(cmd), 0);
+		g_exit_code));
+	args = process_args(get_cmd_args(cmd));
 	if (!args || !*args || ! **args)
 		exit((ft_close(2, fi, fo), free_env(), free(cmd), free_split(args), \
 		free_split(history), 0));

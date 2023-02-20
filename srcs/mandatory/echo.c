@@ -51,18 +51,18 @@ static int	newline_opt(char *input, int *tmp)
 	return (0);
 }
 
-char	*get_processed_input(char *input, int opt, int exit_code)
+char	*get_processed_input(char *input, int opt)
 {
 	char	*output;
 
 	output = ft_strdup("");
-	quote_gestion(input, &output, exit_code);
+	quote_gestion(input, &output);
 	if (!opt)
 		output = gnl_join(output, "\n", 1);
 	return (output);
 }
 
-char	**process_args(char **args, int exit_code)
+char	**process_args(char **args)
 {
 	int		i;
 	char	*tmp;
@@ -72,7 +72,7 @@ char	**process_args(char **args, int exit_code)
 		return (NULL);
 	while (args[i])
 	{
-		tmp = get_processed_input(args[i], 1, exit_code);
+		tmp = get_processed_input(args[i], 1);
 		free(args[i]);
 		args[i] = tmp;
 		i++;
@@ -80,7 +80,7 @@ char	**process_args(char **args, int exit_code)
 	return (args);
 }
 
-int	echo_cmd(char *input, int exit_code)
+int	echo_cmd(char *input)
 {
 	int		i;
 	int		tmp;
@@ -102,7 +102,7 @@ int	echo_cmd(char *input, int exit_code)
 			break ;
 		tmp += temp;
 	}
-	to_print = get_processed_input(input + i, tmp, exit_code);
+	to_print = get_processed_input(input + i, tmp);
 	ft_printf("%s", to_print);
 	return (free(to_print), free(input), 0);
 }

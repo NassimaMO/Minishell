@@ -35,7 +35,7 @@ static void	ft_quotes(char *quotes, char *input, int *i)
 	}
 }
 
-void	quote_gestion(char *input, char **output, int exit_code)
+void	quote_gestion(char *input, char **output)
 {
 	static char	quotes;
 	char		*code;
@@ -47,7 +47,7 @@ void	quote_gestion(char *input, char **output, int exit_code)
 		ft_quotes(&quotes, input, &i);
 		if (input[i] && input[i] == '$' && input[i + 1] == '?')
 		{
-			code = ft_itoa(exit_code);
+			code = ft_itoa(g_exit_code);
 			*output = gnl_join(*output, code, ft_strlen(code));
 			free((i += 2, code));
 		}
@@ -61,5 +61,5 @@ void	quote_gestion(char *input, char **output, int exit_code)
 	if (quotes && !input[i])
 		quotes = '\0';
 	if (input[i])
-		quote_gestion(input + i, output, exit_code);
+		quote_gestion(input + i, output);
 }

@@ -70,6 +70,13 @@ static char	*add_char(char *str, char c, size_t cursor)
 	ft_printf("%c", c);
 	if (x == w.ws_col)
 	{
+		if (y == w.ws_row)
+			ft_printf("\n");
+		ft_move(RIGHT, 1);
+	}
+	get_cursor_pos(&x, &y);
+/* 	if (x == w.ws_col)
+	{
 		x = 0;
 		if (y == w.ws_row)
 			ft_printf("\n");
@@ -77,7 +84,7 @@ static char	*add_char(char *str, char c, size_t cursor)
 			y++;
 	}
 	else
-		x++;
+		x++; */
 	ft_printf("%s", str + cursor);
 	ft_printf("\033[%d;%dH", y, x);
 	new_str = malloc(ft_strlen(str) + 2);

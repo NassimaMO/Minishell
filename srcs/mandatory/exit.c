@@ -79,25 +79,25 @@ static int	check_overflow(char *s, long long max)
 	return (0);
 }
 
-int	check_exit(char *input, int *exit_code)
+int	check_exit(char *input)
 {
 	char	**args;
 
 	if (!input)
 		return (ft_printf("\nexit\n"), EXIT);
-	args = process_args(get_cmd_args(input), *exit_code);
+	args = process_args(get_cmd_args(input));
 	if (args && *args && !ft_strncmp(*args, "exit", 4) && ft_strlen(*args) == 4)
 	{
 		ft_printf("exit\n");
 		if (split_len(args) > 2)
-			*exit_code = 1;
+			g_exit_code = 1;
 		if (split_len(args) > 2)
 			return (print_err("exit", S2ARG), free_split(args), 0);
 		if (split_len(args) > 1 && \
 			(check_overflow(args[1], LLONG_MAX) || \
 			check_overflow(args[1], LLONG_MIN) || \
-			ft_atoi_err(args[1], exit_code, 1) < 0))
-			*exit_code = (ft_printf("exit: %s: %s\n", input, SNUM), 2);
+			ft_atoi_err(args[1], &g_exit_code, 1) < 0))
+			g_exit_code = (ft_printf("exit: %s: %s\n", input, SNUM), 2);
 		return (free_split(args), EXIT);
 	}
 	return (free_split(args), 0);

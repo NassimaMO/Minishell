@@ -15,11 +15,10 @@
 int	main(void)
 {
 	char	**history;
-	int		exit_code;
 	char	*input;
 
 	history = NULL;
-	exit_code = 0;
+	g_exit_code = 0;
 	signals();
 	init_env();
 	while (1)
@@ -28,12 +27,12 @@ int	main(void)
 		input = get_input(ft_split_dup(history));
 		if (input && *input && *input != '\n')
 			history = add_split(history, input);
-		if (handle_cmd(input, &exit_code, history) == EXIT)
+		if (handle_cmd(input, history) == EXIT)
 			break ;
 		if (input && !(*input && *input != '\n'))
 			free(input);
 	}
 	free_env();
 	free_split(history);
-	return (exit_code);
+	return (g_exit_code);
 }

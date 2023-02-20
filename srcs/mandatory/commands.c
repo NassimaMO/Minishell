@@ -62,7 +62,7 @@ int	is_bin(char *cmd)
 	char		*s;
 
 	i = 0;
-	args = process_args(get_cmd_args(cmd), 0);
+	args = process_args(get_cmd_args(cmd));
 	if ((!*cmd && (free_split(args), 1)) || !args)
 		return (0);
 	s = args[0];
@@ -81,7 +81,7 @@ int	is_bin(char *cmd)
 	return (free_split(args), 0);
 }
 
-void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
+void	built_in(char *input, int fd_in, int fd_out)
 {
 	char	*line;
 
@@ -90,35 +90,35 @@ void	built_in(char *input, int fd_in, int fd_out, int *exit_code)
 	ft_close(2, fd_in, fd_out);
 	line = ft_strtrim(input, " \t");
 	if (!ft_strncmp(line, "echo", 4))
-		*exit_code = echo_cmd(line + 4, *exit_code);
+		g_exit_code = echo_cmd(line + 4);
 	else if (!ft_strncmp(line, "pwd", 3))
-		*exit_code = pwd_cmd(line);
+		g_exit_code = pwd_cmd(line);
 	else if (!ft_strncmp(line, "cd", 2))
-		*exit_code = cd_cmd(line, *exit_code);
+		g_exit_code = cd_cmd(line);
 	else if (!ft_strncmp(line, "env", 3))
-		*exit_code = env_cmd(line);
+		g_exit_code = env_cmd(line);
 	else if (!ft_strncmp(line, "export", 6))
-		*exit_code = export_cmd(line, *exit_code);
+		g_exit_code = export_cmd(line);
 	else if (!ft_strncmp(line, "unset", 5))
-		*exit_code = unset_cmd(line, *exit_code);
+		g_exit_code = unset_cmd(line);
 	return (free(line));
 }
 
-int	handle_cmd(char *s, int *x, char **h)
+int	handle_cmd(char *s, char **h)
 {
 	char		**cmd;
 	int			fd[5];
 	int			i;
 
 	if ((init_fd(fd, 4), 1) && !s)
-		return (check_exit(s, x));
+		return (check_exit(s));
 	cmd = split_pipes(s);
 	if (!cmd)
 		return (write(2, STXN, 13 * (ft_strchr(s, '|') != NULL)), 2);
 	i = split_len(cmd);
 	if (i > 1)
-		*x = ft_pipes(i, cmd, fd, h);
-	else if (check_exit(s, x) == EXIT)
+		g_exit_code = ft_pipes(i, cmd, fd, h);
+	else if (check_exit(s) == EXIT)
 		return (free_split(cmd), EXIT);
 	s = ft_strdup(s);
 	if (i == 1 && !is_bin(s) && (free_split(cmd), redirect(s, fd, fd +1), 1))
@@ -126,9 +126,9 @@ int	handle_cmd(char *s, int *x, char **h)
 		i = fork();
 		if (i == 0)
 			exec_cmd(s, fd[0], fd[1], h);
-		*x = WEXITSTATUS((waitpid(i, x, 0), *x));
+		g_exit_code = (waitpid(i, &g_exit_code, 0), WEXITSTATUS(g_exit_code));
 	}
 	else if (i == 1 && is_bin(s) && (set_std(fd + 2, SET), 1))
-		set_std(fd +2, (free_split((built_in(s, *fd, fd[1], x), cmd)), 0));
+		set_std(fd +2, (free_split((built_in(s, *fd, fd[1]), cmd)), 0));
 	return (ft_close(2, fd[0], fd[1]), free(s), 0);
 }

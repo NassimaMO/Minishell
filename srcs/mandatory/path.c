@@ -61,12 +61,12 @@ static char	*get_home(void)
 	return (free(cmd), free_split(split), home);
 }
 
-int	cd_cmd(char *str, int exit_code)
+int	cd_cmd(char *str)
 {
 	char	*path;
 	char	**args;
 
-	args = process_args(get_cmd_args(str), exit_code);
+	args = process_args(get_cmd_args(str));
 	str = ft_strtrim(str + 2, " \t");
 	if (!getenv("HOME") && (*str == '~' || split_len(args) == 1))
 	{
@@ -86,8 +86,8 @@ int	cd_cmd(char *str, int exit_code)
 	}
 	else
 		path = ft_strdup(args[1]);
-	exit_code = update_path(path, args[1]);
-	return (free_split(args), free(str), exit_code);
+	g_exit_code = update_path(path, args[1]);
+	return (free_split(args), free(str), g_exit_code);
 }
 
 /* option=SHORT: path with ~ ; option=0: full path */

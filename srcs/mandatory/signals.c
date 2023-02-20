@@ -18,6 +18,7 @@ static void	ft_handler(int signum)
 
 	if (signum == SIGINT)
 	{
+		g_exit_code = 130;
 		tcgetattr(STDIN_FILENO, &tty);
 		if (!(tty.c_lflag & ECHO))
 			ft_printf("^C");
@@ -26,7 +27,7 @@ static void	ft_handler(int signum)
 
 void	signals(void)
 {
-	struct sigaction		sa;
+	struct sigaction	sa;
 
 	ft_bzero(&sa, sizeof(struct sigaction));
 	sa.sa_handler = &ft_handler;

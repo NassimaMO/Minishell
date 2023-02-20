@@ -12,16 +12,16 @@
 
 #include "minishell.h"
 
-int	export_cmd(char *str, int exit_code)
+int	export_cmd(char *str)
 {
 	char	*line;
 	char	**args;
 	int		i;
 
-	args = process_args(get_cmd_args(str), exit_code);
+	args = process_args(get_cmd_args(str));
 	if (split_len(args) <= 1)
 		return (free_split(args), print_export(environ), 0);
-	i = (ft_bzero(&exit_code, sizeof(int)), 1);
+	i = (ft_bzero(&g_exit_code, sizeof(int)), 1);
 	while (args[i])
 	{
 		line = ft_strdup(args[i]);
@@ -32,21 +32,21 @@ int	export_cmd(char *str, int exit_code)
 		if (*(args[i]) && args[i][ft_strlen(args[i]) - 1] == '+')
 			args[i][ft_strlen(args[i]) - 1] = '\0';
 		if (!valid_var_name(args[i]) || !*args[i])
-			exit_code = (write(2, "export: not a valid identifier: ", \
+			g_exit_code = (write(2, "export: not a valid identifier: ", \
 	32), write(2, "'", 1), ft_putstr_fd(args[i], 2), write(2, "'\n", 2), 1);
 		else
 			add_var(args[i], line);
 		i = (free(line), i + 1);
 	}
-	return (free_split(args), exit_code);
+	return (free_split(args), g_exit_code);
 }
 
-int	unset_cmd(char *str, int exit_code)
+int	unset_cmd(char *str)
 {
 	char	**args;
 	int		i;
 
-	args = process_args(get_cmd_args(str), exit_code);
+	args = process_args(get_cmd_args(str));
 	if (split_len(args) <= 1)
 		return (print_err("unset", SARG), free_split(args), free(str), 1);
 	i = 1;

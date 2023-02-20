@@ -58,6 +58,8 @@
 
 extern char	**environ;
 
+int	g_exit_code;
+
 /* signals.c */
 void	signals(void);
 
@@ -99,11 +101,11 @@ char	**ft_split_set(char *str, char *charset);
 
 /* commands.c */
 int		is_bin(char *cmd);
-void	built_in(char *input, int fd_in, int fd_out, int *exit_code);
-int		handle_cmd(char *input, int *exit_code, char **history);
+void	built_in(char *input, int fd_in, int fd_out);
+int		handle_cmd(char *input, char **history);
 
 /* quotes.c */
-void	quote_gestion(char *input, char **output, int exit_code);
+void	quote_gestion(char *input, char **output);
 
 /* pipex.c */
 void	exec_cmd(char *cmd, int fi, int fo, char **history);
@@ -124,18 +126,18 @@ void	ft_dup(int fd_in, int fd_out);
 int		redirect(char *str, int *fd_in, int *fd_out);
 
 /* echo.c */
-char	*get_processed_input(char *input, int opt, int exit_code);
-char	**process_args(char **args, int exit_code);
-int		echo_cmd(char *input, int exit_code);
+char	*get_processed_input(char *input, int opt);
+char	**process_args(char **args);
+int		echo_cmd(char *input);
 
 /* path.c */
 int		pwd_cmd(char *input);
-int		cd_cmd(char *line, int exit_code);
+int		cd_cmd(char *line);
 char	*get_current_path(int option);
 
 /* env */
-int		export_cmd(char *str, int exit_code);
-int		unset_cmd(char *line, int exit_code);
+int		export_cmd(char *str);
+int		unset_cmd(char *line);
 int		env_cmd(char *input);
 
 /* env_utils.c */
@@ -147,6 +149,6 @@ void	del_var(char *name);
 
 /* exit.c */
 int		ft_atoi_err(const char *s, void *n, size_t size);
-int		check_exit(char *input, int *exit_code);
+int		check_exit(char *input);
 
 #endif
