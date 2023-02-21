@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 15:22:40 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/01/31 08:42:14 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/15 16:46:29 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,6 @@ size_t	print_shell(int opt)
 	write(fd, ":", 1);
 	write(fd, path, ft_strlen(path));
 	write(fd, "$ ", 2);
-	ft_printf("\033[s");
 	close(fd);
 	return (free(name), free(path), free(user), len);
 }

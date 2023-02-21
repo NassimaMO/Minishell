@@ -6,11 +6,37 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 13:27:23 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/05 15:20:31 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/15 17:50:42 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+char	*str_trim_but_no(char *str, char c)
+{
+	char	*to_return;
+	int		i;
+	int		j;
+
+	i = 0;
+	j = 0;
+	to_return = ft_calloc(ft_strlen(str) + 1, 1);
+	while (str[i])
+	{
+		if (str[i] == c)
+		{
+			while (str[i] == c)
+				i++;
+			if (!str[i])
+				break ;
+			if (j)
+				to_return[j++] = c;
+		}
+		to_return[j++] = str[i];
+		i++;
+	}
+	return (to_return);
+}
 
 static int	is_char_in_str(char c, char *str)
 {

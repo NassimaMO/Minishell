@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:05:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/14 15:17:49 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/02/15 17:51:01 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,12 @@ extern char	**environ;
 
 int	g_exit_code;
 
+typedef struct s_cursor {
+	size_t	cursor;
+	int		x;
+	int		y;
+}	t_cursor;
+
 /* signals.c */
 void	signals(void);
 
@@ -78,16 +84,17 @@ void	set_std(int std[3], int opt);
 
 /* input.c */
 void	get_cursor_pos(int *x, int *y);
-char	*get_input(char **history);
+char	*get_input(char **history, t_cursor *curs);
 void	go_through_input(char *input, char **to_return, int *i, char quotes);
 
 /* manage_input.c */
-void	ft_move(char direction, int n);
+void	ft_move(t_cursor *curs, char direction, int n);
 void	process_input(char **history, char *buff, size_t *moves, \
-					size_t *cursor);
+					t_cursor *curs);
 
 /* history.c */
-void	go_through_hist(size_t *cursor, size_t *moves, char **history, int len);
+void	ft_escape(t_cursor *curs, size_t *moves, char **history);
+void	change_curs(t_cursor *curs, char direction, int n);
 
 /* split.c */
 char	**ft_split_dup(char **split);
@@ -98,6 +105,7 @@ char	*ft_dupfree(char **split, int i);
 
 /* ft_split_set.c */
 char	**ft_split_set(char *str, char *charset);
+char	*str_trim_but_no(char *str, char c);
 
 /* commands.c */
 int		is_bin(char *cmd);

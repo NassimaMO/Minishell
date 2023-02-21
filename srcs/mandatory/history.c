@@ -1,30 +1,94 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   history.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nmouslim <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/15 17:03:19 by nmouslim          #+#    #+#             */
+/*   Updated: 2023/02/15 17:03:21 by nmouslim         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-static void		print_prompt_hist(size_t *cursor, size_t *moves, char **history)
-{
-	ft_printf("\033[J\r");
-	print_shell(0);
-	ft_printf("%s", history[split_len(history) - (*moves + 1)]);
-	*cursor = ft_strlen(history[split_len(history) - (*moves + 1)]);
-}
-
-void		go_through_hist(size_t *cursor, size_t *moves, char **history, int len)
+void	change_curs(t_cursor *curs, char direction, int n)
 {
 	struct winsize	w;
-	int				x;
-	int				y;
-	
-	get_cursor_pos((ioctl(0, TIOCGWINSZ, &w), &x), &y);
-	if (split_len(history) >= (*moves + 1) && y == w.ws_row && \
-		len + print_shell(LEN) > w.ws_col)
+	int				i;
+
+	i = 0;
+	ioctl(0, TIOCGWINSZ, &w);
+	while (i < n)
 	{
-		while (len + print_shell(LEN) / w.ws_col > 0 && len > 0 && \
-				len + print_shell(LEN) > w.ws_row)
-			len -= w.ws_col, ft_printf("\033[1K\033[A");
-		print_prompt_hist(cursor, moves, history);
+		if (direction == LEFT && curs->x % w.ws_col == 1)
+		{
+			curs->x = w.ws_col;
+			curs->y--;
+		}
+		else if (direction == RIGHT && curs->x % w.ws_col == 0)
+		{
+			curs->x = 1;
+			curs->y++;
+		}
+		else if (direction == LEFT)
+			curs->x--;
+		else if (direction == RIGHT)
+			curs->x++;
+		i++;
 	}
-	else if (split_len(history) >= (*moves + 1))
-		print_prompt_hist((ft_printf("\033[u"), cursor), moves, history);
+}
+
+static void	print_prompt_hist(t_cursor *curs, size_t *moves, char **history, \
+size_t s_len)
+{
+	ft_move(curs, LEFT, curs->cursor);
+	ft_printf("\033[J");
+	ft_printf("%s", history[s_len - (*moves + 1)]);
+	curs->cursor = ft_strlen(history[s_len - (*moves + 1)]);
+	change_curs(curs, RIGHT, curs->cursor);
+}
+
+static void	go_through_hist(t_cursor *curs, size_t *moves, char **history, \
+int len)
+{
+	struct winsize	w;
+	size_t			s_len;
+
+	s_len = split_len(history);
+	ioctl(0, TIOCGWINSZ, &w);
+	if (s_len >= (*moves + 1))
+	{
+		while (curs->x + (len - curs->cursor) / w.ws_col > 0 && len > 0 && \
+				curs->x + (len - curs->cursor) > w.ws_col)
+		{
+			ft_printf("\033[1K\033[A");
+			curs->y--;
+			len -= w.ws_col;
+		}
+		print_prompt_hist(curs, moves, history, s_len);
+	}
 	else
 		(*moves)--;
+}
+
+void	ft_escape(t_cursor *curs, size_t *moves, char **history)
+{
+	char	buff[1];
+	size_t	prec_move;
+
+	prec_move = *moves;
+	if (read(0, ft_memset(buff, 0, 1), 1) == 1 && *buff == '[')
+	{
+		read(0, ft_memset(buff, 0, 1), 1);
+		if ((*buff == 'C' && curs->cursor < \
+		ft_strlen(history[split_len(history) - (*moves + 1)]) && \
+		++(curs->cursor)) || (*buff == 'D' && curs->cursor > 0 && \
+		(--(curs->cursor), 1)))
+			ft_move(curs, *buff, 1);
+		if (history && ((*buff == 'A' && *moves < split_len(history) && \
+		++(*moves)) || (*buff == 'B' && *moves > 0 && (--(*moves), 1))))
+			go_through_hist(curs, moves, history, \
+			ft_strlen(history[split_len(history) - (prec_move + 1)]));
+	}
 }
