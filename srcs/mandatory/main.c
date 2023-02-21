@@ -14,13 +14,13 @@
 
 int	main(void)
 {
-	char	**history;
+	char		**history;
 	char		*input;
 	t_cursor	curs;
 
 	history = NULL;
 	g_exit_code = 0;
-	signals();
+	signals(SET);
 	init_env();
 	while (1)
 	{

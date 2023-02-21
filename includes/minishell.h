@@ -36,6 +36,7 @@
 
 # define RESET 0
 # define SET 1
+# define HEREDOC 2
 
 # define EXIT 1
 
@@ -57,8 +58,7 @@
 # define MSK 1023
 
 extern char	**environ;
-
-int	g_exit_code;
+int			g_exit_code;
 
 typedef struct s_cursor {
 	size_t	cursor;
@@ -67,7 +67,7 @@ typedef struct s_cursor {
 }	t_cursor;
 
 /* signals.c */
-void	signals(void);
+void	signals(int option);
 
 /* print.c */
 char	*get_cmd(char *cmd);

@@ -71,14 +71,14 @@ int	redirect(char *str, int *fd_in, int *fd_out)
 		ft_skip_quotes(str, &i);
 		if (str[i] == '<')
 			in = redir_in(str + i, fd_in);
-		if (str[i] == '>')
+		else if (str[i] == '>')
 		{
 			while (i != 0 && ft_isdigit(str[i - 1]))
 				i--;
 			out = redir_out(str + i, fd_out);
 		}
-		i += (str[i] != 0) + (str[i] == '>' || str[i] == '<') + ((str[i] == '>' \
-		|| str[i] == '<') && (str[i + 1] == '>' || str[i + 1] == '<'));
+		else
+			i += (str[i] != 0);
 	}
 	str[0] *= (!in && !out);
 	return (in + out * (in == 0));

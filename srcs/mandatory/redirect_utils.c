@@ -28,7 +28,8 @@ static char	*delimiter(char *str, char c)
 	while (str[i] == ' ' || str[i] == '\t')
 		i++;
 	j = i;
-	while (str[j] && str[j] != ' ' && str[j] != '\t')
+	while (str[j] && str[j] != ' ' && str[j] != '\t' && \
+			str[j] != '>' && str[j] != '<')
 		j++;
 	return (ft_substr(str, i, j - i));
 }
@@ -36,25 +37,21 @@ static char	*delimiter(char *str, char c)
 /* changes str to remove redirection */
 static void	ft_change_str(char *str, char *name, char c)
 {
-	char	*line;
+	char	*before;
 	int		len;
 	char	*s;
+	char	*end;
 
-	line = ft_strdup(str);
-	*ft_strchr(line, c) = 0;
+	before = ft_strdup(str);
+	*ft_strchr(before, c) = 0;
 	s = ft_strnstr(ft_strchr(str, c), name, ft_strlen(ft_strchr(str, c)));
-	if (ft_strchr(s, ' '))
-	{
-		len = ft_strlen(ft_strchr(s, ' '));
-		line = gnl_join(line, ft_strchr(s, ' '), len);
-	}
-	else if (ft_strchr(s, '\t'))
-	{
-		len = ft_strlen(ft_strchr(s, ' '));
-		line = gnl_join(line, ft_strchr(s, ' '), len);
-	}
-	ft_strlcpy(str, line, ft_strlen(line) + 1);
-	free(line);
+	end = s;
+	while (*end && *end != ' ' && *end != '\t' && *end != '>' && *end != '<')
+		end ++;
+	len = ft_strlen(end);
+	before = gnl_join(before, end, len);
+	ft_strlcpy(str, before, ft_strlen(before) + 1);
+	free(before);
 }
 
 /* changes str to remove redirection and changes fd_out */
@@ -87,31 +84,32 @@ int	redir_out(char *str, int *fd_out)
 }
 
 /* read stdin until delimiter and write it in a pipe */
-static void	heredoc(char *delimiter, int *fd_in)
+static int	heredoc(char *delimiter, int *fd_in)
 {
 	char		**history;
 	int			pipefd[2];
 	t_cursor	curs;
 	char		*tmp;
+	int			code;
 
 	if (pipe(pipefd) < 0)
-		return ;
-	history = NULL;
-	ft_printf(">");
+		return (2);
+	history = (ft_printf(">"), NULL);
+	code = g_exit_code;
+	g_exit_code = (signals(HEREDOC), 0);
 	tmp = get_input(history, &curs);
-	while (tmp && (ft_strncmp(tmp, delimiter, ft_strlen(delimiter)) || \
-			(ft_strlen(delimiter) != ft_strlen(tmp))))
-	{
-		write(pipefd[1], tmp, ft_strlen(tmp));
-		write(pipefd[1], "\n", 1);
-		ft_printf(">");
-		free(tmp);
-		tmp = get_input(history, &curs);
-	}
-	free(tmp);
-	close(pipefd[1]);
+	while ((ft_strncmp(tmp, delimiter, ft_strlen(delimiter)) || \
+			(ft_strlen(delimiter) != ft_strlen(tmp))) && !g_exit_code && tmp)
+		tmp = (free((write(pipefd[1], tmp, ft_strlen(tmp)), tmp)), \
+					ft_printf((write(pipefd[1], "\n", 1), ">")), \
+					get_input(history, &curs));
+	close((free(tmp), pipefd[1]));
 	*fd_in = (ft_close(1, *fd_in), pipefd[0]);
-	free_split(history);
+	signals((free_split(history), SET));
+	if (g_exit_code)
+		return (EXIT);
+	g_exit_code = code;
+	return (0);
 }
 
 /* changes str to remove redirection and changes fd_in */
@@ -124,9 +122,9 @@ int	redir_in(char *str, int *fd_in)
 	new_fd = 0;
 	if (!*name || *name == '<' || *name == '>')
 		return (write(2, STXN, 13), free(name), ft_bzero(str, 1), 2);
-	if (ft_strnstr(str, "<<", ft_strlen(str)))
-		heredoc(name, fd_in);
-	else
+	if (ft_strnstr(str, "<<", ft_strlen(str)) && heredoc(name, fd_in))
+		return (free(name), ft_bzero(str, 1), g_exit_code);
+	else if (!ft_strnstr(str, "<<", ft_strlen(str)))
 		new_fd = open(name, O_RDONLY);
 	ft_change_str(str, name, '<');
 	if (new_fd > 2)
