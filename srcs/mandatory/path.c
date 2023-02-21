@@ -18,6 +18,8 @@ static int	update_path(char *path, char *arg)
 	char	*var;
 
 	pwd = getcwd(NULL, 0);
+	if (!pwd)
+		return (EXIT_FAILURE);
 	if (chdir(path) < 0)
 	{
 		write(2, "cd: ", 5);
@@ -99,6 +101,8 @@ char	*get_current_path(int option)
 	int		len;
 
 	path = getcwd(NULL, 0);
+	if (!path)
+		return (NULL);
 	home = getenv("HOME");
 	if (!home)
 		return (path);
