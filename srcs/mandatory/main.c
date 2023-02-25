@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+int	g_exit_code;
+
 int	main(void)
 {
 	char		**history;

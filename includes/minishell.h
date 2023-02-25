@@ -58,8 +58,9 @@
 # define MSK 1023
 
 extern char	**environ;
-int			g_exit_code;
-
+extern int	g_exit_code;
+/* int			g_exit_code;
+ */
 typedef struct s_cursor {
 	size_t	cursor;
 	int		x;
