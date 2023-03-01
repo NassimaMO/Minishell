@@ -40,9 +40,14 @@ void	ft_close(int nb, ...)
 void	ft_dup(int fd_in, int fd_out)
 {
 	dup2(fd_in, STDIN_FILENO);
+	ft_close(1, fd_in);
 	dup2(fd_out & MSK, STDOUT_FILENO);
+	ft_close(1, fd_out & MSK);
 	if (((fd_out >> 20) & MSK) && ((fd_out >> 10) & MSK))
+	{
 		dup2((fd_out >> 10) & MSK, (fd_out >> 20) & MSK);
+		ft_close(1, (fd_out >> 10) & MSK);
+	}
 }
 
 static void	ft_skip_quotes(char *str, int *i)

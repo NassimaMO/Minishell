@@ -37,81 +37,71 @@ void	exec_cmd(char *cmd, int fi, int fo, char **history)
 	exit((perror(""), free_split(args), free_env(), free(cmd), free(path), 1));
 }
 
-static int	*fi(int i, int fd[], int pipes[])
+static int	*fi(int i, int fd[2], int *pipes)
 {
 	int	*fd_in;
 
 	if (i == 0)
 	{
 		if (fd[0] < 0)
-		{
 			fd[0] = open("/dev/null", O_RDONLY);
-			if (fd[0] < 0)
-				exit(EXIT_FAILURE);
-		}
 		fd_in = fd;
 	}
-	else if (i % 2)
-		fd_in = pipes;
 	else
-		fd_in = (pipes + 2);
+		fd_in = pipes;
 	return (fd_in);
 }
 
-static int	*fo(int i, int nb, int fd[], int pipes[])
+static int	*fo(int i, int n, int fd[2], int *pipes)
 {
 	int	*fd_out;
 
-	if (i == nb - 1)
-	{
+	if (i == n - 1)
 		fd_out = fd + 1;
-		if (fd[1] < 0)
-			exit(EXIT_FAILURE);
-	}
-	else if (i % 2)
-		fd_out = pipes + 3;
 	else
 		fd_out = pipes + 1;
 	return (fd_out);
 }
 
-void	cp(int i, int nb, int pipes[], int opt)
+int	wait_pids(pid_t *pids, int n)
 {
-	if ((opt == IN || opt == ALL) && i != 0 && i % 2)
-		close(pipes[1]);
-	if ((opt == IN || opt == ALL) && i != 0 && !(i % 2))
-		close((pipes + 2)[1]);
-	if ((opt == OUT || opt == ALL) && i != nb - 1 && i % 2)
-		close((pipes + 2)[0]);
-	if ((opt == OUT || opt == ALL) && i != nb - 1 && !(i % 2))
-		close(pipes[0]);
-}
-
-int	ft_pipes(int n, char **cmds, int fd[2], char **h)
-{
-	int		p[4];
-	pid_t	pid;
-	int		s;
-	int		i;
+	int	i;
+	int	status;
 
 	i = 0;
+	while (i < n - 1)
+	{
+		waitpid(pids[i], NULL, 0);
+		i++;
+	}
+	waitpid(pids[i], &status, 0);
+	free(pids);
+	return (WEXITSTATUS(status));
+}
+
+int	ft_pipes(int n, char **cmds, int fd[2], char **history)
+{
+	pid_t	*pids;
+	int		pipes[2];
+	int		i;
+	pid_t	pid;
+	int		fd_in;
+
+	i = 0;
+	pids = malloc(sizeof(pid_t) * n);
 	while (i < n)
 	{
-		if (i != (n - 1) && ((!(i % 2) && pipe(p) < 0) || \
-		((i % 2) && pipe(p + 2) < 0)))
-			return (perror("pipe failed: "), free_split(cmds), 1);
-		pid = (redirect(cmds[i], fi(i, fd, p), fo(i, n, fd, p)), fork());
+		fd_in = *fi(i, fd, pipes);
+		if (i != n - 1 && pipe(pipes) < 0)
+			return (perror(""), free_split(history), 1);
+		redirect(cmds[i], &fd_in, fo(i, n, fd, pipes));
+		pid = fork();
 		if (pid == -1)
-			return (perror("fork failed: "), free_split(cmds), 1);
-		if (pid == 0)
-		{
-			if ((cp(i, n, p, ALL), 1) && !cmds[i])
-				exit((write(2, "syntax error\n", 13), free_split(cmds), 2));
-			exec_cmd(ft_dupfree(cmds, i), *fi(i, fd, p), *fo(i, n, fd, p), h);
-		}
-		if (!i++ && (ft_close(1, fd[0]), 1))
-			continue ;
-		waitpid(pid, &s, (close((cp(i -1, n, p, IN), *(fi(i -1, fd, p)))), 0));
+			return (perror(""), free_split(history), 1);
+		if (pid == 0 && (free(pids), close(pipes[i == n - 1]), 1))
+			exec_cmd(ft_dupfree(cmds, i), fd_in, *fo(i, n, fd, pipes), history);
+		ft_close(2, fd_in, *fo(i, n, fd, pipes));
+		pids[i++] = pid;
 	}
-	return (free_split(cmds), WEXITSTATUS(s));
+	return (free_split(cmds), wait_pids(pids, n));
 }
