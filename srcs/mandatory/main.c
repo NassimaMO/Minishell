@@ -19,15 +19,18 @@ int	main(void)
 	char		**history;
 	char		*input;
 	t_cursor	curs;
+	struct stat	buf;
 
-	history = NULL;
-	g_exit_code = 0;
-	signals(SET);
-	init_env();
+	history = (init_env(), NULL);
+	g_exit_code = (signals(SET), 0);
 	while (1)
 	{
 		print_shell(0);
-		input = get_input(ft_split_dup(history), &curs);
+		fstat(STDIN_FILENO, &buf);
+		if (S_ISFIFO(buf.st_mode) || !isatty(STDIN_FILENO))
+			input = get_input();
+		else
+			input = get_input_readline(ft_split_dup(history), &curs);
 		if (input && *input && *input != '\n')
 			history = add_split(history, input);
 		if (handle_cmd(input, history) == EXIT)
@@ -35,7 +38,5 @@ int	main(void)
 		if (input && !(*input && *input != '\n'))
 			free(input);
 	}
-	free_env();
-	free_split(history);
-	return (g_exit_code);
+	return (free_env(), free_split(history), g_exit_code);
 }

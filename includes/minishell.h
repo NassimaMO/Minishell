@@ -83,10 +83,13 @@ void	init_fd(int *fd, size_t size);
 void	set_terminal(int option);
 void	set_std(int std[3], int opt);
 
-/* input.c */
+/* input_utils.c */
 void	get_cursor_pos(int *x, int *y);
-char	*get_input(char **history, t_cursor *curs);
 void	go_through_input(char *input, char **to_return, int *i, char quotes);
+
+/* input.c */
+char	*get_input_readline(char **history, t_cursor *curs);
+char	*get_input(void);
 
 /* manage_input.c */
 void	ft_move(t_cursor *curs, char direction, int n);

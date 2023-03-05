@@ -86,26 +86,24 @@ int	redir_out(char *str, int *fd_out)
 /* read stdin until delimiter and write it in a pipe */
 static int	heredoc(char *delimiter, int *fd_in)
 {
-	char		**history;
 	int			pipefd[2];
-	t_cursor	curs;
 	char		*tmp;
 	int			code;
 
 	if (pipe(pipefd) < 0)
 		return (2);
-	history = (ft_printf(">"), NULL);
 	code = g_exit_code;
 	g_exit_code = (signals(HEREDOC), 0);
-	tmp = get_input(history, &curs);
+	tmp = (ft_printf(">"), get_input());
 	while ((ft_strncmp(tmp, delimiter, ft_strlen(delimiter)) || \
 			(ft_strlen(delimiter) != ft_strlen(tmp))) && !g_exit_code && tmp)
-		tmp = (free((write(pipefd[1], tmp, ft_strlen(tmp)), tmp)), \
-					ft_printf((write(pipefd[1], "\n", 1), ">")), \
-					get_input(history, &curs));
+	{
+		free((write(pipefd[1], tmp, ft_strlen(tmp)), tmp));
+		tmp = (ft_printf((write(pipefd[1], "\n", 1), ">")), get_input());
+	}
 	close((free(tmp), pipefd[1]));
 	*fd_in = (ft_close(1, *fd_in), pipefd[0]);
-	signals((free_split(history), SET));
+	signals(SET);
 	if (g_exit_code)
 		return (EXIT);
 	g_exit_code = code;

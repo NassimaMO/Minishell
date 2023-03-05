@@ -61,15 +61,26 @@ void	set_terminal(int option)
 {
 	struct termios			tty;
 	static struct termios	tmp;
+	int						fd[2];
+	static int				std[3];
+	struct stat				buf;
 
-	if (option == SET)
+	if (option == SET && (set_std(std, SET), 1))
 	{
-		tcgetattr(STDIN_FILENO, &tty);
-		tmp = tty;
+		fd[0] = open("/dev/tty", O_RDONLY);
+		fd[1] = open("/dev/tty", O_WRONLY);
+		fstat(STDIN_FILENO, &buf);
+		if (!S_ISFIFO(buf.st_mode))
+			ft_dup(fd[0], fd[1]);
+		else
+			ft_close(2, fd[0], (close(STDOUT_FILENO), fd[1]));
+		if (!isatty(STDIN_FILENO))
+			return ;
+		tmp = (tcgetattr(STDIN_FILENO, &tty), tty);
 		tty.c_lflag &= ~ECHO;
 		tty.c_lflag &= ~ICANON;
 		tcsetattr(STDIN_FILENO, TCSANOW, &tty);
 	}
-	else if (option == RESET)
-		return ((void)tcsetattr(STDIN_FILENO, TCSANOW, &tmp));
+	else if (option == RESET && (set_std(std, RESET), isatty(STDIN_FILENO)))
+		tcsetattr(STDIN_FILENO, TCSANOW, &tmp);
 }

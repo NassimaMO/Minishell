@@ -40,7 +40,7 @@ char	*gnl_join(char *dest, char *src, int len)
 	return (new_dest);
 }
 
-int	gnl_strlen(char *str)
+int	gnl_strlen(const char *str)
 {
 	int	i;
 

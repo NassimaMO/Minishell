@@ -83,8 +83,9 @@ int	check_exit(char *input)
 {
 	char	**args;
 
+	set_terminal(SET);
 	if (!input)
-		return (ft_printf("\nexit\n"), EXIT);
+		return (ft_printf("\nexit\n"), set_terminal(RESET), EXIT);
 	args = process_args(get_cmd_args(input));
 	if (args && *args && !ft_strncmp(*args, "exit", 4) && ft_strlen(*args) == 4)
 	{
@@ -92,13 +93,14 @@ int	check_exit(char *input)
 		if (split_len(args) > 2)
 			g_exit_code = 1;
 		if (split_len(args) > 2)
-			return (print_err("exit", S2ARG), free_split(args), 0);
+			return (print_err("exit", S2ARG), set_terminal(0), \
+					free_split(args), 0);
 		if (split_len(args) > 1 && \
 			(check_overflow(args[1], LLONG_MAX) || \
 			check_overflow(args[1], LLONG_MIN) || \
 			ft_atoi_err(args[1], &g_exit_code, 1) < 0))
 			g_exit_code = (ft_printf("exit: %s: %s\n", input, SNUM), 2);
-		return (free_split(args), EXIT);
+		return (free_split(args), set_terminal(RESET), EXIT);
 	}
-	return (free_split(args), 0);
+	return (free_split(args), set_terminal(RESET), 0);
 }

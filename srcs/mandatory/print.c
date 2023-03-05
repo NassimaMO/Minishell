@@ -82,30 +82,24 @@ size_t	print_shell(int opt)
 	char			*name;
 	char			*user;
 	char			*path;
-	int				fd;
 	static size_t	len;
 
 	if (opt == LEN)
 		return (len);
-	fd = open("/dev/tty", O_WRONLY);
+	set_terminal(SET);
 	name = get_cmd("/bin/hostname");
 	user = get_cmd("/bin/id -u -n");
 	path = get_current_path(SHORT);
 	if (len != ft_strlen(user) + ft_strlen(name) + ft_strlen(path) + 4)
 		len = ft_strlen(user) + ft_strlen(name) + ft_strlen(path) + 4;
-	write(fd, user, ft_strlen(user));
-	write(fd, "@", 1);
-	write(fd, name, ft_strlen(name));
-	write(fd, ":", 1);
-	write(fd, path, ft_strlen(path));
-	write(fd, "$ ", 2);
-	close(fd);
+	ft_printf("%s@%s:%s$ ", user, name, path);
+	set_terminal(RESET);
 	return (free(name), free(path), free(user), len);
 }
 
 void	print_err(const char *cmd, const char *error)
 {
-	write(2, cmd, ft_strlen(cmd));
+	write(2, cmd, gnl_strlen(cmd));
 	write(2, ": ", 2);
 	write(2, error, ft_strlen(error));
 	write(2, "\n", 1);
