@@ -57,6 +57,6 @@ char	*get_input(void)
 		str = gnl_join(str, &buff, 1);
 	}
 	if (bytes < 0 && buff == 0)
-		return (ft_printf("\n"), ft_strdup(""));
-	return (ft_printf("\n"), str);
+		return (ft_strdup(""));
+	return (str);
 }

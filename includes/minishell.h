@@ -46,6 +46,7 @@
 # define SCMD "command not found"
 # define SCDH "HOME not set"
 # define SCDO "OLDPWD not set"
+# define SHDOC "here-document delimited by end-of-file"
 # define STXN "syntax error\n"
 
 /* (O_RDWR | O_CREAT | O_TRUNC) */

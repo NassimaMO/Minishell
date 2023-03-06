@@ -95,7 +95,7 @@ static int	heredoc(char *delimiter, int *fd_in)
 	code = g_exit_code;
 	g_exit_code = (signals(HEREDOC), 0);
 	tmp = (ft_printf(">"), get_input());
-	while ((ft_strncmp(tmp, delimiter, ft_strlen(delimiter)) || \
+	while (tmp && (ft_strncmp(tmp, delimiter, ft_strlen(delimiter)) || \
 			(ft_strlen(delimiter) != ft_strlen(tmp))) && !g_exit_code && tmp)
 	{
 		free((write(pipefd[1], tmp, ft_strlen(tmp)), tmp));
@@ -104,6 +104,8 @@ static int	heredoc(char *delimiter, int *fd_in)
 	close((free(tmp), pipefd[1]));
 	*fd_in = (ft_close(1, *fd_in), pipefd[0]);
 	signals(SET);
+	if (!tmp)
+		print_err("warning", SHDOC);
 	if (g_exit_code)
 		return (EXIT);
 	g_exit_code = code;
