@@ -17,15 +17,15 @@ static int	update_path(char *path, char *arg)
 	char	*pwd;
 	char	*var;
 
-	pwd = getcwd(NULL, 0);
-	if (!pwd)
-		return (EXIT_FAILURE);
 	if (chdir(path) < 0)
 	{
 		write(2, "cd: ", 5);
 		perror(path);
-		return (free(path), free(pwd), EXIT_FAILURE);
+		return (free(path), EXIT_FAILURE);
 	}
+	pwd = getcwd(NULL, 0);
+	if (!pwd)
+		return (free(path), EXIT_FAILURE);
 	var = ft_strjoin("OLDPWD=", pwd);
 	add_var("OLDPWD", var);
 	free(pwd);
@@ -102,7 +102,7 @@ char	*get_current_path(int option)
 
 	path = getcwd(NULL, 0);
 	if (!path)
-		return (NULL);
+		path = ft_strdup(getenv("PWD"));
 	home = getenv("HOME");
 	if (!home)
 		return (path);
