@@ -16,28 +16,26 @@ static int	update_path(char *path, char *arg)
 {
 	char	*pwd;
 	char	*var;
+	char	*s;
 
 	if (chdir(path) < 0)
 	{
-		write(2, "cd: ", 5);
-		perror(path);
-		return (free(path), EXIT_FAILURE);
+		s = strerror(errno);
+		write(2, "cd: ", 4);
+		print_err(path, s);
+		return (free(path), 1);
 	}
 	pwd = getcwd(NULL, 0);
 	if (!pwd)
-		return (free(path), EXIT_FAILURE);
+		return (free(path), 1);
 	var = ft_strjoin("OLDPWD=", pwd);
 	add_var("OLDPWD", var);
-	free(pwd);
-	free(var);
-	pwd = getcwd(NULL, 0);
-	var = ft_strjoin("PWD=", pwd);
+	pwd = (free(pwd), getcwd(NULL, 0));
+	var = (free(var), ft_strjoin("PWD=", pwd));
 	add_var("PWD", var);
-	free(pwd);
-	free(var);
 	if (arg && !ft_strncmp(arg, "-", 1) && ft_strlen(arg) == 1)
 		ft_printf("%s\n", path);
-	return (free(path), 0);
+	return (free(path), free(pwd), free(var), 0);
 }
 
 static char	*get_home(void)
@@ -128,7 +126,7 @@ int	pwd_cmd(char *input)
 	else
 	{
 		print_err("pwd", S2ARG);
-		return (free(input), EXIT_FAILURE);
+		return (free(input), 1);
 	}
 	ft_printf("%s\n", path);
 	return (free(input), free(path), 0);

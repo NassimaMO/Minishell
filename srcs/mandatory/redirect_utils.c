@@ -76,10 +76,9 @@ int	redir_out(char *str, int *fd_out)
 		*fd_out = ((n & MSK) << 20) | ((new_fd & MSK) << 10) | (*fd_out & MSK);
 	else if (new_fd > 2)
 		*fd_out = (ft_close(1, *fd_out), new_fd);
-	ft_strlcpy(str, ft_strchr(str, '>'), ft_strlen(ft_strchr(str, '>')) + 1);
 	ft_change_str(str, name, '>');
 	if (new_fd < 0)
-		return (perror(name), free(name), free(s), 2);
+		return (perror(name), free(name), free(s), 1);
 	return (free(name), free(s), 0);
 }
 
@@ -130,6 +129,6 @@ int	redir_in(char *str, int *fd_in)
 	if (new_fd > 2)
 		*fd_in = (ft_close(1, *fd_in), new_fd);
 	else if (new_fd < 0)
-		return (perror(name), free(name), 2);
+		return (perror(name), free(name), 1);
 	return (free(name), 0);
 }

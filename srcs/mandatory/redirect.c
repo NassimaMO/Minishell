@@ -18,8 +18,9 @@ void	ft_close(int nb, ...)
 	int			i;
 	int			fd;
 	struct stat	buf;
+	int			err;
 
-	va_start(args, nb);
+	err = (va_start(args, nb), errno);
 	i = 0;
 	while (i < nb)
 	{
@@ -35,6 +36,7 @@ void	ft_close(int nb, ...)
 			close(fd);
 		i++;
 	}
+	errno = err;
 }
 
 void	ft_dup(int fd_in, int fd_out)
@@ -84,7 +86,8 @@ int	redirect(char *str, int *fd_in, int *fd_out)
 		}
 		else
 			i += (str[i] != 0);
+		if (in || out)
+			g_exit_code = (ft_bzero(str, ft_strlen(str)), in + out * (in == 0));
 	}
-	str[0] *= (!in && !out);
 	return (in + out * (in == 0));
 }

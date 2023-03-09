@@ -85,9 +85,9 @@ void	built_in(char *input, int fd_in, int fd_out)
 {
 	char	*line;
 
-	redirect(input, &fd_in, &fd_out);
+	if (redirect(input, &fd_in, &fd_out))
+		return ;
 	ft_dup(fd_in, fd_out);
-	ft_close(2, fd_in, fd_out);
 	line = ft_strtrim(input, " \t");
 	if (!ft_strncmp(line, "echo", 4))
 		g_exit_code = echo_cmd(line + 4);
@@ -121,7 +121,7 @@ int	handle_cmd(char *s, char **h)
 	else if (check_exit(s) == EXIT)
 		return (free_split(cmd), EXIT);
 	s = ft_strdup(s);
-	if (i == 1 && !is_bin(s) && (free_split(cmd), redirect(s, fd, fd +1), 1))
+	if (i == 1 && !is_bin(s) && (free_split(cmd), !redirect(s, fd, fd +1)))
 	{
 		i = fork();
 		if (i == 0)

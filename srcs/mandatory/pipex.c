@@ -30,7 +30,7 @@ void	exec_cmd(char *cmd, int fi, int fo, char **history)
 		path = get_pathname(args[0], environ);
 	ft_dup(fi, fo);
 	execve(path, args, environ);
-	free_split((ft_close(2, fi, fo), history));
+	free_split(history);
 	if (errno == ENOENT)
 		exit((print_err(args[0], SCMD), free_split(args), free_env(), \
 		free(path), free(cmd), 127));
