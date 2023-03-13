@@ -61,17 +61,11 @@ int	is_bin(char *cmd)
 	char		**args;
 	char		*s;
 
-	i = 0;
 	args = process_args(get_cmd_args(cmd));
 	if ((!*cmd && (free_split(args), 1)) || !args)
 		return (0);
+	i = 0;
 	s = args[0];
-	if (s && (!ft_strncmp(args[0], "<", 1) || !ft_strncmp(args[0], ">", 1)))
-	{
-		s = args[1];
-		if (s)
-			s = args[2];
-	}
 	while (s && i < 7)
 	{
 		if (!strncmp(s, cmds[i], ft_strlen(cmds[i])))
@@ -121,7 +115,7 @@ int	handle_cmd(char *s, char **h)
 	else if (check_exit(s) == EXIT)
 		return (free_split(cmd), EXIT);
 	s = ft_strdup(s);
-	if (i == 1 && !is_bin(s) && (free_split(cmd), !redirect(s, fd, fd +1)))
+	if (i == 1 && (free_split(cmd), !redirect(s, fd, fd +1)) && !is_bin(s))
 	{
 		i = fork();
 		if (i == 0)
@@ -129,6 +123,6 @@ int	handle_cmd(char *s, char **h)
 		g_exit_code = (waitpid(i, &g_exit_code, 0), WEXITSTATUS(g_exit_code));
 	}
 	else if (i == 1 && is_bin(s) && (set_std(fd + 2, SET), 1))
-		set_std(fd +2, (free_split((built_in(s, *fd, fd[1]), cmd)), 0));
+		set_std(fd + 2, (built_in(s, *fd, fd[1]), 0));
 	return (ft_close(2, fd[0], fd[1]), free(s), 0);
 }

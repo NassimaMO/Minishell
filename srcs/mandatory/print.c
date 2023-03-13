@@ -58,7 +58,7 @@ char	*get_cmd(char *cmd)
 
 	ft_bzero(fd, sizeof(int) * 2);
 	if (pipe(fd) < 0)
-		return (perror(""), ft_close(2, fd[0], fd[1]), NULL);
+		return (perror(""), NULL);
 	stdclone = dup(STDERR_FILENO);
 	close(STDERR_FILENO);
 	pid = fork();
@@ -67,7 +67,7 @@ char	*get_cmd(char *cmd)
 	name = ft_strdup(cmd);
 	if (pid == 0)
 		exec_cmd(name, 0, (close(stdclone), close(fd[0]), fd[1]), 0);
-	wait(NULL);
+	waitpid(pid, NULL, 0);
 	name = (free(name), get_next_line(fd[0]));
 	ft_close(1, (dup2(stdclone, STDERR_FILENO), stdclone));
 	if (ft_strchr(name, '.'))
