@@ -47,21 +47,19 @@ void	signals(int option)
 
 	ft_bzero(&sa, sizeof(struct sigaction));
 	if (option == SET)
-	{
 		sa.sa_handler = &ft_handler;
-		sigaction(SIGINT, &sa, NULL);
-	}
 	else if (option == HEREDOC)
 	{
 		sa.sa_flags |= SA_SIGINFO;
 		sa.sa_sigaction = &handler_heredoc;
-		sigaction(SIGINT, &sa, NULL);
 	}
 	else if (option == RESET)
-	{
 		sa.sa_handler = SIG_DFL;
-		sigaction(SIGINT, &sa, NULL);
-	}
+	else if (option == IGNORE)
+		sa.sa_handler = SIG_IGN;
+	else
+		return ;
+	sigaction(SIGINT, &sa, NULL);
 	sa.sa_flags = SA_RESTART;
 	sigaction(SIGQUIT, &sa, NULL);
 }

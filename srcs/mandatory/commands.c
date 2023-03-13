@@ -119,12 +119,12 @@ int	handle_cmd(char *s, char **h)
 	s = ft_strdup(s);
 	if (i == 1 && (free_split(cmd), !redirect(s, fd, fd +1)) && !is_bin(s))
 	{
-		i = fork();
+		i = (signals(IGNORE), fork());
 		if (i == 0)
 			exec_cmd(s, fd[0], fd[1], h);
 		g_exit_code = (waitpid(i, &g_exit_code, 0), WEXITSTATUS(g_exit_code));
 	}
 	else if (i == 1 && is_bin(s) && (set_std(fd + 2, SET), 1))
 		set_std(fd + 2, (built_in(s, *fd, fd[1]), 0));
-	return (ft_close(2, fd[0], fd[1]), free(s), 0);
+	return (ft_close(2, fd[0], fd[1]), free(s), signals(SET), 0);
 }

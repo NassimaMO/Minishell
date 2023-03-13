@@ -37,6 +37,7 @@
 # define RESET 0
 # define SET 1
 # define HEREDOC 2
+# define IGNORE 3
 
 # define EXIT 1
 
