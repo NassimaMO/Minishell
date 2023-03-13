@@ -28,7 +28,7 @@ void	exec_cmd(char *cmd, int fi, int fo, char **history)
 		path = relative_path(args[0]);
 	else
 		path = get_pathname(args[0], environ);
-	ft_dup(fi, fo);
+	signals((ft_dup(fi, fo), RESET));
 	execve(path, args, environ);
 	free_split(history);
 	if (errno == ENOENT)
@@ -78,6 +78,7 @@ int	wait_pids(pid_t *pids, int n)
 	if (pids[i])
 		status = (WEXITSTATUS(waitpid(pids[i], &status, 0)), status);
 	free(pids);
+	signals(SET);
 	return (status);
 }
 
@@ -88,7 +89,7 @@ int	ft_pipes(int n, char **cmds, int fd[2], char **hist)
 	int		i;
 	int		fd_i;
 
-	i = 0;
+	i = (signals(IGNORE), 0);
 	pids = ft_calloc(n, sizeof(pid_t));
 	while (i < n)
 	{
@@ -103,7 +104,7 @@ int	ft_pipes(int n, char **cmds, int fd[2], char **hist)
 			if (pids[i] == 0 && (free(pids), close(pipes[i == n - 1]), 1))
 				exec_cmd(ft_dupfree(cmds, i), fd_i, *fo(i, n, fd, pipes), hist);
 		}
-		ft_close(2, fd_i, *fo(i, n, fd, pipes));
+		signals((ft_close(2, fd_i, *fo(i, n, fd, pipes)), SET));
 		i++;
 	}
 	return (free_split(cmds), wait_pids(pids, n));
