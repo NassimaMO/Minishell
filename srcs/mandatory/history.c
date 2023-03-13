@@ -72,6 +72,21 @@ int len)
 		(*moves)--;
 }
 
+static void ft_suppr(t_cursor *curs, char *str)
+{
+	int	len;
+
+	if (str[curs->cursor])
+	{
+		ft_printf("\033[s");
+		ft_printf("\033[J");
+		len = ft_strlen(str) - curs->cursor;
+		ft_strlcpy(str + curs->cursor, str + curs->cursor + 1, len);
+		ft_printf("%s", str + curs->cursor);
+		ft_printf("\033[u");
+	}
+}
+
 void	ft_escape(t_cursor *curs, size_t *moves, char **history)
 {
 	char	buff[1];
@@ -81,6 +96,8 @@ void	ft_escape(t_cursor *curs, size_t *moves, char **history)
 	if (read(0, ft_memset(buff, 0, 1), 1) == 1 && *buff == '[')
 	{
 		read(0, ft_memset(buff, 0, 1), 1);
+		if (*buff == '3' && read(0, ft_memset(buff, 0, 1), 1) == 1 && *buff == '~')
+			ft_suppr(curs, history[split_len(history) - (*moves + 1)]);
 		if ((*buff == 'C' && curs->cursor < \
 		ft_strlen(history[split_len(history) - (*moves + 1)]) && \
 		++(curs->cursor)) || (*buff == 'D' && curs->cursor > 0 && \
