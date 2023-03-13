@@ -72,7 +72,7 @@ int len)
 		(*moves)--;
 }
 
-static void ft_suppr(t_cursor *curs, char *str)
+static void	ft_suppr(t_cursor *curs, char *str)
 {
 	int	len;
 
@@ -96,7 +96,8 @@ void	ft_escape(t_cursor *curs, size_t *moves, char **history)
 	if (read(0, ft_memset(buff, 0, 1), 1) == 1 && *buff == '[')
 	{
 		read(0, ft_memset(buff, 0, 1), 1);
-		if (*buff == '3' && read(0, ft_memset(buff, 0, 1), 1) == 1 && *buff == '~')
+		if (*buff == '3' && read(0, ft_memset(buff, 0, 1), 1) == 1 && \
+			*buff == '~')
 			ft_suppr(curs, history[split_len(history) - (*moves + 1)]);
 		if ((*buff == 'C' && curs->cursor < \
 		ft_strlen(history[split_len(history) - (*moves + 1)]) && \
