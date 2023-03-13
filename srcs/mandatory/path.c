@@ -121,13 +121,7 @@ int	pwd_cmd(char *input)
 	char	*path;
 
 	input = ft_strtrim(input, " \t");
-	if (ft_strlen(input) == 3)
-		path = get_current_path(FULL);
-	else
-	{
-		print_err("pwd", S2ARG);
-		return (free(input), 1);
-	}
+	path = get_current_path(FULL);
 	ft_printf("%s\n", path);
 	return (free(input), free(path), 0);
 }
