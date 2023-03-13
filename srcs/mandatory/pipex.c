@@ -69,39 +69,42 @@ int	wait_pids(pid_t *pids, int n)
 	int	status;
 
 	i = 0;
+	status = 1;
 	while (i < n - 1)
 	{
 		waitpid(pids[i], NULL, 0);
 		i++;
 	}
-	waitpid(pids[i], &status, 0);
+	if (pids[i])
+		status = (WEXITSTATUS(waitpid(pids[i], &status, 0)), status);
 	free(pids);
-	return (WEXITSTATUS(status));
+	return (status);
 }
 
-int	ft_pipes(int n, char **cmds, int fd[2], char **history)
+int	ft_pipes(int n, char **cmds, int fd[2], char **hist)
 {
 	pid_t	*pids;
 	int		pipes[2];
 	int		i;
-	pid_t	pid;
-	int		fd_in;
+	int		fd_i;
 
 	i = 0;
-	pids = malloc(sizeof(pid_t) * n);
+	pids = ft_calloc(n, sizeof(pid_t));
 	while (i < n)
 	{
-		fd_in = *fi(i, fd, pipes);
+		fd_i = *fi(i, fd, pipes);
 		if (i != n - 1 && pipe(pipes) < 0)
-			return (perror(""), free_split(history), 1);
-		redirect(cmds[i], &fd_in, fo(i, n, fd, pipes));
-		pid = fork();
-		if (pid == -1)
-			return (perror(""), free_split(history), 1);
-		if (pid == 0 && (free(pids), close(pipes[i == n - 1]), 1))
-			exec_cmd(ft_dupfree(cmds, i), fd_in, *fo(i, n, fd, pipes), history);
-		ft_close(2, fd_in, *fo(i, n, fd, pipes));
-		pids[i++] = pid;
+			return (perror(""), free_split(hist), 1);
+		if (!redirect(cmds[i], &fd_i, fo(i, n, fd, pipes)) || i != n - 1)
+		{
+			pids[i] = fork();
+			if (pids[i] == -1)
+				return (perror(""), free_split(hist), 1);
+			if (pids[i] == 0 && (free(pids), close(pipes[i == n - 1]), 1))
+				exec_cmd(ft_dupfree(cmds, i), fd_i, *fo(i, n, fd, pipes), hist);
+		}
+		ft_close(2, fd_i, *fo(i, n, fd, pipes));
+		i++;
 	}
 	return (free_split(cmds), wait_pids(pids, n));
 }
