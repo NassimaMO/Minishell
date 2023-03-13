@@ -18,6 +18,10 @@ static int	parse_pipes(char *input)
 	char	c;
 
 	i = 0;
+	while (input[i] == ' ' || input[i] == '\t')
+		i++;
+	if (input[i] == '|')
+		return (0);
 	while (input[i] && input[i] != '|')
 	{
 		if (input[i] == '"' || input[i] == '\'')
