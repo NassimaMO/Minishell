@@ -63,16 +63,19 @@ static int	*fo(int i, int n, int fd[2], int *pipes)
 	return (fd_out);
 }
 
-int	wait_pids(pid_t *pids, int n)
+int	wait_pids(pid_t *pids, int n, int fd[2], int *pipes)
 {
 	int	i;
 	int	status;
+	int	fd_i;
 
 	i = 0;
 	status = 1;
 	while (i < n - 1)
 	{
+		fd_i = *fi(i, fd, pipes);
 		waitpid(pids[i], NULL, 0);
+		ft_close(2, fd_i, *fo(i, n, fd, pipes));
 		i++;
 	}
 	if (pids[i])
@@ -96,16 +99,15 @@ int	ft_pipes(int n, char **cmds, int fd[2], char **hist)
 		fd_i = *fi(i, fd, pipes);
 		if (i != n - 1 && pipe(pipes) < 0)
 			return (perror(""), free_split(hist), 1);
-		if (!redirect(cmds[i], &fd_i, fo(i, n, fd, pipes)) || i != n - 1)
-		{
-			pids[i] = fork();
-			if (pids[i] == -1)
-				return (perror(""), free_split(hist), 1);
-			if (pids[i] == 0 && (free(pids), close(pipes[i == n - 1]), 1))
-				exec_cmd(ft_dupfree(cmds, i), fd_i, *fo(i, n, fd, pipes), hist);
-		}
-		signals((ft_close(2, fd_i, *fo(i, n, fd, pipes)), SET));
+		pids[i] = fork();
+		if (pids[i] == -1)
+			return (perror(""), free_split(hist), 1);
+		if (pids[i] == 0 && (close(pipes[i == n - 1]), (!redirect(cmds[i], \
+			&fd_i, fo(i, n, fd, pipes)) || i != n - 1) && (free(pids), 1)))
+			exec_cmd(ft_dupfree(cmds, i), fd_i, *fo(i, n, fd, pipes), hist);
+		ft_close(2, fd_i, *fo(i, n, fd, pipes));
+		signals(SET);
 		i++;
 	}
-	return (free_split(cmds), wait_pids(pids, n));
+	return (free_split(cmds), wait_pids(pids, n, fd, pipes));
 }

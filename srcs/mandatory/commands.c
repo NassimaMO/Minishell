@@ -85,6 +85,7 @@ void	built_in(char *input, int fd_in, int fd_out)
 
 	if (redirect(input, &fd_in, &fd_out))
 		return ;
+	ft_printf("%d %d\n", fd_in, fd_out);
 	ft_dup(fd_in, fd_out);
 	line = ft_strtrim(input, " \t");
 	if (!line)
