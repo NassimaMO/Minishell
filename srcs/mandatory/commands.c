@@ -85,6 +85,8 @@ void	built_in(char *input, int fd_in, int fd_out)
 		return ;
 	ft_dup(fd_in, fd_out);
 	line = ft_strtrim(input, " \t");
+	if (!line)
+		return ;
 	if (!ft_strncmp(line, "echo", 4))
 		g_exit_code = echo_cmd(line + 4);
 	else if (!ft_strncmp(line, "pwd", 3))
@@ -97,7 +99,7 @@ void	built_in(char *input, int fd_in, int fd_out)
 		g_exit_code = export_cmd(line);
 	else if (!ft_strncmp(line, "unset", 5))
 		g_exit_code = unset_cmd(line);
-	return (free(line));
+	free(line);
 }
 
 int	handle_cmd(char *s, char **h)
