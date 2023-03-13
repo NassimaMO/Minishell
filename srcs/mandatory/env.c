@@ -48,7 +48,7 @@ int	unset_cmd(char *str)
 
 	args = process_args(get_cmd_args(str));
 	if (split_len(args) <= 1)
-		return (print_err("unset", SARG), free_split(args), free(str), 1);
+		return (print_err("unset", SARG), free_split(args), 1);
 	i = 1;
 	while (args[i])
 	{
