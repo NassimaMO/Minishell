@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:02:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/03/14 11:46:24 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 13:52:59 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,10 @@ int	main(void)
 		print_shell(0);
 		fstat(STDIN_FILENO, &buf);
 		if (S_ISFIFO(buf.st_mode) || !isatty(STDIN_FILENO))
-		{
-			signals(IGNORE);
-			input = get_input();
-		}
+			input = (signals(IGNORE), get_input());
 		else
-		{
-			signals(SET);
-			input = get_input_readline(ft_split_dup(history), &curs);
-		}
+			input = (signals(SET), \
+			get_input_readline(ft_split_dup(history), &curs));
 		if (input && *input && *input != '\n')
 			history = add_split(history, input);
 		if (handle_cmd(input, history) == EXIT)

@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 13:05:38 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/15 17:51:01 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 14:41:48 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ void	ft_init(int nb, ...);
 void	init_fd(int *fd, size_t size);
 void	set_terminal(int option);
 void	set_std(int std[3], int opt);
+void	set_ctrl_keys(int option);
 
 /* input_utils.c */
 void	get_cursor_pos(int *x, int *y);
@@ -108,10 +109,6 @@ char	**add_split(char **split, char *str);
 void	free_split(char **split);
 size_t	split_len(char **split);
 char	*ft_dupfree(char **split, int i);
-
-/* ft_split_set.c */
-char	**ft_split_set(char *str, char *charset);
-char	*str_trim_but_no(char *str, char c);
 
 /* commands.c */
 int		is_bin(char *cmd);

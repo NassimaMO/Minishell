@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 14:52:03 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/05 15:16:29 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 14:16:22 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,16 +90,17 @@ int	check_exit(char *input)
 	if (args && *args && !ft_strncmp(*args, "exit", 4) && ft_strlen(*args) == 4)
 	{
 		ft_printf("exit\n");
-		if (split_len(args) > 2)
-			g_exit_code = 1;
-		if (split_len(args) > 2)
-			return (print_err("exit", S2ARG), set_terminal(0), \
-					free_split(args), 0);
 		if (split_len(args) > 1 && \
 			(check_overflow(args[1], LLONG_MAX) || \
 			check_overflow(args[1], LLONG_MIN) || \
 			ft_atoi_err(args[1], &g_exit_code, 1) < 0))
-			g_exit_code = (ft_printf("exit: %s: %s\n", input, SNUM), 2);
+			g_exit_code = (write(2, "exit: ", 6), print_err(args[1], SNUM), 2);
+		else if (split_len(args) > 2)
+		{
+			g_exit_code = 1;
+			return (print_err("exit", S2ARG), set_terminal(0), \
+					free_split(args), 0);
+		}
 		return (free_split(args), set_terminal(RESET), EXIT);
 	}
 	return (free_split(args), set_terminal(RESET), 0);

@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 06:51:04 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/15 17:50:15 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 14:31:42 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ char	*get_input(void)
 	str = gnl_join(ft_strdup(""), &buff, 1);
 	while (bytes >= 0 && buff != '\n')
 	{
-		if ((bytes == 0 || buff == 0 || buff == 4))
+		if (((bytes == 0 || buff == 0 || buff == 4) && !*str))
 			return (free(str), NULL);
 		bytes = read(0, ft_memset(&buff, 0, 1), 1);
 		str = gnl_join(str, &buff, 1);

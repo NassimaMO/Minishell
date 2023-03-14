@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 15:19:13 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/15 14:53:37 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 14:42:31 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,11 +91,11 @@ static int	heredoc(char *delimiter, int *fd_in)
 
 	if (pipe(pipefd) < 0)
 		return (2);
-	code = g_exit_code;
+	code = (set_ctrl_keys(SET), g_exit_code);
 	g_exit_code = (signals(HEREDOC), 0);
 	tmp = (ft_printf(">"), get_input());
-	while (tmp && (ft_strncmp(tmp, delimiter, ft_strlen(delimiter)) || \
-			(ft_strlen(delimiter) != ft_strlen(tmp))) && !g_exit_code && tmp)
+	while (tmp && (ft_strncmp(delimiter, tmp, gnl_strlen(tmp)) || \
+			(gnl_strlen(tmp) != ft_strlen(delimiter))) && !g_exit_code && tmp)
 	{
 		free((write(pipefd[1], tmp, ft_strlen(tmp)), tmp));
 		tmp = (ft_printf((write(pipefd[1], "\n", 1), ">")), get_input());
@@ -106,9 +106,9 @@ static int	heredoc(char *delimiter, int *fd_in)
 	if (!tmp)
 		print_err("warning", SHDOC);
 	if (g_exit_code)
-		return (EXIT);
+		return (set_ctrl_keys(RESET), EXIT);
 	g_exit_code = code;
-	return (0);
+	return (set_ctrl_keys(RESET), 0);
 }
 
 /* changes str to remove redirection and changes fd_in */

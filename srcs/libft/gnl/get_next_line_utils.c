@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:54:11 by nghulam-          #+#    #+#             */
-/*   Updated: 2022/11/15 16:54:13 by nghulam-         ###   ########.fr       */
+/*   Updated: 2023/03/14 14:27:03 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,9 @@ char	*gnl_join(char *dest, char *src, int len)
 	return (new_dest);
 }
 
-int	gnl_strlen(const char *str)
+size_t	gnl_strlen(const char *str)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	while (str[i])

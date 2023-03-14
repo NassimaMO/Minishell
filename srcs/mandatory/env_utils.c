@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 11:04:22 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/03/14 11:39:01 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 13:50:47 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,18 @@ void	init_env(void)
 	while (environ[i])
 	{
 		environ[i] = ft_strdup(environ[i]);
+		if (!environ[i])
+			exit((free_env(), 1));
 		i++;
 	}
 	if (getenv("SHLVL") && !ft_atoi_err(getenv("SHLVL"), &n, sizeof(int)))
 	{
 		str = ft_itoa(n + 1);
-		line = ft_strjoin("SHLVL=", str);
-		add_var("SHLVL", line);
-		free(str);
-		free(line);
+		if (str)
+			line = ft_strjoin("SHLVL=", str);
+		if (!str || !line)
+			return (add_var("SHLVL", "SHLVL=1"));
+		return (add_var("SHLVL", line), free(str), free(line));
 	}
 	else
 		add_var("SHLVL", "SHLVL=1");

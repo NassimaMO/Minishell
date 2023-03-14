@@ -10,7 +10,6 @@ COMMON_SRCS					=	history.c \
 								redirect.c \
 								redirect_utils.c \
 								exit.c \
-								ft_split_set.c \
 								echo.c \
 								quotes.c \
 								path.c \

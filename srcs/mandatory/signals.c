@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 15:22:15 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/03/14 11:55:12 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 14:44:19 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static void	ft_handler(int signum)
 	{
 		g_exit_code = 130;
 		tcgetattr(STDIN_FILENO, &tty);
-		if (!(tty.c_lflag & ECHO))
+		if (!(tty.c_lflag & ECHO) || !(tty.c_lflag & ECHOCTL))
 			ft_printf("^C");
 	}
 }
@@ -33,8 +33,8 @@ static void	handler_heredoc(int signum, siginfo_t *info, void *context)
 	{
 		g_exit_code = 130;
 		tcgetattr(STDIN_FILENO, &tty);
-		if (!(tty.c_lflag & ECHO))
-			ft_printf("^C");
+		if (!(tty.c_lflag & ECHO) || !(tty.c_lflag & ECHOCTL))
+			ft_printf("^C\n");
 		signals(RESET);
 		kill(SIGINT, info->si_pid);
 	}
@@ -60,6 +60,8 @@ void	signals(int option)
 	else
 		return ;
 	sigaction(SIGINT, &sa, NULL);
+	ft_bzero(&sa, sizeof(struct sigaction));
 	sa.sa_flags = SA_RESTART;
+	sa.sa_handler = SIG_IGN;
 	sigaction(SIGQUIT, &sa, NULL);
 }

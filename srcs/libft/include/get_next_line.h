@@ -35,6 +35,6 @@ char	*get_next_line(int fd);
 char	*gnl_join(char *dest, char *src, int len);
 char	*init(char *str, int len);
 int		gnl_close(int fd);
-int		gnl_strlen(const char *str);
+size_t	gnl_strlen(const char *str);
 
 #endif

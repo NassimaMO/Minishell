@@ -1,16 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   input.c                                            :+:      :+:    :+:   */
+/*   input_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 06:51:04 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/15 17:50:15 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 14:21:08 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static char	*str_trim_but_no(char *str, char c)
+{
+	char	*to_return;
+	int		i;
+	int		j;
+
+	i = 0;
+	j = 0;
+	to_return = ft_calloc(ft_strlen(str) + 1, 1);
+	while (str[i])
+	{
+		if (str[i] == c)
+		{
+			while (str[i] == c)
+				i++;
+			if (!str[i])
+				break ;
+			if (j)
+				to_return[j++] = c;
+		}
+		to_return[j++] = str[i];
+		i++;
+	}
+	return (to_return);
+}
 
 static char	*get_variable(char *input, int *x)
 {
