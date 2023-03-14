@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:14 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/03/14 14:41:06 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 17:09:05 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,21 +82,5 @@ void	set_terminal(int option)
 		tcsetattr(STDIN_FILENO, TCSANOW, &tty);
 	}
 	else if (option == RESET && (set_std(std, RESET), isatty(STDIN_FILENO)))
-		tcsetattr(STDIN_FILENO, TCSANOW, &tmp);
-}
-
-void	set_ctrl_keys(int option)
-{
-	struct termios			tty;
-	static struct termios	tmp;
-
-	if (option == SET)
-	{
-		tcgetattr(STDIN_FILENO, &tty);
-		tmp = tty;
-		tty.c_lflag &= ~ECHOCTL;
-		tcsetattr(STDIN_FILENO, TCSANOW, &tty);
-	}
-	else
 		tcsetattr(STDIN_FILENO, TCSANOW, &tmp);
 }

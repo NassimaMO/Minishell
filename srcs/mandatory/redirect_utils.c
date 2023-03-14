@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 15:19:13 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/03/14 16:23:21 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 17:06:11 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,27 +88,28 @@ static int	heredoc(char *delimiter, int *fd_in)
 	int			pipefd[2];
 	char		*tmp;
 	int			code;
+	t_cursor	curs;
 
 	if (pipe(pipefd) < 0)
 		return (perror(""), 2);
-	code = (set_ctrl_keys(SET), g_exit_code);
+	code = g_exit_code;
 	g_exit_code = (signals(HEREDOC), 0);
-	tmp = (ft_printf(">"), get_input());
+	tmp = (ft_printf(">"), get_input_readline(NULL, &curs));
 	while (tmp && (ft_strncmp(delimiter, tmp, gnl_strlen(tmp)) || \
 			(gnl_strlen(tmp) != ft_strlen(delimiter))) && !g_exit_code && tmp)
 	{
 		free((write(pipefd[1], tmp, ft_strlen(tmp)), tmp));
-		tmp = (ft_printf((write(pipefd[1], "\n", 1), ">")), get_input());
+		tmp = (ft_printf((write(pipefd[1], "\n", 1), ">")), \
+		get_input_readline(NULL, &curs));
 	}
-	close((free(tmp), pipefd[1]));
-	*fd_in = (ft_close(1, *fd_in), pipefd[0]);
+	*fd_in = (free(tmp), ft_close(2, *fd_in, pipefd[1]), pipefd[0]);
 	signals(SET);
 	if (!tmp)
 		print_err("warning", SHDOC);
 	if (g_exit_code)
-		return (set_ctrl_keys(RESET), EXIT);
+		return (EXIT);
 	g_exit_code = code;
-	return (set_ctrl_keys(RESET), 0);
+	return (0);
 }
 
 /* changes str to remove redirection and changes fd_in */
