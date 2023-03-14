@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 15:22:15 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/03/14 14:44:19 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 16:30:44 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,6 @@ void	signals(int option)
 	else
 		return ;
 	sigaction(SIGINT, &sa, NULL);
-	ft_bzero(&sa, sizeof(struct sigaction));
 	sa.sa_flags = SA_RESTART;
-	sa.sa_handler = SIG_IGN;
 	sigaction(SIGQUIT, &sa, NULL);
 }

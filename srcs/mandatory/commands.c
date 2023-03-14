@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 15:39:27 by nmouslim          #+#    #+#             */
-/*   Updated: 2023/03/14 13:41:19 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 16:42:28 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,8 @@ int	is_bin(char *cmd)
 	s = args[0];
 	while (s && i < 7)
 	{
-		if (!strncmp(s, cmds[i], ft_strlen(cmds[i])))
+		if (!strncmp(s, cmds[i], ft_strlen(cmds[i])) && \
+			ft_strlen(s) == ft_strlen(cmds[i]))
 			return (free_split(args), 1);
 		i++;
 	}
@@ -129,6 +130,6 @@ int	handle_cmd(char *s, char **h)
 		g_exit_code = (waitpid(i, &g_exit_code, 0), WEXITSTATUS(g_exit_code));
 	}
 	else if (i == 1 && is_bin(s) && (set_std(fd + 2, SET), 1))
-		set_std(fd + 2, (built_in(s, *fd, fd[1]), 0));
+		set_std(fd + 2, (built_in(s, *fd, fd[1]), RESET));
 	return (ft_close(2, fd[0], fd[1]), free(s), signals(SET), 0);
 }

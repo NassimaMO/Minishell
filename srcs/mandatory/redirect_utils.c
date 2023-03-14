@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 15:19:13 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/03/14 14:42:31 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 16:23:21 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ static int	heredoc(char *delimiter, int *fd_in)
 	int			code;
 
 	if (pipe(pipefd) < 0)
-		return (2);
+		return (perror(""), 2);
 	code = (set_ctrl_keys(SET), g_exit_code);
 	g_exit_code = (signals(HEREDOC), 0);
 	tmp = (ft_printf(">"), get_input());
