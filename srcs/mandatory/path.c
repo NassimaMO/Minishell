@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:04 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/03/14 13:27:54 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 15:16:14 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static int	update_path(char *path, char *arg)
 	return (free(path), free(pwd), free(var), 0);
 }
 
-static char	*get_home(void)
+/* static char	*get_home(void)
 {
 	char	*home;
 	char	*cmd;
@@ -58,8 +58,9 @@ static char	*get_home(void)
 		home = (free(home), ft_strdup(split[5]));
 	else
 		home = NULL;
+	ft_printf("%s\n", home);
 	return (free(cmd), free_split(split), home);
-}
+} */
 
 int	cd_cmd(char *str)
 {
@@ -69,13 +70,9 @@ int	cd_cmd(char *str)
 	args = process_args(get_cmd_args(str));
 	str = ft_strtrim(str + 2, " \t");
 	if (!getenv("HOME") && (*str == '~' || split_len(args) == 1))
-	{
-		if (split_len(args) == 1)
-			return (print_err("cd", SCDH), free_split(args), free(str), 1);
-		path = gnl_join(get_home(), str + 1, ft_strlen(str + 1));
-	}
+		return (print_err("cd", SCDH), free_split(args), free(str), 1);
 	else if (split_len(args) == 1)
-		path = get_home();
+		path = ft_strdup(getenv("HOME"));
 	else if (split_len(args) > 2)
 		return (print_err("cd", S2ARG), free_split(args), free(str), 1);
 	else if (!ft_strncmp(args[1], "-", 1) && ft_strlen(args[1]) == 1)

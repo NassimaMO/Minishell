@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 15:22:40 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/15 16:46:29 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 15:17:56 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,18 +63,18 @@ char	*get_cmd(char *cmd)
 	close(STDERR_FILENO);
 	pid = fork();
 	if (pid < 0)
-		return (perror(""), ft_close(2, fd[0], fd[1]), NULL);
+		return (perror(""), NULL);
 	name = ft_strdup(cmd);
 	if (pid == 0)
 		exec_cmd(name, 0, (close(stdclone), close(fd[0]), fd[1]), 0);
-	waitpid(pid, NULL, 0);
+	waitpid((close(fd[1]), pid), NULL, 0);
 	name = (free(name), get_next_line(fd[0]));
-	ft_close(1, (dup2(stdclone, STDERR_FILENO), stdclone));
+	ft_close(2, (dup2(stdclone, STDERR_FILENO), stdclone), fd[0]);
 	if (ft_strchr(name, '.'))
 		*ft_strchr(name, '.') = '\0';
 	else if (ft_strchr(name, '\n'))
 		*ft_strchr(name, '\n') = '\0';
-	return (ft_close(2, fd[0], fd[1]), name);
+	return (name);
 }
 
 size_t	print_shell(int opt)
