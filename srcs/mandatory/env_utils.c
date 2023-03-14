@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 11:04:22 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/12 14:22:33 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 11:39:01 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ void	init_env(void)
 		free(str);
 		free(line);
 	}
+	else
+		add_var("SHLVL", "SHLVL=1");
 }
 
 void	free_env(void)

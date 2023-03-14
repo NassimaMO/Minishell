@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:35:42 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/12 15:09:51 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 11:54:16 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,6 @@ int	ft_pipes(int n, char **cmds, int fd[2], char **hist)
 			&fd_i, fo(i, n, fd, pipes)) || i != n - 1) && (free(pids), 1)))
 			exec_cmd(ft_dupfree(cmds, i), fd_i, *fo(i, n, fd, pipes), hist);
 		ft_close(2, fd_i, *fo(i, n, fd, pipes));
-		signals(SET);
 		i++;
 	}
 	return (free_split(cmds), wait_pids(pids, n, fd, pipes));
