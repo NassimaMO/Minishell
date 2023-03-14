@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:04 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/03/14 15:16:14 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 15:28:18 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,8 @@ char	*get_current_path(int option)
 	{
 		len = ft_strlen(path) - ft_strlen(home);
 		short_path = malloc(len + 2);
+		if (!short_path)
+			return (path);
 		short_path[0] = '~';
 		ft_strlcpy(short_path + 1, path + ft_strlen(home), len + 1);
 		free(path);

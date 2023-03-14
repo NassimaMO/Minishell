@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:31 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/05 15:23:26 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 15:32:24 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ char	*get_pathname(char *cmd, char *envp[])
 	{
 		s1 = ft_strjoin(split[i], "/");
 		if (!s1)
-			return (free(cmd), NULL);
+			return (free(cmd), free_split(split), ft_strdup(""));
 		s2 = ft_strjoin(s1, cmd);
 		free(s1);
 		if (s2 && access(s2, X_OK) == 0)

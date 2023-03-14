@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:35:42 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/03/14 13:28:25 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 16:09:51 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,10 +98,11 @@ int	ft_pipes(int n, char **cmds, int fd[2], char **hist)
 	{
 		fd_i = *fi(i, fd, pipes);
 		if (i != n - 1 && pipe(pipes) < 0)
-			return (perror(""), free_split(hist), 1);
+			return (perror(""), free_split(cmds), free(pids), signals(SET), 1);
 		pids[i] = fork();
 		if (pids[i] == -1)
-			return (perror(""), free_split(hist), 1);
+			return (perror(""), ft_close(3, fd_i, pipes[0], pipes[1]), \
+					free_split(cmds), free(pids), signals(SET), 1);
 		if (pids[i] == 0 && (close(pipes[i == n - 1]), (!redirect(cmds[i], \
 			&fd_i, fo(i, n, fd, pipes)) || i != n - 1) && (free(pids), 1)))
 			exec_cmd(ft_dupfree(cmds, i), fd_i, *fo(i, n, fd, pipes), hist);
