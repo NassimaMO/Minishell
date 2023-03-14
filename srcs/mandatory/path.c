@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:04 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/05 15:22:30 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 11:22:25 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ static int	update_path(char *path, char *arg)
 	char	*var;
 	char	*s;
 
+	pwd = getcwd(NULL, 0);
 	if (chdir(path) < 0)
 	{
 		s = strerror(errno);
@@ -25,7 +26,6 @@ static int	update_path(char *path, char *arg)
 		print_err(path, s);
 		return (free(path), 1);
 	}
-	pwd = getcwd(NULL, 0);
 	if (!pwd)
 		return (free(path), 1);
 	var = ft_strjoin("OLDPWD=", pwd);
