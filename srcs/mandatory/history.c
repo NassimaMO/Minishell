@@ -47,6 +47,8 @@ size_t s_len)
 	ft_printf("%s", history[s_len - (*moves + 1)]);
 	curs->cursor = ft_strlen(history[s_len - (*moves + 1)]);
 	change_curs(curs, RIGHT, curs->cursor);
+	if (curs->x == 1)
+		ft_printf("\n");
 }
 
 static void	go_through_hist(t_cursor *curs, size_t *moves, char **history, \
