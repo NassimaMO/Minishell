@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 15:39:27 by nmouslim          #+#    #+#             */
-/*   Updated: 2023/02/05 15:11:38 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 10:40:55 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,6 @@ void	built_in(char *input, int fd_in, int fd_out)
 
 	if (redirect(input, &fd_in, &fd_out))
 		return ;
-	ft_printf("%d %d\n", fd_in, fd_out);
 	ft_dup(fd_in, fd_out);
 	line = ft_strtrim(input, " \t");
 	if (!line)
