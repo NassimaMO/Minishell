@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:36:04 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/03/14 11:22:25 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 13:27:54 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static int	update_path(char *path, char *arg)
 		s = strerror(errno);
 		write(2, "cd: ", 4);
 		print_err(path, s);
-		return (free(path), 1);
+		return (free(path), free(pwd), 1);
 	}
 	if (!pwd)
 		return (free(path), 1);
