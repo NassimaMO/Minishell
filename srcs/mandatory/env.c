@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 09:35:52 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/02/05 15:15:09 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/03/14 11:32:45 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	unset_cmd(char *str)
 
 	args = process_args(get_cmd_args(str));
 	if (split_len(args) <= 1)
-		return (print_err("unset", SARG), free_split(args), 1);
+		return (free_split(args), 1);
 	i = 1;
 	while (args[i])
 	{
